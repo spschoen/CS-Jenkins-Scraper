@@ -4,9 +4,7 @@ import datetime
 import time
 import os
 
-pulled_commits = 60
-
-repo = Repo("C:/users/Sam/Documents/Github/Tscripts/.git/")
+#repo = Repo("C:/users/Sam/Documents/Github/Tscripts/.git/")
 repo = Repo(os.getcwd() + "\.git")
 hc = repo.head.commit
 
@@ -14,7 +12,10 @@ hc = repo.head.commit
 #print(hc.hexsha)
 
 first_commits = list(repo.iter_commits('master', max_count=pulled_commits))
+first_commits = list(repo.iter_commits('master', max_count=first_commits[0].count()))
 #print(first_commits)
+
+print(first_commits[0].count())
     
 i = 0
 for commit in reversed(first_commits):
@@ -27,10 +28,10 @@ for commit in reversed(first_commits):
         print(' |--> Committer:', commit.committer.name)
     print(' |--> Committed:', time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(commit.committed_date)))
     if i != 0:
-        #print(first_commits[pulled_commits - i].committed_date)
+        #print(first_commits[first_commits[0].count() - i].committed_date)
         #print(commit.committed_date)
-        #print(commit.committed_date - first_commits[pulled_commits - i].committed_date)
-        last = first_commits[pulled_commits - i].committed_date
+        #print(commit.committed_date - first_commits[first_commits[0].count() - i].committed_date)
+        last = first_commits[first_commits[0].count() - i].committed_date
         now = commit.committed_date
         dur = now - last
         dur = str(datetime.timedelta(seconds=dur))
@@ -40,5 +41,3 @@ for commit in reversed(first_commits):
     i += 1
     
 #lazy
-
-print(os.getcwd())
