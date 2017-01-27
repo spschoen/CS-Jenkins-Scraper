@@ -5,7 +5,7 @@ import time
 import os
 
 #repo = Repo("C:/users/Sam/Documents/Github/Tscripts/.git/")
-repo = Repo(os.getcwd() + "\.git")
+repo = Repo(os.getcwd() + "/.git")
 hc = repo.head.commit
 
 # Verification
