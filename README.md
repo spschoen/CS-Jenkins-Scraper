@@ -1,5 +1,10 @@
 # CSC216-Python-Analyzer
 ¯\\_(ツ)_/¯
 
-```pip3 install --upgrade pip```
-```pip3 install GitPython```
+Install python first.
+
+```pip3 install --upgrade pip``` - Update pip.
+
+```pip3 install GitPython``` - Install GitPython
+
+```pip3 install radon``` - Install radon for complexity
