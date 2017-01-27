@@ -2,10 +2,12 @@ from git import *
 from git.objects.util import *
 import datetime
 import time
+import os
 
 pulled_commits = 60
 
 repo = Repo("C:/users/Sam/Documents/Github/Tscripts/.git/")
+repo = Repo(os.getcwd() + "\.git")
 hc = repo.head.commit
 
 # Verification
@@ -38,3 +40,5 @@ for commit in reversed(first_commits):
     i += 1
     
 #lazy
+
+print(os.getcwd())
