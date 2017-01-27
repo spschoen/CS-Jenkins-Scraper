@@ -11,7 +11,9 @@ hc = repo.head.commit
 # Verification
 #print(hc.hexsha)
 
-first_commits = list(repo.iter_commits('master', max_count=pulled_commits))
+default_pulled = 10
+
+first_commits = list(repo.iter_commits('master', max_count=default_pulled))
 first_commits = list(repo.iter_commits('master', max_count=first_commits[0].count()))
 #print(first_commits)
 
