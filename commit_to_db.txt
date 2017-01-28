@@ -1,0 +1,19 @@
+mysql> SELECT * FROM commits;
++----+------------------------------------------+----------+------------+----------+----------------------------------------------------+
+| id | hexSHA                                   | author   | time       | duration | Message                                            |
++----+------------------------------------------+----------+------------+----------+----------------------------------------------------+
+|  1 | b1a21c072b3e22405c270d8aaba1ce71a282c94a | Samuel S | 1485529758 |        0 | Initial commit                                     |
+|  2 | 26314f764ed7cadafc41b0755a2e88bd1536f039 | Samuel S | 1485529770 |       12 | Update README.md                                   |
+|  3 | 506a64f4d3d5e556846441139b048608a12a0dff | spschoen | 1485530078 |      308 | Adding basic programs.                             |
+|  4 | e00a0b62c11a4389ef30fa677e0e1e5da783162b | spschoen | 1485530358 |      280 | repoTest now pulls from local repo. - Instead of a |
+|  5 | bc365f04d0ad09b61fb5f59ad3acb22c39341ba0 | spschoen | 1485531686 |     1328 | Possibly more modular.                             |
+|  6 | 71221b58782fa84bab2fa5f07219475fcf4da99c | spschoen | 1485531807 |      121 | Adding instructions.                               |
+|  7 | c2f1eb7a458d76c767e7f74e0844b1bd66008215 | spschoen | 1485531885 |       78 | Returned pull variable for first iteration.        |
+|  8 | 50ae8c98e0f0295290f8ca83354da3fdf7016ebc | spschoen | 1485541240 |     9355 | Changes.                                           |
+|  9 | 9cc6850ef5b59f4ac8a5028b5730de38de8b233a | spschoen | 1485541860 |      620 | more in readme                                     |
+| 10 | 5a060c9f9913fe696d05252b4686e04da64c131a | spschoen | 1485551602 |     9742 | Holy carp we got MySQL to work                     |
+| 11 | 89cdf1be320b1c70dec10e3dbccdcdf24515a2da | spschoen | 1485551670 |       68 | removing modules file.                             |
+| 12 | 65defd99eb32340a9aca2daeaaa03be66d933048 | spschoen | 1485551997 |      327 | Documentation in SQL                               |
+| 13 | 6574c64682ae65dfdfee4cb000dd4e61c7720b32 | spschoen | 1485567091 |    15094 | MySQL DB populated by commit information - Script  |
++----+------------------------------------------+----------+------------+----------+----------------------------------------------------+
+13 rows in set (0.00 sec)

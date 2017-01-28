@@ -14,9 +14,9 @@ cur = cnx.cursor()
 
 #Local repo
 repo = Repo(os.getcwd() + "/.git")
-default_pulled = 10
+default_pulled = 1000
 first_commits = list(repo.iter_commits('master', max_count=default_pulled))
-first_commits = list(repo.iter_commits('master',
+first_commits = list(repo.iter_commits('master', \
                                         max_count=first_commits[0].count()))
 
 #print(first_commits[0].count())
@@ -39,9 +39,10 @@ for commit in reversed(first_commits):
         now = commit.committed_date
         dur = now - last
 
-    insert = "INSERT INTO commits(id, hexSHA, author, time, duration, Message) \
-    VALUES (NULL, '%s', '%s', '%d', '%d', '%s')" % \
-    (commit.hexsha, commit.author.name, commit.committed_date, dur, commit.message.replace('\n',''))
+    insert = "INSERT INTO commits(id, hexSHA, author, time, duration, Message) VALUES (NULL, '%s', '%s', '%d', '%d', '%s')" % \
+    (commit.hexsha, commit.author.name[:8], commit.committed_date, dur, commit.message.replace('\n\n',' - ').replace('\n','')[:50])
+
+    print insert
 
     try:
         cur.execute(insert)
