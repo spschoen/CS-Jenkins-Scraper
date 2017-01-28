@@ -5,7 +5,7 @@ from git.objects.util import *
 from future_builtins import *
 import MySQLdb
 import os
-import subprocess
+#import subprocess
 
 #The DB conection
 cnx = MySQLdb.connect("localhost","root","p@55w0rd","WTP")
@@ -55,9 +55,9 @@ for commit in reversed(first_commits):
         (commit.hexsha, commit.author.name[:8], commit.committed_date, dur, \
         commit.message.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50])
         print("Sending error mail to spschoen.alerts")
-        ps = subprocess.Popen(['printf', 'Unable to add commit %s to db' % commit.hexsha], stdout=subprocess.PIPE)
-        out = subprocess.check_output(('msmtp', 'spschoen.alerts@gmail.com'), stdin=ps.stdout)
-        ps.wait()
+        #ps = subprocess.Popen(['printf', 'Unable to add commit %s to db' % commit.hexsha], stdout=subprocess.PIPE)
+        #out = subprocess.check_output(('msmtp', 'spschoen.alerts@gmail.com'), stdin=ps.stdout)
+        #ps.wait()
         cnx.rollback()
 
     i += 1
