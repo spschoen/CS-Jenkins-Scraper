@@ -5,6 +5,7 @@ from git.objects.util import *
 from future_builtins import *
 import MySQLdb
 import os
+#import subprocess
 
 #The DB conection
 cnx = MySQLdb.connect("localhost","root","p@55w0rd","WTP")
@@ -15,6 +16,8 @@ cur = cnx.cursor()
 #Local repo
 repo = Repo(os.getcwd() + "/.git")
 default_pulled = 1000
+#I would be worried if a 216 repo had more than 1000 commits.
+#So this second line *SHOULD* handle that.
 first_commits = list(repo.iter_commits('master', max_count=default_pulled))
 first_commits = list(repo.iter_commits('master', \
                                         max_count=first_commits[0].count()))
@@ -24,39 +27,40 @@ first_commits = list(repo.iter_commits('master', \
 i = 0
 
 for commit in reversed(first_commits):
-    #print('Commit')
-    #print(' |-->    HexSHA:', commit.hexsha)
-    #if len(commit.parents) > 1:
-    #    print(' |-->   Parents:', commit.parents)
-    #print(' |-->    Author:', commit.author.name)
-    #if commit.author.name != commit.committer.name:
-    #    print(' |--> Committer:', commit.committer.name)
-    #print(' |--> Committed:', time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(commit.committed_date)))
     insert = ""
     dur = 0
     if i != 0:
+        # Future note to me - figure out the longest time between possible commits.
+        # and then pad out the duration with zeros to fit that.
         last = first_commits[first_commits[0].count() - i].committed_date
         now = commit.committed_date
         dur = now - last
 
-    insert = "INSERT INTO commits(id, hexSHA, author, time, duration, Message) VALUES (NULL, '%s', '%s', '%d', '%d', '%s')" % \
-    (commit.hexsha, commit.author.name[:8], commit.committed_date, dur, commit.message.replace('\n\n',' - ').replace('\n','')[:50])
+    #Insert message - packages up the commit info and gets it ready to be
+    #parsed by mysql
+    insert = "INSERT INTO commits(id, hexSHA, author, time, duration, Message) \
+    VALUES (NULL, '%s', '%s', '%d', '%d', '%s')" % \
+    (commit.hexsha, commit.author.name[:8], commit.committed_date, dur, \
+    commit.message.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50])
 
-    print insert
-
+    #Try/except block - it will send MySQL the command to run, and commit it.
+    #If it can't run the command, print the command that was attempted and then email
+    #the error to someone who cares - that will probably be removed but I wanted to do it
+    #Anyways.  Oh, it also removes the attempt from the database, which is nice.
     try:
         cur.execute(insert)
         cnx.commit()
     except:
+        print("Unable to execute '%s', '%s', '%d', '%04d', '%s'") % \
+        (commit.hexsha, commit.author.name[:8], commit.committed_date, dur, \
+        commit.message.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50])
+        print("Sending error mail to spschoen.alerts")
+        #ps = subprocess.Popen(['printf', 'Unable to add commit %s to db' % commit.hexsha], stdout=subprocess.PIPE)
+        #out = subprocess.check_output(('msmtp', 'spschoen.alerts@gmail.com'), stdin=ps.stdout)
+        #ps.wait()
         cnx.rollback()
 
     i += 1
-
-#Debug below: selects all from the table, and then prints it.
-cur.execute("SELECT * FROM commits")
-
-for row in cur.fetchall():
-    print(row)
 
 #Close the connection.
 cnx.close()
