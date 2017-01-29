@@ -43,3 +43,5 @@ for commit in reversed(first_commits):
     i += 1
     
 #lazy
+
+print(first_commits[0].committed_date)
