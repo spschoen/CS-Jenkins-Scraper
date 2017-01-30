@@ -13,7 +13,7 @@ from future_builtins import *
 #The DB conection
 #Logs into the MySQL DB at localhost using the root username and p@55w0rd
 #password, then uses the WTP Table.
-cnx = MySQLdb.connect("localhost","root","p@55w0rd","WTP")
+cnx = MySQLdb.connect("localhost","root","p@55w0rd","potluck")
 
 #Because this is how we connect
 #The cursor is used to perform queries in the DB.
@@ -28,7 +28,7 @@ cur = cnx.cursor()
 #Wrapped in a try/except so that, incase the commit fails,
 #the changes will be rolled back and the DB won't be affected.
 try:
-    #cur.execute(insert)
+    cur.execute(insert)
     #cur.execute(remove)
 
     #Commit actually sends the comand.
