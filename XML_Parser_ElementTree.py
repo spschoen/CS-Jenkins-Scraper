@@ -1,3 +1,15 @@
+#Element Tree XML parser - the first XML Parser I found and used.
+#It was col but it's just awkward to use and doesn't have the methods and
+#security I wanted, so I abandonned it later.
+#This can be ignored, but is being saved in the Repo just because it could
+#Be useful in the future.  Never delete obselete code, just remove it from
+#Production!
+
+#Reminder to self: research Blue/Green deployment.
+
+#This file can pretty much be ignored, since XML_Parser_ElementTree.py
+#Shows off the methods better and with useful application.
+
 import xml.etree.ElementTree as ET  #Grab that XML Parsing.
 tree = ET.parse('Style_Errors.xml') #Get the XML File.
 root = tree.getroot()               #Get the root of the XML.

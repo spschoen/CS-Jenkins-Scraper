@@ -1,3 +1,8 @@
+#File testing how GitPython works and how to parse git commits.
+#Does not interact with MySQL.
+#This file can pretty much be ignored, since Github_Info_To_DB_Test.py
+#Shows off the methods better and with useful application.
+
 from git import *
 from git.objects.util import *
 import datetime
@@ -18,7 +23,7 @@ first_commits = list(repo.iter_commits('master', max_count=first_commits[0].coun
 #print(first_commits)
 
 print(first_commits[0].count())
-    
+
 i = 0
 for commit in reversed(first_commits):
     print('Commit', i)
@@ -28,20 +33,15 @@ for commit in reversed(first_commits):
     print(' |-->    Author:', commit.author.name)
     if commit.author.name != commit.committer.name:
         print(' |--> Committer:', commit.committer.name)
-    print(' |--> Committed:', time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime(commit.committed_date)))
+    print(' |--> Committed:', time.strftime('%Y-%m-%d %H:%M:%S', \
+    time.gmtime(commit.committed_date)))
+
     if i != 0:
-        #print(first_commits[first_commits[0].count() - i].committed_date)
-        #print(commit.committed_date)
-        #print(commit.committed_date - first_commits[first_commits[0].count() - i].committed_date)
         last = first_commits[first_commits[0].count() - i].committed_date
         now = commit.committed_date
         dur = now - last
         dur = str(datetime.timedelta(seconds=dur))
         print(' |-->      Time:', dur, 'since last commit')
-        
+
     print(' |-->   Message:', commit.message.replace('\n\n',' - ') + '\n')
     i += 1
-    
-#lazy
-
-print(first_commits[0].committed_date)

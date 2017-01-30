@@ -1,3 +1,12 @@
+#Element Tree XML parser - the first XML Parser I found and used.
+#It was col but it's just awkward to use and doesn't have the methods and
+#security I wanted, so I abandonned it later.
+#This can be ignored, but is being saved in the Repo just because it could
+#Be useful in the future.  Never delete obselete code, just remove it from
+#Production!
+
+#Reminder to self: research Blue/Green deployment.
+
 from future_builtins import *
 import xml.etree.ElementTree as ET  #Grab that XML Parsing.
 import MySQLdb

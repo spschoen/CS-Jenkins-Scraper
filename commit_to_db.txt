@@ -1,3 +1,5 @@
+Example file - Copied output from a MySQL table after running the  script.
+
 mysql> SELECT * FROM commits;
 +----+------------------------------------------+----------+------------+----------+----------------------------------------------------+
 | id | hexSHA                                   | author   | time       | duration | Message                                            |
