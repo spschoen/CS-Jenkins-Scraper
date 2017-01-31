@@ -1,5 +1,3 @@
-#sudo /etc/init.d/mysql start
-
 #Don't know why I make the names have underscores.  Better than spaces.
 
 #All the packages we use.
