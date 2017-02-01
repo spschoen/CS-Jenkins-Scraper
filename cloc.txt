@@ -1,0 +1,1 @@
+cloc csc216-002-P2-096/ --by-file-by-lang --exclude-ext=xml --exclude-dir=gui
