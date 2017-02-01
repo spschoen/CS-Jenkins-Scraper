@@ -1,6 +1,4 @@
-#sudo /etc/init.d/mysql start
-
-#Don't know why I make the names have underscores.  Better than spaces.
+from __future__ import print_function
 
 #All the packages we use.
 from git import *
@@ -25,6 +23,11 @@ first_commits = list(repo.iter_commits('master', max_count=default_pulled))
 first_commits = list(repo.iter_commits('master', \
                                         max_count=first_commits[0].count()))
 
+f = open(os.path.join(os.getcwd()+"\output\lines_of_code.dat"), "r")
+data = f.readlines()
+for line in data:
+    data[data.index(line)] = line.replace('\n','')
+
 #A Loop to get each commit in the repo, and then put it in the DB.
 #i is used to make sure we aren't doing some weird duration calculation.
 i = 0
@@ -43,10 +46,11 @@ for commit in reversed(first_commits):
 
     #Insert message - packages up the commit info and gets it ready to be
     #parsed by MySQL
-    insert = "INSERT INTO commits(id, hexSHA, author, time, duration, Message) \
-    VALUES (NULL, '%s', '%s', '%d', '%d', '%s')" % \
+    insert = "INSERT INTO commits(id, hexSHA, author, time, duration, Message, loc) \
+    VALUES (NULL, '%s', '%s', '%d', '%d', '%s', '%d')" % \
     (commit.hexsha, commit.author.name[:8], commit.committed_date, dur, \
-    commit.message.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50])
+    commit.message.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50], \
+    data[i][0])
     # removing double/single lines ^ here and here ^                ^
     #                   making the ' characters safe to insert here ^
     #                       by wrapping them up.
