@@ -1,24 +1,24 @@
 <?xml version="1.0"?><results>
 <header>
-  <cloc_url>http://cloc.sourceforge.net</cloc_url>
-  <cloc_version>1.60</cloc_version>
-  <elapsed_seconds>0.209671020507812</elapsed_seconds>
+  <cloc_url>github.com/AlDanial/cloc</cloc_url>
+  <cloc_version>1.72</cloc_version>
+  <elapsed_seconds>0.5</elapsed_seconds>
   <n_files>9</n_files>
   <n_lines>2100</n_lines>
-  <files_per_second>42.9243868714067</files_per_second>
-  <lines_per_second>10015.6902699949</lines_per_second>
+  <files_per_second>18</files_per_second>
+  <lines_per_second>4200</lines_per_second>
   <report_file>cloc.xml</report_file>
 </header>
 <files>
-  <file name="../csc216-002-P2-096/Project2/src/edu/ncsu/csc216/bug_tracker/bug/TrackedBug.java" blank="62" comment="212" code="348"  language="Java" />
-  <file name="../csc216-002-P2-096/Project2/test/edu/ncsu/csc216/bug_tracker/bug/TrackedBugTest.java" blank="39" comment="45" code="267"  language="Java" />
-  <file name="../csc216-002-P2-096/Project2/test/edu/ncsu/csc216/bug_tracker/tracker/BugListTest.java" blank="40" comment="68" code="243"  language="Java" />
-  <file name="../csc216-002-P2-096/Project2/test/edu/ncsu/csc216/bug_tracker/tracker/BugTrackerModelTest.java" blank="26" comment="44" code="104"  language="Java" />
-  <file name="../csc216-002-P2-096/Project2/src/edu/ncsu/csc216/bug_tracker/tracker/BugTrackerModel.java" blank="30" comment="87" code="77"  language="Java" />
-  <file name="../csc216-002-P2-096/Project2/src/edu/ncsu/csc216/bug_tracker/tracker/BugList.java" blank="24" comment="61" code="73"  language="Java" />
-  <file name="../csc216-002-P2-096/Project2/test/edu/ncsu/csc216/bug_tracker/command/CommandTest.java" blank="10" comment="20" code="70"  language="Java" />
-  <file name="../csc216-002-P2-096/Project2/src/edu/ncsu/csc216/bug_tracker/command/Command.java" blank="8" comment="62" code="50"  language="Java" />
-  <file name="../csc216-002-P2-096/Project2/src/edu/ncsu/csc216/bug_tracker/bug/BugState.java" blank="5" comment="19" code="6"  language="Java" />
+  <file name="..\csc216-002-P2-096\Project2\src\edu\ncsu\csc216\bug_tracker\bug\TrackedBug.java" blank="62" comment="212" code="348"  language="Java" />
+  <file name="..\csc216-002-P2-096\Project2\test\edu\ncsu\csc216\bug_tracker\bug\TrackedBugTest.java" blank="39" comment="45" code="267"  language="Java" />
+  <file name="..\csc216-002-P2-096\Project2\test\edu\ncsu\csc216\bug_tracker\tracker\BugListTest.java" blank="40" comment="68" code="243"  language="Java" />
+  <file name="..\csc216-002-P2-096\Project2\test\edu\ncsu\csc216\bug_tracker\tracker\BugTrackerModelTest.java" blank="26" comment="44" code="104"  language="Java" />
+  <file name="..\csc216-002-P2-096\Project2\src\edu\ncsu\csc216\bug_tracker\tracker\BugTrackerModel.java" blank="30" comment="87" code="77"  language="Java" />
+  <file name="..\csc216-002-P2-096\Project2\src\edu\ncsu\csc216\bug_tracker\tracker\BugList.java" blank="24" comment="61" code="73"  language="Java" />
+  <file name="..\csc216-002-P2-096\Project2\test\edu\ncsu\csc216\bug_tracker\command\CommandTest.java" blank="10" comment="20" code="70"  language="Java" />
+  <file name="..\csc216-002-P2-096\Project2\src\edu\ncsu\csc216\bug_tracker\command\Command.java" blank="8" comment="62" code="50"  language="Java" />
+  <file name="..\csc216-002-P2-096\Project2\src\edu\ncsu\csc216\bug_tracker\bug\BugState.java" blank="5" comment="19" code="6"  language="Java" />
   <total blank="244" comment="618" code="1238" />
 </files>
 <languages>
