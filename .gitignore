@@ -91,3 +91,5 @@ ENV/
 # Random stuff.
 PyGithub_Test.py
 output/
+cloc.stat
+cloc.xml
