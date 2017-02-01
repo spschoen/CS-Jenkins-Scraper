@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from __future__ import print_function
+=======
+#Don't know why I make the names have underscores.  Better than spaces.
+>>>>>>> 5e0914279c467e8da2f7c7efd7f8a3e1f5335040
 
 #All the packages we use.
 from git import *
@@ -23,10 +27,15 @@ first_commits = list(repo.iter_commits('master', max_count=default_pulled))
 first_commits = list(repo.iter_commits('master', \
                                         max_count=first_commits[0].count()))
 
+<<<<<<< HEAD
 f = open(os.path.join(os.getcwd()+"\output\lines_of_code.dat"), "r")
 data = f.readlines()
 for line in data:
     data[data.index(line)] = line.replace('\n','')
+=======
+f = open(os.path.join(os.getcwd()+"/output/lines_of_code.dat"), "r")
+data = f.readlines()
+>>>>>>> 5e0914279c467e8da2f7c7efd7f8a3e1f5335040
 
 #A Loop to get each commit in the repo, and then put it in the DB.
 #i is used to make sure we aren't doing some weird duration calculation.
@@ -46,6 +55,7 @@ for commit in reversed(first_commits):
 
     #Insert message - packages up the commit info and gets it ready to be
     #parsed by MySQL
+<<<<<<< HEAD
     insert = "INSERT INTO commits(id, hexSHA, author, time, duration, Message, loc) \
     VALUES (NULL, '%s', '%s', '%d', '%d', '%s', '%d')" % \
     (commit.hexsha, commit.author.name[:8], commit.committed_date, dur, \
@@ -58,6 +68,25 @@ for commit in reversed(first_commits):
     #break the insert command and potentially break the DB.
     #Before added, it would simply refuse to add the commit to the DB.
 
+=======
+    try:
+        insert = "INSERT INTO commits(id, hexSHA, author, time, duration, Message, loc) \
+        VALUES (NULL, '%s', '%s', '%d', '%d', '%s', '%d')" % \
+        (commit.hexsha, commit.author.name[:8], commit.committed_date, dur, \
+        commit.message.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50], \
+        int(data[i].replace("\n","").split(" ")[1]))
+        # removing double/single lines ^ here and here ^                ^
+        #                   making the ' characters safe to insert here ^
+        #                       by wrapping them up.
+        #If you left them in there, unescaped, then you'd allow commit messages to
+        #break the insert command and potentially break the DB.
+        #Before added, it would simply refuse to add the commit to the DB.
+    except:
+        insert = "INSERT INTO commits(id, hexSHA, author, time, duration, Message, loc) \
+        VALUES (NULL, '%s', '%s', '%d', '%d', '%s', NULL)" % \
+        (commit.hexsha, commit.author.name[:8], commit.committed_date, dur, \
+        commit.message.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50])
+>>>>>>> 5e0914279c467e8da2f7c7efd7f8a3e1f5335040
     #Try/except block - it will send MySQL the command to run, and commit it.
     #If it can't run the command, print the command that was attempted and then email
     #the error to someone who cares - that will probably be removed but I wanted to do it
@@ -66,9 +95,10 @@ for commit in reversed(first_commits):
         cur.execute(insert)
         cnx.commit()
     except:
-        print("Unable to execute '%s', '%s', '%d', '%04d', '%s'") % \
+        print("Unable to execute '%s', '%s', '%d', '%04d', '%s', '%d'") % \
         (commit.hexsha, commit.author.name[:8], commit.committed_date, dur, \
-        commit.message.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50])
+        commit.message.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50], \
+        int(data[i].replace("\n","").split(" ")[1]))
         cnx.rollback()
 
     i += 1
