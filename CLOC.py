@@ -19,6 +19,8 @@ import subprocess
     #print("Script exiting.")
     #sys.exit()
 
+subprocess.call(["cloc","./", "--by-file-by-lang", "--exclude-ext=xml", "--exclude-dir=gui,reference,output", "--xml", "--out=cloc.xml"])
+
 #Get the parser, set it up to parse cloc.xml
 try:
     DOMTree = xml.dom.minidom.parse('cloc.xml')
