@@ -21,15 +21,10 @@ first_commits = list(repo.iter_commits('master', max_count=default_pulled))
 first_commits = list(repo.iter_commits('master', \
                                         max_count=first_commits[0].count()))
 
-<<<<<<< HEAD
 f = open(os.path.join(os.getcwd()+"\output\lines_of_code.dat"), "r")
 data = f.readlines()
 for line in data:
     data[data.index(line)] = line.replace('\n','')
-=======
-f = open(os.path.join(os.getcwd()+"/output/lines_of_code.dat"), "r")
-data = f.readlines()
->>>>>>> 5e0914279c467e8da2f7c7efd7f8a3e1f5335040
 
 #A Loop to get each commit in the repo, and then put it in the DB.
 #i is used to make sure we aren't doing some weird duration calculation.
