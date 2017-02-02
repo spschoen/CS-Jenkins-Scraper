@@ -5,9 +5,18 @@ from future_builtins import *
 import MySQLdb
 import os
 
+#Login details in Slack.
+user = raw_input("USERNAME: ")
+print("USER: " + user)
+pw = raw_input("PASSWORD: ")
+print("PWRD: " + pw)
+
 #See MySQL_Test.py for better comments on this.
 #The DB conection
-cnx = MySQLdb.connect("localhost","root","p@55w0rd","WTP")
+cnx = MySQLdb.connect(host="gitinfodev.cqpmxmtmxihw.us-east-1.rds.amazonaws.com",
+    user=user,
+    passwd=pw,
+    db="WTP")
 
 #Because this is how we connect
 cur = cnx.cursor()
