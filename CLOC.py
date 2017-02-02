@@ -14,15 +14,18 @@ import subprocess
 
 #Verifying the CLOC is installed
 #Commented out because doesn't work on Windows.
-#if shutil.which("cloc") == None:
-    #print("ERROR: CLOC utility is required to be installed.")
-    #print("Script exiting.")
-    #sys.exit()
+if shutil.which("cloc") == None:
+    print("ERROR: CLOC utility is required to be installed.")
+    print("Script exiting.")
+    sys.exit()
+
+#Sending cloc output to /dev/null
+DEVNULL = open(os.devnull, 'wb')
 
 #Commented out because doesn't work on Windows.
-#subprocess.call(["cloc","./", "--by-file-by-lang", \
-# "--exclude-ext=xml", "--exclude-dir=gui,reference,output", \
-# "--xml", "--out=cloc.xml"])
+subprocess.call(["cloc","./", "--by-file-by-lang", \
+ "--exclude-ext=xml", "--exclude-dir=gui,reference,output", \
+ "--xml", "--out=cloc.xml"], stdout=DEVNULL)
 
 #Get the parser, set it up to parse cloc.xml
 try:
