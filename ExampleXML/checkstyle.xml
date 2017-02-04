@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="7.4">
+<file name="/home/jenkins/workspace/TS_TestingTutorial_MASTER/CashRegister_MASTER/src/edu/ncsu/csc216/cash_register/CashRegister.java">
+</file>
+<file name="/home/jenkins/workspace/TS_TestingTutorial_MASTER/CashRegister_MASTER/src/edu/ncsu/csc216/cash_register/Currency.java">
+</file>
+<file name="/home/jenkins/workspace/TS_TestingTutorial_MASTER/CashRegister_MASTER/src/edu/ncsu/csc216/cash_register/CurrencyCollection.java">
+</file>
+<file name="/home/jenkins/workspace/TS_TestingTutorial_MASTER/CashRegister_MASTER/src/edu/ncsu/csc216/cash_register/NCSUBookstores.java">
+</file>
+<file name="/home/jenkins/workspace/TS_TestingTutorial_MASTER/CashRegister_MASTER/test/edu/ncsu/csc216/cash_register/CashRegisterTest.java">
+</file>
+<file name="/home/jenkins/workspace/TS_TestingTutorial_MASTER/CashRegister_MASTER/test/edu/ncsu/csc216/cash_register/CurrencyCollectionTest.java">
+</file>
+<file name="/home/jenkins/workspace/TS_TestingTutorial_MASTER/CashRegister_MASTER/test/edu/ncsu/csc216/cash_register/CurrencyTest.java">
+</file>
+</checkstyle>

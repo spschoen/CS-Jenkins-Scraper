@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-#sudo /etc/init.d/mysql start
-
-#Don't know why I make the names have underscores.  Better than spaces.
-#You could do better
-#hashtag or comment?
-
-=======
->>>>>>> 239d0d1857125ffc4034c22875dc104ee307f250
 #All the packages we use.
 from git import *
 from git.objects.util import *

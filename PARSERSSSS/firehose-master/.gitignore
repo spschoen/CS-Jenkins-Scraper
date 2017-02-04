@@ -1,5 +1,0 @@
-# Ignore backups:
-*~
-
-# Python bytecode:
-*.pyc
