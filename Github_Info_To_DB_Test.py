@@ -1,9 +1,12 @@
+<<<<<<< HEAD
 #sudo /etc/init.d/mysql start
 
 #Don't know why I make the names have underscores.  Better than spaces.
 #You could do better
 #hashtag or comment?
 
+=======
+>>>>>>> 239d0d1857125ffc4034c22875dc104ee307f250
 #All the packages we use.
 from git import *
 from git.objects.util import *
@@ -11,9 +14,18 @@ from future_builtins import *
 import MySQLdb
 import os
 
+#Login details in Slack.
+user = raw_input("USERNAME: ")
+print("USER: " + user)
+pw = raw_input("PASSWORD: ")
+print("PWRD: " + pw)
+
 #See MySQL_Test.py for better comments on this.
 #The DB conection
-cnx = MySQLdb.connect("localhost","root","p@55w0rd","WTP")
+cnx = MySQLdb.connect(host="gitinfodev.cqpmxmtmxihw.us-east-1.rds.amazonaws.com",
+    user=user,
+    passwd=pw,
+    db="WTP")
 
 #Because this is how we connect
 cur = cnx.cursor()
@@ -27,8 +39,10 @@ first_commits = list(repo.iter_commits('master', max_count=default_pulled))
 first_commits = list(repo.iter_commits('master', \
                                         max_count=first_commits[0].count()))
 
-f = open(os.path.join(os.getcwd()+"/output/lines_of_code.dat"), "r")
+f = open(os.path.join(os.getcwd()+"\output\lines_of_code.dat"), "r")
 data = f.readlines()
+for line in data:
+    data[data.index(line)] = line.replace('\n','')
 
 #A Loop to get each commit in the repo, and then put it in the DB.
 #i is used to make sure we aren't doing some weird duration calculation.
