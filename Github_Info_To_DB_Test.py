@@ -1,6 +1,8 @@
 #sudo /etc/init.d/mysql start
 
 #Don't know why I make the names have underscores.  Better than spaces.
+#You could do better
+#hashtag or comment?
 
 #All the packages we use.
 from git import *

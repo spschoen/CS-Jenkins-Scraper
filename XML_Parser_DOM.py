@@ -35,7 +35,7 @@ if root.hasAttribute("name"):
 
 #A basic for loop, to look at all the nodes (<> elements) inside the file node
 #(which is now the root node) and print out their information.
-#.childNodes is a list of nodes that the root has as children.  I hate E 115.
+#.childNodes is a list of nodes that the root has as children.  I hate E 115. (lol rz)
 for node in root.childNodes:
     #Nodes have like, 11 types, in Python, and this is a special one that's
     #Called text.  I'm not sure what the TEXT_NODE is but every single
