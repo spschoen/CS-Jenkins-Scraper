@@ -5,5 +5,6 @@ you copied into this directory, and another in the CashRegister file.
 The parsers I have started works off of the ones in the CashRegister and moved it to the same directory as this message. (You can move them
 I just wanted to show you which ones)
 
-For FindBugs parser, the for loop is being a bit of a bitch, but it
-should be getting all the data we need
+For both the FindBugs and PMD parser, the for loop is being a bit of a bitch, but it
+should be getting all the data we need. I think it’s because I’m a node too far in, 
+if that makes sense.
