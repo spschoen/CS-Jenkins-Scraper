@@ -12,25 +12,32 @@ root = DOMTree.documentElement
 if root.hasAttribute("version"):
     print("FindBugs Version : %s" % root.getAttribute("version"))
 
-root = root.getElementsByTagName('BugInstance')[0]   #This is wrong and I know it, but 
-                                                        #I'm putting it here for a dummy variable
-if root.hasAttribute("type"):
-    string = root.getAttribute("type").split('/')  
-    string = string[len(string) - 1]
-    print("File Checked       : %s" % string)           #Struggling with grabbing the 
-                                                            # file name, pobs not that important rn
-for node in root.childNodes:
+root = root.getElementsByTagName('BugInstance')[0]
 
-   # if node.nodeType != node.TEXT_NODE:
-        if node.hasAttribute("type"):
-            if node.hasAttribute("priority"):
-                line = node.getAttribute("priority")
-                if node.hasAttribute("rank"):
-                    line += ":" + node.getAttribute("rank")
+if root.hasAttribute("type"):
+
+# for root in root.childNodes:      Cant get for loop to work. Rip
+    line = "Bugtype: "          
+    line += root.getAttribute("type") + "\n"
+    if root.hasAttribute("priority"):
+        line += "Priority: " + root.getAttribute("priority")
+        if root.hasAttribute("rank"):
+            line += " Rank: " + root.getAttribute("rank") + "\n"
+            if root.hasAttribute("abbrev"):
+                print()
+                line += "Abbrev: " + root.getAttribute("abbrev") + "\n"
+            if root.hasAttribute("category"):
+                line += "Category: " + root.getAttribute("category")
                 print(line)
-            if node.hasAttribute("type"):
-                print(node.getAttribute("type"))
-            if node.hasAttribute("category"):
-                print(node.getAttribute("category"))
-            print()
+    node = root.getElementsByTagName('Class')[0]
+    if node.hasAttribute("classname"):
+        string = node.getAttribute("classname").split(".")
+        string = string[len(string) - 1]
+        print("Class: " + string)
+    node = root.getElementsByTagName('Method')[0]
+    if node.hasAttribute("name"):
+        print(root.getElementsByTagName("name")) #Prints the brackets, look at xml <Method classname> for deets
+
+
+    print()
 

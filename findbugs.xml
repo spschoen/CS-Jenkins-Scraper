@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<BugCollection version="3.0.1" sequence="0" timestamp="1486094710067" analysisTimestamp="1486094710133" release="">
+  <Project projectName="">
+    <Jar>/home/jenkins/workspace/TS_TestingTutorial/CashRegister/bin</Jar>
+    <AuxClasspathEntry>/usr/local/junit/lib/ant-junit.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/usr/local/junit/lib/ant-junit4.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/usr/local/junit/lib/junit.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>/usr/local/junit/lib/org.hamcrest.core_1.3.0.v201303031735.jar</AuxClasspathEntry>
+    <SrcDir>/home/jenkins/workspace/TS_TestingTutorial/CashRegister/src</SrcDir>
+    <SrcDir>/home/jenkins/workspace/TS_TestingTutorial/CashRegister/test</SrcDir>
+  </Project>
+  <BugInstance type="NP_UNWRITTEN_FIELD" priority="2" rank="8" abbrev="NP" category="CORRECTNESS">
+    <Class classname="edu.ncsu.csc216.cash_register.CurrencyCollection">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="55" end="171" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Class>
+    <Method classname="edu.ncsu.csc216.cash_register.CurrencyCollection" name="&lt;init&gt;" signature="(I)V" isStatic="false">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="64" end="73" startBytecode="0" endBytecode="239" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Method>
+    <Field classname="edu.ncsu.csc216.cash_register.CurrencyCollection" name="currency" signature="[Ledu/ncsu/csc216/cash_register/Currency;" isStatic="false">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Field>
+    <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="65" end="65" startBytecode="20" endBytecode="20" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+  </BugInstance>
+  <BugInstance type="NP_UNWRITTEN_FIELD" priority="2" rank="8" abbrev="NP" category="CORRECTNESS">
+    <Class classname="edu.ncsu.csc216.cash_register.CurrencyCollection">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="55" end="171" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Class>
+    <Method classname="edu.ncsu.csc216.cash_register.CurrencyCollection" name="depositCurrencyCollection" signature="(Ledu/ncsu/csc216/cash_register/CurrencyCollection;)V" isStatic="false">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="116" end="119" startBytecode="0" endBytecode="120" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Method>
+    <Field classname="edu.ncsu.csc216.cash_register.CurrencyCollection" name="currency" signature="[Ledu/ncsu/csc216/cash_register/Currency;" isStatic="false">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Field>
+    <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="117" end="117" startBytecode="13" endBytecode="13" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+  </BugInstance>
+  <BugInstance type="NP_UNWRITTEN_FIELD" priority="2" rank="8" abbrev="NP" category="CORRECTNESS">
+    <Class classname="edu.ncsu.csc216.cash_register.CurrencyCollection">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="55" end="171" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Class>
+    <Method classname="edu.ncsu.csc216.cash_register.CurrencyCollection" name="getBalance" signature="()I" isStatic="false">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="167" end="171" startBytecode="0" endBytecode="136" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Method>
+    <Field classname="edu.ncsu.csc216.cash_register.CurrencyCollection" name="currency" signature="[Ledu/ncsu/csc216/cash_register/Currency;" isStatic="false">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Field>
+    <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="168" end="168" startBytecode="9" endBytecode="9" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+  </BugInstance>
+  <BugInstance type="NP_UNWRITTEN_FIELD" priority="2" rank="8" abbrev="NP" category="CORRECTNESS">
+    <Class classname="edu.ncsu.csc216.cash_register.CurrencyCollection">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="55" end="171" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Class>
+    <Method classname="edu.ncsu.csc216.cash_register.CurrencyCollection" name="getCurrencyAtIdx" signature="(I)Ledu/ncsu/csc216/cash_register/Currency;" isStatic="false">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="82" end="85" startBytecode="0" endBytecode="94" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Method>
+    <Field classname="edu.ncsu.csc216.cash_register.CurrencyCollection" name="currency" signature="[Ledu/ncsu/csc216/cash_register/Currency;" isStatic="false">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Field>
+    <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="85" end="85" startBytecode="23" endBytecode="23" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+  </BugInstance>
+  <BugInstance type="NP_UNWRITTEN_FIELD" priority="2" rank="8" abbrev="NP" category="CORRECTNESS">
+    <Class classname="edu.ncsu.csc216.cash_register.CurrencyCollection">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="55" end="171" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Class>
+    <Method classname="edu.ncsu.csc216.cash_register.CurrencyCollection" name="modifyDenomination" signature="(II)V" isStatic="false">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="98" end="109" startBytecode="0" endBytecode="196" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Method>
+    <Field classname="edu.ncsu.csc216.cash_register.CurrencyCollection" name="currency" signature="[Ledu/ncsu/csc216/cash_register/Currency;" isStatic="false">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Field>
+    <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="100" end="100" startBytecode="18" endBytecode="18" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+  </BugInstance>
+  <BugInstance type="NP_UNWRITTEN_FIELD" priority="2" rank="8" abbrev="NP" category="CORRECTNESS">
+    <Class classname="edu.ncsu.csc216.cash_register.CurrencyCollection">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="55" end="171" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Class>
+    <Method classname="edu.ncsu.csc216.cash_register.CurrencyCollection" name="refundByAmount" signature="(I)Ledu/ncsu/csc216/cash_register/CurrencyCollection;" isStatic="false">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="131" end="149" startBytecode="0" endBytecode="315" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Method>
+    <Field classname="edu.ncsu.csc216.cash_register.CurrencyCollection" name="currency" signature="[Ledu/ncsu/csc216/cash_register/Currency;" isStatic="false">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Field>
+    <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="134" end="134" startBytecode="25" endBytecode="25" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+  </BugInstance>
+  <BugInstance type="UR_UNINIT_READ" priority="2" rank="3" abbrev="UR" category="CORRECTNESS">
+    <Class classname="edu.ncsu.csc216.cash_register.CurrencyCollection">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="55" end="171" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Class>
+    <Method classname="edu.ncsu.csc216.cash_register.CurrencyCollection" name="&lt;init&gt;" signature="(I)V" isStatic="false">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="64" end="73" startBytecode="0" endBytecode="239" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Method>
+    <Field classname="edu.ncsu.csc216.cash_register.CurrencyCollection" name="currency" signature="[Ledu/ncsu/csc216/cash_register/Currency;" isStatic="false">
+      <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+    </Field>
+    <SourceLine classname="edu.ncsu.csc216.cash_register.CurrencyCollection" start="65" end="65" startBytecode="5" endBytecode="5" sourcefile="CurrencyCollection.java" sourcepath="edu/ncsu/csc216/cash_register/CurrencyCollection.java"/>
+  </BugInstance>
+  <Errors errors="0" missingClasses="0"></Errors>
+  <FindBugsSummary timestamp="Thu, 2 Feb 2017 23:05:10 -0500" total_classes="5" referenced_classes="25" total_bugs="7" total_size="341" num_packages="1" java_version="1.8.0_111" vm_version="25.111-b15" cpu_seconds="6.14" clock_seconds="6.28" peak_mbytes="62.72" alloc_mbytes="454.38" gc_seconds="0.30" priority_2="7">
+    <PackageStats package="edu.ncsu.csc216.cash_register" total_bugs="7" total_types="5" total_size="341" priority_2="7">
+      <ClassStats class="edu.ncsu.csc216.cash_register.CashRegister" sourceFile="CashRegister.java" interface="false" size="16" bugs="0"/>
+      <ClassStats class="edu.ncsu.csc216.cash_register.Currency" sourceFile="Currency.java" interface="false" size="44" bugs="0"/>
+      <ClassStats class="edu.ncsu.csc216.cash_register.CurrencyCollection" sourceFile="CurrencyCollection.java" interface="false" size="75" bugs="7" priority_2="7"/>
+      <ClassStats class="edu.ncsu.csc216.cash_register.CurrencyTest" sourceFile="CurrencyTest.java" interface="false" size="41" bugs="0"/>
+      <ClassStats class="edu.ncsu.csc216.cash_register.NCSUBookstores" sourceFile="NCSUBookstores.java" interface="false" size="165" bugs="0"/>
+    </PackageStats>
+    <FindBugsProfile>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.ClassInfoAnalysisEngine" totalMilliseconds="863" invocations="381" avgMicrosecondsPerInvocation="2266" maxMicrosecondsPerInvocation="69529" standardDeviationMircosecondsPerInvocation="5775"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FieldItemSummary" totalMilliseconds="253" invocations="25" avgMicrosecondsPerInvocation="10134" maxMicrosecondsPerInvocation="79907" standardDeviationMircosecondsPerInvocation="19027"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.MethodGenFactory" totalMilliseconds="253" invocations="38" avgMicrosecondsPerInvocation="6664" maxMicrosecondsPerInvocation="219417" standardDeviationMircosecondsPerInvocation="35003"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FindNoSideEffectMethods" totalMilliseconds="213" invocations="25" avgMicrosecondsPerInvocation="8535" maxMicrosecondsPerInvocation="73711" standardDeviationMircosecondsPerInvocation="15883"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.ClassDataAnalysisEngine" totalMilliseconds="191" invocations="382" avgMicrosecondsPerInvocation="500" maxMicrosecondsPerInvocation="14627" standardDeviationMircosecondsPerInvocation="1339"/>
+      <ClassProfile name="edu.umd.cs.findbugs.util.TopologicalSort" totalMilliseconds="188" invocations="347" avgMicrosecondsPerInvocation="543" maxMicrosecondsPerInvocation="14243" standardDeviationMircosecondsPerInvocation="1573"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory" totalMilliseconds="163" invocations="38" avgMicrosecondsPerInvocation="4293" maxMicrosecondsPerInvocation="18093" standardDeviationMircosecondsPerInvocation="4667"/>
+      <ClassProfile name="edu.umd.cs.findbugs.OpcodeStack$JumpInfoFactory" totalMilliseconds="155" invocations="115" avgMicrosecondsPerInvocation="1348" maxMicrosecondsPerInvocation="19651" standardDeviationMircosecondsPerInvocation="2876"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.ValueNumberDataflowFactory" totalMilliseconds="149" invocations="40" avgMicrosecondsPerInvocation="3746" maxMicrosecondsPerInvocation="25222" standardDeviationMircosecondsPerInvocation="5249"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.TypeDataflowFactory" totalMilliseconds="142" invocations="40" avgMicrosecondsPerInvocation="3566" maxMicrosecondsPerInvocation="44859" standardDeviationMircosecondsPerInvocation="7298"/>
+      <ClassProfile name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder" totalMilliseconds="135" invocations="38" avgMicrosecondsPerInvocation="3571" maxMicrosecondsPerInvocation="15194" standardDeviationMircosecondsPerInvocation="3875"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.UnconditionalValueDerefDataflowFactory" totalMilliseconds="135" invocations="38" avgMicrosecondsPerInvocation="3563" maxMicrosecondsPerInvocation="15269" standardDeviationMircosecondsPerInvocation="4486"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.CFGFactory" totalMilliseconds="131" invocations="38" avgMicrosecondsPerInvocation="3472" maxMicrosecondsPerInvocation="34653" standardDeviationMircosecondsPerInvocation="5911"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.NoteDirectlyRelevantTypeQualifiers" totalMilliseconds="106" invocations="25" avgMicrosecondsPerInvocation="4241" maxMicrosecondsPerInvocation="38621" standardDeviationMircosecondsPerInvocation="8491"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.StreamResourceTracker" totalMilliseconds="105" invocations="38" avgMicrosecondsPerInvocation="2768" maxMicrosecondsPerInvocation="7021" standardDeviationMircosecondsPerInvocation="2421"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.JavaClassAnalysisEngine" totalMilliseconds="101" invocations="45" avgMicrosecondsPerInvocation="2256" maxMicrosecondsPerInvocation="45117" standardDeviationMircosecondsPerInvocation="7016"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FindDeadLocalStores" totalMilliseconds="87" invocations="5" avgMicrosecondsPerInvocation="17437" maxMicrosecondsPerInvocation="56464" standardDeviationMircosecondsPerInvocation="19604"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FindRefComparison$SpecialTypeAnalysis" totalMilliseconds="80" invocations="33" avgMicrosecondsPerInvocation="2449" maxMicrosecondsPerInvocation="12202" standardDeviationMircosecondsPerInvocation="3244"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.OverridingEqualsNotSymmetrical" totalMilliseconds="79" invocations="25" avgMicrosecondsPerInvocation="3163" maxMicrosecondsPerInvocation="33986" standardDeviationMircosecondsPerInvocation="6749"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.BuildObligationPolicyDatabase" totalMilliseconds="74" invocations="25" avgMicrosecondsPerInvocation="2985" maxMicrosecondsPerInvocation="17128" standardDeviationMircosecondsPerInvocation="5023"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures" totalMilliseconds="65" invocations="25" avgMicrosecondsPerInvocation="2616" maxMicrosecondsPerInvocation="16114" standardDeviationMircosecondsPerInvocation="4717"/>
+    </FindBugsProfile>
+  </FindBugsSummary>
+  <ClassFeatures></ClassFeatures>
+  <History></History>
+</BugCollection>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="5.5.2" timestamp="2017-02-02T23:05:18.508">
+<file name="/home/jenkins/workspace/TS_TestingTutorial/CashRegister/test/edu/ncsu/csc216/cash_register/CurrencyTest.java">
+<violation beginline="116" endline="118" begincolumn="27" endcolumn="17" rule="EmptyIfStmt" ruleset="Empty Code" package="edu.ncsu.csc216.cash_register" class="CurrencyTest" method="testHashCode" externalInfoUrl="https://pmd.github.io/pmd-5.5.2/pmd-java/rules/java/empty.html#EmptyIfStmt" priority="3">
+The body of this if statement is empty. Make sure you do     not have a ; following the if by mistake.  Otherwise, there is     probably a more efficient way to write the code.
+</violation>
+<violation beginline="116" endline="116" begincolumn="21" endcolumn="24" rule="UnconditionalIfStatement" ruleset="Basic" package="edu.ncsu.csc216.cash_register" class="CurrencyTest" method="testHashCode" externalInfoUrl="https://pmd.github.io/pmd-5.5.2/pmd-java/rules/java/basic.html#UnconditionalIfStatement" priority="3">
+The condition of this if statement is always true or     always false, so you do not need the if statement at all.
+</violation>
+<violation beginline="118" endline="120" begincolumn="24" endcolumn="17" rule="EmptyIfStmt" ruleset="Empty Code" package="edu.ncsu.csc216.cash_register" class="CurrencyTest" method="testHashCode" externalInfoUrl="https://pmd.github.io/pmd-5.5.2/pmd-java/rules/java/empty.html#EmptyIfStmt" priority="3">
+The body of this if statement is empty. Make sure you do     not have a ; following the if by mistake.  Otherwise, there is     probably a more efficient way to write the code.
+</violation>
+</file>
+</pmd>
