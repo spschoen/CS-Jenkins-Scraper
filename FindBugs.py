@@ -12,32 +12,32 @@ root = DOMTree.documentElement
 if root.hasAttribute("version"):
     print("FindBugs Version : %s" % root.getAttribute("version"))
 
-root = root.getElementsByTagName('BugInstance')[0]
+for node in root.getElementsByTagName("BugInstance"):
+    if node.nodeType != node.TEXT_NODE:
+        line = "Bugtype: "
+        line += node.getAttribute("type") + "\n"
+        if node.hasAttribute("priority"):
+            line += "Priority: " + node.getAttribute("priority")
+        if node.hasAttribute("rank"):
+            line += " Rank: " + node.getAttribute("rank") + "\n"
+        if node.hasAttribute("abbrev"):
+            print()
+            line += "Abbrev: " + node.getAttribute("abbrev") + "\n"
+        if node.hasAttribute("category"):
+            line += "Category: " + node.getAttribute("category")
 
-if root.hasAttribute("type"):
+        print(line)
 
-# for root in root.childNodes:      Cant get for loop to work. Rip
-    line = "Bugtype: "          
-    line += root.getAttribute("type") + "\n"
-    if root.hasAttribute("priority"):
-        line += "Priority: " + root.getAttribute("priority")
-        if root.hasAttribute("rank"):
-            line += " Rank: " + root.getAttribute("rank") + "\n"
-            if root.hasAttribute("abbrev"):
-                print()
-                line += "Abbrev: " + root.getAttribute("abbrev") + "\n"
-            if root.hasAttribute("category"):
-                line += "Category: " + root.getAttribute("category")
-                print(line)
-    node = root.getElementsByTagName('Class')[0]
-    if node.hasAttribute("classname"):
-        string = node.getAttribute("classname").split(".")
-        string = string[len(string) - 1]
-        print("Class: " + string)
-    node = root.getElementsByTagName('Method')[0]
-    if node.hasAttribute("name"):
-        print(root.getElementsByTagName("name")) #Prints the brackets, look at xml <Method classname> for deets
+        classNode = root.getElementsByTagName('Class')[0]
+        if classNode.hasAttribute("classname"):
+            string = classNode.getAttribute("classname").split(".")
+            string = string[len(string) - 1]
+            print("Class: " + string)
+
+        #I have no idea what this is looking for.
+        methodNode = root.getElementsByTagName('Method')[0]
+        if methodNode.hasAttribute("name"):
+            print(methodNode.getElementsByTagName("name")) #Prints the brackets, look at xml <Method classname> for deets
 
 
     print()
-
