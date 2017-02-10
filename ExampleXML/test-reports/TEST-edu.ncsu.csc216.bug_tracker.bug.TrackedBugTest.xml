@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="1" hostname="bn18-11.dcs.mcnc.org" name="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" skipped="0" tests="8" time="0.252" timestamp="2017-02-08T23:43:08">
+<testsuite errors="0" failures="8" hostname="bn18-11.dcs.mcnc.org" name="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" skipped="0" tests="8" time="0.283" timestamp="2017-02-10T19:58:21">
   <properties>
     <property name="java.vendor" value="Oracle Corporation" />
     <property name="result.exec.file" value="/home/jenkins/workspace/toolsResearch/Project2/jacoco/exec/jacoco.exec" />
@@ -43,7 +43,7 @@
     <property name="java.awt.printerjob" value="sun.print.PSPrinterJob" />
     <property name="sun.io.unicode.encoding" value="UnicodeLittle" />
     <property name="awt.toolkit" value="sun.awt.X11.XToolkit" />
-    <property name="_jacoco.agentFile" value="/tmp/jacocoagent7176665866773434475.jar" />
+    <property name="_jacoco.agentFile" value="/tmp/jacocoagent554045335091011338.jar" />
     <property name="user.home" value="/home/jenkins" />
     <property name="java.specification.vendor" value="Oracle Corporation" />
     <property name="test" value="/home/jenkins/workspace/toolsResearch/Project2/test" />
@@ -51,8 +51,8 @@
     <property name="java.vendor.url" value="http://java.oracle.com/" />
     <property name="java.vm.vendor" value="Oracle Corporation" />
     <property name="java.runtime.name" value="OpenJDK Runtime Environment" />
-    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner testsfile=/home/jenkins/workspace/toolsResearch/Project2/junittestcases3187398907427833500.properties skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/jenkins/workspace/toolsResearch/Project2/test-reports/IGNORETHIS.xml crashfile=/home/jenkins/workspace/toolsResearch/Project2/junitvmwatcher266141577372935052.properties propsfile=/home/jenkins/workspace/toolsResearch/Project2/junit5487179925753561201.properties" />
-    <property name="java.class.path" value="/usr/local/jacoco/lib/jacocoagent.jar:/usr/local/jacoco/lib/jacocoant.jar:/usr/local/jacoco/lib/org.jacoco.agent-0.7.8.201612092310.jar:/usr/local/jacoco/lib/org.jacoco.ant-0.7.8.201612092310.jar:/usr/local/jacoco/lib/org.jacoco.core-0.7.8.201612092310.jar:/usr/local/jacoco/lib/org.jacoco.report-0.7.8.201612092310.jar:/home/jenkins/workspace/toolsResearch/Project2/lib/BugTrackerXML.jar:/usr/local/junit/lib/ant-junit.jar:/usr/local/junit/lib/ant-junit4.jar:/usr/local/junit/lib/junit.jar:/usr/local/junit/lib/org.hamcrest.core_1.3.0.v201303031735.jar:/home/jenkins/workspace/toolsResearch/Project2/bin:/usr/local/ant-1.9.8/lib/ant-launcher.jar:/usr/local/ant/lib/ant.jar:/usr/local/ant/lib/ant-junit.jar:/usr/local/ant/lib/ant-junit4.jar:/tmp/jacocoagent7176665866773434475.jar" />
+    <property name="sun.java.command" value="org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner testsfile=/home/jenkins/workspace/toolsResearch/Project2/junittestcases4178750137335735396.properties skipNonTests=false filtertrace=true haltOnError=false haltOnFailure=false formatter=org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter showoutput=false outputtoformatters=true logfailedtests=true threadid=0 logtestlistenerevents=false formatter=org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter,/home/jenkins/workspace/toolsResearch/Project2/test-reports/IGNORETHIS.xml crashfile=/home/jenkins/workspace/toolsResearch/Project2/junitvmwatcher6191586024041601248.properties propsfile=/home/jenkins/workspace/toolsResearch/Project2/junit5204453332884949518.properties" />
+    <property name="java.class.path" value="/usr/local/jacoco/lib/jacocoagent.jar:/usr/local/jacoco/lib/jacocoant.jar:/usr/local/jacoco/lib/org.jacoco.agent-0.7.8.201612092310.jar:/usr/local/jacoco/lib/org.jacoco.ant-0.7.8.201612092310.jar:/usr/local/jacoco/lib/org.jacoco.core-0.7.8.201612092310.jar:/usr/local/jacoco/lib/org.jacoco.report-0.7.8.201612092310.jar:/home/jenkins/workspace/toolsResearch/Project2/lib/BugTrackerXML.jar:/usr/local/junit/lib/ant-junit.jar:/usr/local/junit/lib/ant-junit4.jar:/usr/local/junit/lib/junit.jar:/usr/local/junit/lib/org.hamcrest.core_1.3.0.v201303031735.jar:/home/jenkins/workspace/toolsResearch/Project2/bin:/usr/local/ant-1.9.8/lib/ant-launcher.jar:/usr/local/ant/lib/ant.jar:/usr/local/ant/lib/ant-junit.jar:/usr/local/ant/lib/ant-junit4.jar:/tmp/jacocoagent554045335091011338.jar" />
     <property name="ant.version" value="Apache Ant(TM) version 1.9.8 compiled on December 25 2016" />
     <property name="config.home" value="/usr/local/config" />
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification" />
@@ -80,18 +80,50 @@
     <property name="java.specification.version" value="1.8" />
     <property name="ant.project.invoked-targets" value="clean,build_student,unittest,findbugs,pmd,checkstyle,ts_build,ts_unittest" />
   </properties>
-  <testcase classname="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" name="testGetBugId" time="0.022" />
-  <testcase classname="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" name="testGetNotesString" time="0.011" />
-  <testcase classname="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" name="testGetOwner" time="0.001" />
-  <testcase classname="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" name="testGetResolution" time="0.006" />
-  <testcase classname="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" name="testGetXMLBug" time="0.005" />
-  <testcase classname="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" name="testIncrementCounter" time="0.017">
+  <testcase classname="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" name="testGetBugId" time="0.049">
+    <failure message="expected:&lt;1&gt; but was:&lt;0&gt;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: expected:&lt;1&gt; but was:&lt;0&gt;
+	at edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest.testGetBugId(TrackedBugTest.java:75)
+</failure>
+  </testcase>
+  <testcase classname="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" name="testGetNotesString" time="0.018">
+    <failure message="expected:&lt;con[mirf]ation&#xa;------&#xa;&gt; but was:&lt;con[firm]ation&#xa;------&#xa;&gt;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: expected:&lt;con[mirf]ation
+------
+&gt; but was:&lt;con[firm]ation
+------
+&gt;
+	at edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest.testGetNotesString(TrackedBugTest.java:130)
+</failure>
+  </testcase>
+  <testcase classname="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" name="testGetOwner" time="0.001">
+    <failure message="expected:&lt;[odod]&gt; but was:&lt;[dodo]&gt;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: expected:&lt;[odod]&gt; but was:&lt;[dodo]&gt;
+	at edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest.testGetOwner(TrackedBugTest.java:111)
+</failure>
+  </testcase>
+  <testcase classname="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" name="testGetResolution" time="0.007">
+    <failure message="expected:&lt;WONTFIX&gt; but was:&lt;FIXED&gt;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: expected:&lt;WONTFIX&gt; but was:&lt;FIXED&gt;
+	at edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest.testGetResolution(TrackedBugTest.java:94)
+</failure>
+  </testcase>
+  <testcase classname="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" name="testGetXMLBug" time="0.008">
+    <failure message="expected:&lt;true&gt; but was:&lt;false&gt;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: expected:&lt;true&gt; but was:&lt;false&gt;
+	at edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest.testGetXMLBug(TrackedBugTest.java:342)
+</failure>
+  </testcase>
+  <testcase classname="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" name="testIncrementCounter" time="0.005">
     <failure message="expected:&lt;8&gt; but was:&lt;9&gt;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: expected:&lt;8&gt; but was:&lt;9&gt;
 	at edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest.testIncrementCounter(TrackedBugTest.java:62)
 </failure>
   </testcase>
-  <testcase classname="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" name="testResolution" time="0.003" />
-  <testcase classname="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" name="testStateTests" time="0.003" />
+  <testcase classname="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" name="testResolution" time="0.008">
+    <failure message="expected null, but was:&lt;asdf&gt;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: expected null, but was:&lt;asdf&gt;
+	at edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest.testResolution(TrackedBugTest.java:375)
+</failure>
+  </testcase>
+  <testcase classname="edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest" name="testStateTests" time="0.006">
+    <failure message="expected:&lt;Re[po]en not Possessed or ...&gt; but was:&lt;Re[op]en not Possessed or ...&gt;" type="junit.framework.AssertionFailedError">junit.framework.AssertionFailedError: expected:&lt;Re[po]en not Possessed or ...&gt; but was:&lt;Re[op]en not Possessed or ...&gt;
+	at edu.ncsu.csc216.bug_tracker.bug.TrackedBugTest.testStateTests(TrackedBugTest.java:303)
+</failure>
+  </testcase>
   <system-out><![CDATA[]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>
