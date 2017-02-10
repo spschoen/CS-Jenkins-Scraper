@@ -1,0 +1,60 @@
+CommitUID
+    ProjectUID
+    HexSHA
+    Repo
+
+MethodUID
+    Package
+    Class
+    Method
+    MethodUID
+
+TestTable
+    CommitUID
+    TestID/Name (MethodName_TSTest)
+    Pass/Fail
+
+Commits
+    CommitUID
+    Build Number
+    Author
+    Time
+    Duration (between commits)
+    Message
+    Lines of Code
+    LOC Difference
+
+Checkstyle
+    CommitUID
+    MethodUID
+    Error Type
+    Severity
+    Error Message
+    Line
+    Column
+
+Coverage
+    CommitUID
+    MethodUID
+    Total Coverage
+    Instruction Cov.
+    Branch Cov.
+    Complexity Cov.
+    Line Cov.
+
+FindBuggers
+    CommitUID
+    MethodUID
+    Bug Type
+    Priority
+    Rank
+    Category
+    Line
+
+PMD
+    CommitUID
+    MethodUID
+    Ruleset
+    Rule
+    MethodID
+    Line
