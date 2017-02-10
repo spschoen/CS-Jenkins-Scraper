@@ -29,8 +29,7 @@ if root.hasAttribute("name"):
     #This gets the name of the file checked, and since it's got the full path
     #of it too, we have to split and then take the last element from the split
     #Which would be the file name.
-    string = root.getAttribute("name").split('/')
-    string = string[len(string) - 1]
+    string = root.getAttribute("name").split('/')[-1]
     print("File Checked       : %s" % string)
 
 #A basic for loop, to look at all the nodes (<> elements) inside the file node
@@ -53,8 +52,7 @@ for node in root.childNodes:
             if node.hasAttribute("severity"):
                 print(node.getAttribute("severity"))
             if node.hasAttribute("source"):
-                string = node.getAttribute("source").split('.')
-                string = string[len(string) - 1]
+                string = node.getAttribute("source").split('.')[-1]
                 print(string)
             if node.hasAttribute("message"):
                 print(node.getAttribute("message"))

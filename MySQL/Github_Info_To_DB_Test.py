@@ -13,10 +13,10 @@ print("PWRD: " + pw)
 
 #See MySQL_Test.py for better comments on this.
 #The DB conection
-cnx = MySQLdb.connect(host="gitinfodev.cqpmxmtmxihw.us-east-1.rds.amazonaws.com",
-    user=user,
-    passwd=pw,
-    db="WTP")
+#cnx = MySQLdb.connect(host="host ip",
+#    user=user,
+#    passwd=pw,
+#    db="WTP")
 
 #Because this is how we connect
 cur = cnx.cursor()
