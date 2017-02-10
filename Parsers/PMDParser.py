@@ -19,8 +19,7 @@ root = root.getElementsByTagName('file')[0]
 
 #Of course, checking that this worked
 if root.hasAttribute("name"):
-    string = root.getAttribute("name").split('/')
-    string = string[len(string) - 1]
+    string = root.getAttribute("name").split('/')[-1]
     print("File Checked       : %s" % string)
 
 print("\n")
@@ -48,4 +47,3 @@ for node in root.childNodes:
         if node.hasAttribute("method"):
             print("Method: " + node.getAttribute("method"))
         print()
-

@@ -47,12 +47,7 @@ for node in root.childNodes:
         for classNode in node.childNodes:
             if classNode.nodeName == "Method":
                 if classNode.hasAttribute("classname"):
-                    string = classNode.getAttribute("classname").split(".")
-                    string = string[len(string) - 1]
+                    string = classNode.getAttribute("classname").split(".")[-1]
                     print("Class   : " + string)
                 if classNode.hasAttribute("name"):
                     print("Method  : " + classNode.getAttribute("name"))
-
-        #I have no idea what this is looking for.
-        methodNode = root.getElementsByTagName('Method')[0]
-         #Prints the brackets, look at xml <Method classname> for deets
