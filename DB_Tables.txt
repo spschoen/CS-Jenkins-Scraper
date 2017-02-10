@@ -10,12 +10,12 @@ MethodUID
     MethodUID
 
 TestTable
-    CommitUID
+    CommitUID (Primary Key)
     TestID/Name (MethodName_TSTest)
     Pass/Fail
 
 Commits
-    CommitUID
+    CommitUID (Primary Key)
     Build Number
     Author
     Time
@@ -25,7 +25,7 @@ Commits
     LOC Difference
 
 Checkstyle
-    CommitUID
+    CommitUID (Primary Key)
     MethodUID
     Error Type
     Severity
@@ -34,7 +34,7 @@ Checkstyle
     Column
 
 Coverage
-    CommitUID
+    CommitUID (Primary Key)
     MethodUID
     Total Coverage
     Instruction Cov.
@@ -43,7 +43,7 @@ Coverage
     Line Cov.
 
 FindBuggers
-    CommitUID
+    CommitUID (Primary Key)
     MethodUID
     Bug Type
     Priority
@@ -52,7 +52,7 @@ FindBuggers
     Line
 
 PMD
-    CommitUID
+    CommitUID (Primary Key)
     MethodUID
     Ruleset
     Rule
