@@ -6,18 +6,18 @@ import MySQLdb
 import os
 
 #Login details in Slack.
-user = raw_input("USERNAME: ")
-print("USER: " + user)
-pw = raw_input("PASSWORD: ")
-print("PWRD: " + pw)
+# user = raw_input("USERNAME: ")
+# print("USER: " + user)
+# pw = raw_input("PASSWORD: ")
+# print("PWRD: " + pw)
 
 #See MySQL_Test.py for better comments on this.
 #The DB conection
-#cnx = MySQLdb.connect(host="host ip",
-#    user=user,
-#    passwd=pw,
-#    db="WTP")
-
+cnx = MySQLdb.connect(host="152.46.18.11",
+   user="root",
+   passwd="",
+   db="repoinfo")
+doQuery( myConnection )
 #Because this is how we connect
 cur = cnx.cursor()
 
@@ -54,10 +54,10 @@ for commit in reversed(first_commits):
     #Insert message - packages up the commit info and gets it ready to be
     #parsed by MySQL
     try:
-        insert = "INSERT INTO commits(id, hexSHA, author, time, duration, Message, loc) \
-        VALUES (NULL, '%s', '%s', '%d', '%d', '%s', '%d')" % \
-        (commit.hexsha, commit.author.name[:8], commit.committed_date, dur, \
-        commit.message.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50], \
+        insert = "INSERT INTO commits(CommitUID, Build_Num, Author, Time, Duration, Message, LOC , LOC_DIFF) \
+        VALUES (NULL, '%d', '%s', '%d', '%d', '%s', '%d', '%d')" % \
+        (commits.CommitUID, commits.Build_Num, commits.Author.name[:8], commits.committed_date, dur, \
+        commits.message.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50], \
         int(data[i].replace("\n","").split(" ")[1]))
         # removing double/single lines ^ here and here ^                ^
         #                   making the ' characters safe to insert here ^
