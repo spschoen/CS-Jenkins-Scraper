@@ -2,9 +2,29 @@
 
 from xml.dom.minidom import parse
 import xml.dom.minidom
+import sys
+import os
 
+print(len(sys.argv))
+print(str(sys.argv))
 
-DOMTree = xml.dom.minidom.parse('findbugs.xml')  # parse an XML file by name
+EXEC_DIR = os.getcwd()
+'''FILE_DIR = os.path.abspath(os.path.join(EXEC_DIR, \
+    str(sys.argv[len(sys.argv) - 1].split("/")), "findBugs.xml"))
+print(FILE_DIR)'''
+
+FILE_DIR = os.path.abspath(os.path.join(EXEC_DIR))
+print(FILE_DIR)
+for arg in sys.argv[len(sys.argv) - 1].split("/"):
+    FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
+    print(FILE_DIR)
+
+try:
+    DOMTree = xml.dom.minidom.parse(FILE_DIR + '/findbugs.xml')
+except:
+    print("ERROR: Could not interact with file", FILE_DIR + '/findbugs.xml')
+    print("Script exiting.")
+    sys.exit()
 
 #root is the first <> element in the XML file.
 root = DOMTree.documentElement
