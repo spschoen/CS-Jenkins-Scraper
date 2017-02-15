@@ -1,0 +1,10 @@
+# Because updating your package manager is ALWAYS A good idea!
+sudo update yum
+
+#Install Python3 because RHEL is sensitive about 2.6
+sudo yum install python34.x86_64
+
+#Python3 compatible MySQL module.
+#only difference between this and mysqldb is syntactic sugar
+sudo pip3 install PyMySQL
+
