@@ -1,8 +1,7 @@
 #All the packages we use.
 from git import *
 from git.objects.util import *
-from future_builtins import *
-import MySQLdb
+import pymysql.cursors
 import os
 
 #Login details in Slack.
@@ -13,11 +12,10 @@ import os
 
 #See MySQL_Test.py for better comments on this.
 #The DB conection
-cnx = MySQLdb.connect(host="152.46.18.11",
+cnx = pymysql.connect(host="152.46.20.243",
    user="root",
    passwd="",
    db="repoinfo")
-doQuery( myConnection )
 #Because this is how we connect
 cur = cnx.cursor()
 
