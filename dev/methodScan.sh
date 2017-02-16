@@ -10,8 +10,8 @@ function dirScan {
         else
             
             if [[ "${D}" == *.java ]]; then
-                echo "    ${D}"
-                less "${D}" | egrep -o '(publ|priv|prot).*' | grep "(" | egrep -v "\*|;"
+                less "${D}" | egrep -o '(publ|priv|prot).*' | egrep -v "\*|;"
+                echo ""
             fi
         fi
     done
