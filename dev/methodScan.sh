@@ -4,8 +4,8 @@ function dirScan {
     cd "$1"
     #echo "Dir: $1"
     for D in *; do
-        if [ -d "${D}" ] && [[ "${D}" != "gui" ]] && [[ "${D}" != "test" ]]; then
-            #echo "dir ${D}"
+        if [ -d "${D}" ] && [[ "${D}" != "gui" ]] && [[ "${D}" != "test"* ]]; then
+            echo "dir ${D}"
             dirScan "${D}"
         else
             if [[ "${D}" == *.java ]]; then

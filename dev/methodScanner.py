@@ -1,5 +1,5 @@
 import sys
-#import pymysql.cursors
+import pymysql.cursors
 from git import *
 from git.objects.util import *
 '''
@@ -11,27 +11,30 @@ from git.objects.util import *
 # Setting up the DB connection
 # Future people: change this to your master IP
 # Or wherever your DB is.
-#connection = pymysql.connect(host="152.46.20.243")
-#cur = cnx.cursor()
+connection = pymysql.connect(host="152.46.20.243",
+                                user="root",
+                                password="",
+                                db="repoinfo")
+cur = connection.cursor()
 # Connection setup
 
 methodsFile = open("methods.txt", "r" )
-
 allMethods = list(methodsFile)
 
 currentClass = ""
-
-#Current problem to be solved: if there's a space between methodName and (, then it dies.
+currentPacka = ""
 for line in allMethods:
     # New lines are added by the scanner, don't need 'em.
     if line == "\n" and "enum" in line:
         continue
     else:
-        if "class" in line:
+        if "dir" in line:
+            currentPacka = line.split(" ")[1].replace("\n","")
+        elif "class" in line or "interface" in line:
             #print("\n" + line.replace("\n",""))
             print()
             currentClass = line.replace("\n","").split(" ")
-            while currentClass[0] != "class":
+            while currentClass[0] != "class" and currentClass[0] != "interface":
                 del currentClass[0]
             del currentClass[0]
             currentClass = currentClass[0]
@@ -45,11 +48,21 @@ for line in allMethods:
                     break
             if item == "\n":
                 continue
-            print(currentClass + ": " + item)
+            print(currentPacka + ": " + currentClass + ": " + item)
+            cur.execute("SELECT * FROM classUID WHERE Package = %s and class = %s",(currentPacka, currentClass))
+            if cur.rowcount == 0:
+                try:
+                    cur.execute("INSERT INTO classUID(classUID, Package, Class) VALUES (NULL, %s, %s)",(currentPacka, currentClass))
+                except e:
+                    print(e[0] + "|" + e[1])
+                    connection.rollback()
+                    print("rip")
+                    sys.exit()
+
 
 methodsFile.close()
 
 print()
 
 # Closing connection
-#cnx.close()
+connection.close()
