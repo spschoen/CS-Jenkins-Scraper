@@ -24,19 +24,26 @@ currentClass = ""
 #Current problem to be solved: if there's a space between methodName and (, then it dies.
 for line in allMethods:
     if line == "\n":
-        print("")
+        continue;
     else:
         if "class" in line:
-            print(line, end="")
+            print("\n" + line.replace("\n",""))
+            currentClass = line.replace("\n","")
         elif "enum" in line:
             print()
         else:
-            print(line, end="")
-            for part in line.split(" "):
-                if "(" in part:
-                    print(part.split("(")[0])
+            #print(line.replace("\n",""))
+            part = line.split("(")[0].split(" ")
+            for item in reversed(part):
+                if item == "":
+                    continue
+                else:
+                    print(item)
+                    break
 
 methodsFile.close()
+
+print()
 
 # Closing connection
 #cnx.close()
