@@ -17,7 +17,7 @@ for arg in sys.argv[len(sys.argv) - 1].split("/"):
     if arg == "":
         continue
     FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
-    #print(FILE_DIR)
+    # print(FILE_DIR)
 
 try:
     checkstalio = xml.dom.minidom.parse('../ExampleXML/checkstyle.xml')

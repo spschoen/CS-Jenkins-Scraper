@@ -10,6 +10,8 @@ import pymysql.cursors
 from git import *
 from git.objects.util import *
 from datetime import date, datetime, timedelta
+import os.path as osp
+
 
 # Setting up the DB connection
 # TODO: Change this to either enter or the master IP.
@@ -22,8 +24,15 @@ connection = pymysql.connect(host="152.46.20.243",
    db="repoinfo")
 cur = connection.cursor()
 
+        
+join = osp.join
+
+# rorepo is a Repo instance pointing to the git-python repository.
+repo = Repo(self.rorepo.working_tree_dir)
+assert not repo.bare
+
 #The repo of wherever this script is run.
-repo = Repo(os.getcwd() + "/.git")
+# repo = Repo(os.getcwd() + "/.git")
 default_pulled = 1000
 
 #Second line *SHOULD* handle if a repo has more than 1000 commits.

@@ -1,0 +1,9 @@
+commitUpload: started developing but couldn't get working directory correct, probably can when I'm not exhausted
+
+checkstyleUpload: done
+findbugsUpload: done
+pmdUpload: done
+testFileResultsUpload:  Only works it test-reports file is within dev, but done
+
+coverageUpload: ntd
+
