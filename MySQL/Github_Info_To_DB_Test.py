@@ -52,7 +52,7 @@ for commit in reversed(first_commits):
     #Insert message - packages up the commit info and gets it ready to be
     #parsed by MySQL
     try:
-        insert = "INSERT INTO commits(CommitUID, Build_Num, Author, Time, Duration, Message, LOC , LOC_DIFF) \
+        insert = "INSERT INTO commits(CommitUID, Build_Num, Author, Time, Duration, Message, LOC , LOC_DIFF)" \
         VALUES (NULL, '%d', '%s', '%d', '%d', '%s', '%d', '%d')" % \
         (commits.CommitUID, commits.Build_Num, commits.Author.name[:8], commits.committed_date, dur, \
         commits.message.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50], \
@@ -64,10 +64,10 @@ for commit in reversed(first_commits):
         #break the insert command and potentially break the DB.
         #Before added, it would simply refuse to add the commit to the DB.
     except:
-        insert = "INSERT INTO commits(id, hexSHA, author, time, duration, Message, loc) \
+        insert = "INSERT INTO commits(id, hexSHA, author, time, duration, Message, loc)" \
         VALUES (NULL, '%s', '%s', '%d', '%d', '%s', NULL)" % \
         (commit.hexsha, commit.author.name[:8], commit.committed_date, dur, \
-        commit.message.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50])
+        commit.message.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50]"
     #Try/except block - it will send MySQL the command to run, and commit it.
     #If it can't run the command, print the command that was attempted and then email
     #the error to someone who cares - that will probably be removed but I wanted to do it
