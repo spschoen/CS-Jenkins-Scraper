@@ -1,16 +1,8 @@
 # CSC216-Python-Analyzer
 ¯\\_(ツ)_/¯
 
-Install python first.
-
-```pip3 install --upgrade pip``` - Update pip.
-
-```pip3 install GitPython``` - Install GitPython
-
-```pip3 install radon``` - Install radon for complexity
-
-Time to take basic info from repo w/ 170 commits (considered worst case at this time) and insert into a table: 2.5 seconds (roughly)
-
-Assuming 160 repos, each with 170 commits, times 3 for the three major projects, comes out to 20 minutes.
-
-MySQL Files take precedence over Basic parsing.
+```sudo yum update``` - Because do it.
+```sudo yum install cloc``` - install the cloc utility for running LOC analysis
+```sudo yum install python34.x86_64``` - Install python3 because that's what we used.
+```sudo pip3 install PyMySQL``` - Install the MySQL connector
+```sudo pip3 install GitPython``` - Install the Git parser
