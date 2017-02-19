@@ -25,39 +25,88 @@ currentClass = ""
 currentPacka = ""
 for line in allMethods:
     # New lines are added by the scanner, don't need 'em.
-    if line == "\n" and "enum" in line:
+    if line == "\n" or "enum" in line: #Ignore enums and blank lines
         continue
     else:
-        if "dir" in line:
+        if "dir" in line: #for example: dir bug_tracker
             currentPacka = line.split(" ")[1].replace("\n","")
-        elif "class" in line or "interface" in line:
-            #print("\n" + line.replace("\n",""))
-            print()
+            #Split the string on spaces, then take the second value
+            #which is the directory/package, then remove the new line
+
+        elif "class" in line or "interface" in line: #for example: public class TrackedBug {
             currentClass = line.replace("\n","").split(" ")
+            #Remove new line, split on space.
+
+            #While we haven't hit class/interface, remove previous elements.
+            #Since access can be optional (none is accepted), we have to iterate until we hit
+            #class/interface.  Once we get it, we delete class/interface and the first element
+            #is the class name.
             while currentClass[0] != "class" and currentClass[0] != "interface":
                 del currentClass[0]
             del currentClass[0]
             currentClass = currentClass[0]
-        elif "enum" not in line:
+
+            #Check the ClassUID table for all records that match the package and class
+            cur.execute("SELECT * FROM classUID WHERE Package = %s and class = %s",(currentPacka, currentClass))
+
+            #If we get any records returned, then obviously it's already in the table we don't
+            #have to insert.  Otherwise, if there are no returned records, then we need to
+            #insert them into the table.
+            if cur.rowcount == 0:
+                try:
+                    cur.execute("INSERT INTO classUID(classUID, Package, Class) VALUES \
+                                    (NULL, %s, %s)",(currentPacka, currentClass))
+                except e:
+                    #debug
+                    #print(e[0] + "|" + e[1])
+                    connection.rollback()
+            else:
+                pass
+                #debug
+                #print("PKG: " + currentPacka.ljust(20) + " | CLS: " + currentClass.ljust(20) + \
+                #            " | Already exists in DB.")
+
+        elif "enum" not in line: #for example: public String getNote () {
+            #split on the parenthesis, grab the first element. since that's gonna include the
+            #method name, and split that on spaces
             part = line.split("(")[0].split(" ")
+
+            #Iterate over the reversed list, for exmaple: ['','getNote','String','public']
+            #Ignore the '', since if there's a space between ( and the method name, it'll split
+            #into an empty string.  Then, the next item immediately after the blank/parenthesis
+            #is the method name!
             for item in reversed(part):
                 if item == "":
                     continue
                 else:
                     part = item
                     break
+
+            #Ignore new lines, for safety.
             if item == "\n":
                 continue
-            print(currentPacka + ": " + currentClass + ": " + item)
-            cur.execute("SELECT * FROM classUID WHERE Package = %s and class = %s",(currentPacka, currentClass))
+
+            #If we get any records returned, then obviously it's already in the table we don't
+            #have to insert.  Otherwise, if there are no returned records, then we need to
+            #insert them into the table.
+            cur.execute("SELECT * FROM methodUID WHERE Package = %s and Class = %s and \
+                                Method = %s",(currentPacka, currentClass, item))
             if cur.rowcount == 0:
+                #debug
+                #print("PKG: " + currentPacka.ljust(20) + " | CLS: " + currentClass.ljust(30) + \
+                #        " | MTD: " + item.ljust(40) + " | Adding to DB.")
                 try:
-                    cur.execute("INSERT INTO classUID(classUID, Package, Class) VALUES (NULL, %s, %s)",(currentPacka, currentClass))
+                    cur.execute("INSERT INTO methodUID(methodUID, Package, Class, Method) VALUES \
+                                    (NULL, %s, %s, %s)",(currentPacka, currentClass, item))
                 except e:
+                    #debug
                     print(e[0] + "|" + e[1])
                     connection.rollback()
-                    print("rip")
-                    sys.exit()
+            else:
+                pass
+                #debug
+                #print("PKG: " + currentPacka.ljust(20) + " | CLS: " + currentClass.ljust(30) + \
+                #        " | MTD: " + item.ljust(40) + " | Already exists in DB.")
 
 
 methodsFile.close()
