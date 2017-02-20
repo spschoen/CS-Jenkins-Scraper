@@ -19,7 +19,7 @@ for arg in sys.argv[len(sys.argv) - 1].split("/"):
     #print(FILE_DIR)
 
 try:
-    findbuggies = xml.dom.minidom.parse('../ExampleXML/findbugs.xml')
+    findbuggies = xml.dom.minidom.parse(FILE_DIR + '/findbugs.xml')
 except:
     print("ERROR: Could not interact with file", FILE_DIR + '/findbugs.xml')
     print("Script exiting.")
@@ -34,11 +34,10 @@ root = findbuggies.documentElement
 # TODO: Change this to either enter or the master IP.
 # Future people: change this to your master IP
 # Or wherever your DB is.
-# Don't forget to
 connection = pymysql.connect(host="152.46.20.243",
-   user="root",
-   passwd="",
-   db="repoinfo")
+                                user="root",
+                                password="",
+                                db="repoinfo")
 cur = connection.cursor()
 
 if root.hasAttribute("version"):
@@ -88,7 +87,7 @@ for node in root.childNodes:
             add_findbugs = ("INSERT INTO findBugs(CommitsUID, MethodUID, BugType, Priority, Rank, Category, Line) " \
                   "VALUES ( '%d', '%d', '%s', '%d', '%d', '%s', '%d')" % ( 0, -1, bugType, priority, rank, cat, line))
             print(add_findbugs)
-        except: 
+        except:
             print("Messup 2", sys.exc_info())
         # Attempts to insert information into database. If it doesn't match, it catches in the except and prints it.
         try:

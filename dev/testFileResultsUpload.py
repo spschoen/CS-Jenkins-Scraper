@@ -26,11 +26,10 @@ filesListed = os.listdir(FILE_DIR + '/test-reports/');
 # TODO: Change this to either enter or the master IP.
 # Future people: change this to your master IP
 # Or wherever your DB is.
-# Don't forget to
 connection = pymysql.connect(host="152.46.20.243",
-   user="root",
-   passwd="",
-   db="repoinfo")
+                                user="root",
+                                password="",
+                                db="repoinfo")
 cur = connection.cursor()
 
 
@@ -38,7 +37,7 @@ count = 0
 
 #Initialize variables
 className = ""
-testName = "" 
+testName = ""
 passing = ""
 
 while (count < len(filesListed)):
@@ -50,12 +49,12 @@ while (count < len(filesListed)):
             print("ERROR: Could not interact with file", FILE_DIR + '/' + filesListed[count] + '.xml')
             print("Script exiting.")
             sys.exit()
-        
+
         #root is the first <> element in the XML file.
         root = DOMTree.documentElement
 
         if root.hasAttribute("name"):
-            className = root.getAttribute("name").split(".")[-1]  
+            className = root.getAttribute("name").split(".")[-1]
             print(className)
             for node in root.childNodes:
                 if node.nodeName == "testcase":
@@ -65,7 +64,7 @@ while (count < len(filesListed)):
                     if len(node.childNodes) != 0:
                         passing = "F"
                         print(passing)
-                    else: 
+                    else:
                         passing = "P"
                         print(passing)
 
@@ -78,7 +77,7 @@ while (count < len(filesListed)):
 
                         #Checking, delete print
                         print(add_testTable)
-                    except: 
+                    except:
                         print("Messup", sys.exc_info())
                     # Attempts to insert information into database. If it doesn't match, it catches in the except and prints it.
                     try:

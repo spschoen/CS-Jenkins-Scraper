@@ -17,14 +17,13 @@ import os.path as osp
 # TODO: Change this to either enter or the master IP.
 # Future people: change this to your master IP
 # Or wherever your DB is.
-# Don't forget to
 connection = pymysql.connect(host="152.46.20.243",
-   user="root",
-   passwd="",
-   db="repoinfo")
+                                user="root",
+                                password="",
+                                db="repoinfo")
 cur = connection.cursor()
 
-        
+
 join = osp.join
 
 # rorepo is a Repo instance pointing to the git-python repository.
@@ -72,7 +71,7 @@ for commit in reversed(first_commits):
                         (commits.Build_Num, commits.Author.name[:8], commits.committed_date, dur, \
                         commits.message.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50], \
                         loc, lineDiff)
-    except: 
+    except:
         print("Error 1". sys.exc_info())
 
     try:
@@ -80,7 +79,7 @@ for commit in reversed(first_commits):
         cnx.commit()
     except:
         print("Error commiting to DB", sys.exc_info())
-    
+
     i += 1
     prevLines = loc
 

@@ -21,7 +21,7 @@ for arg in sys.argv[len(sys.argv) - 1].split("/"):
     #print(FILE_DIR)
 
 try:
-    pmd = xml.dom.minidom.parse('../ExampleXML/pmd.xml')
+    pmd = xml.dom.minidom.parse(FILE_DIR + '/pmd.xml')
 except:
     print("ERROR: Could not interact with file", FILE_DIR + '/pmd.xml')
     print("Script exiting.")
@@ -86,7 +86,7 @@ for file in root.childNodes:
                           "VALUES ( '%d', '%d', '%s', '%s', '%d')" % ( 0, -1, ruleset, rule, line))
 
                     print(add_pmd)
-                except: 
+                except:
                     print("Messup 2", sys.exc_info())
                 # Attempts to insert information into database. If it doesn't match, it catches in the except and prints it.
                 try:

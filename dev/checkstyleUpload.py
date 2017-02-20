@@ -20,7 +20,7 @@ for arg in sys.argv[len(sys.argv) - 1].split("/"):
     # print(FILE_DIR)
 
 try:
-    checkstalio = xml.dom.minidom.parse('../ExampleXML/checkstyle.xml')
+    checkstalio = xml.dom.minidom.parse(FILE_DIR + '/checkstyle.xml')
 except:
     print("ERROR: Could not interact with file", FILE_DIR + '/checkstyle.xml')
     print("Script exiting.")
@@ -35,11 +35,10 @@ root = checkstalio.documentElement
 # TODO: Change this to either enter or the master IP.
 # Future people: change this to your master IP
 # Or wherever your DB is.
-# Don't forget to
 connection = pymysql.connect(host="152.46.20.243",
-   user="root",
-   passwd="",
-   db="repoinfo")
+                                user="root",
+                                password="",
+                                db="repoinfo")
 cur = connection.cursor()
 # Connection setup
 
@@ -66,7 +65,7 @@ for first in root.childNodes:
         for node in first.childNodes:
             col = -1
             #Ignoes TEXT_NODES because they cause problems
-            if node.nodeType != node.TEXT_NODE:                
+            if node.nodeType != node.TEXT_NODE:
                 if node.hasAttribute("line"):
                     line = int(node.getAttribute("line"))
                 if node.hasAttribute("column"):
@@ -102,7 +101,7 @@ for first in root.childNodes:
 
                     #Checking, delete print
                     print(add_checkstyle)
-                except: 
+                except:
                     print("Messup 2", sys.exc_info()[0])
                 # Attempts to insert information into database. If it doesn't match, it catches in the except and prints it.
                 try:
