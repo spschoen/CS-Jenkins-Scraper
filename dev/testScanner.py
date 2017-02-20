@@ -3,7 +3,7 @@ import pymysql.cursors
 from git import *
 from git.objects.util import *
 '''
-    methodScanner.py is a python file that will read methods.txt
+    testScanner.py is a python file that will read tests.txt
     for all methods and classes in a student's directory,
     then upload the unique ones.
 '''
@@ -18,7 +18,7 @@ connection = pymysql.connect(host="152.46.20.243",
 cur = connection.cursor()
 # Connection setup
 
-methodsFile = open("methods.txt", "r" )
+methodsFile = open("tests.txt", "r" )
 allMethods = list(methodsFile)
 
 currentClass = ""
@@ -47,15 +47,15 @@ for line in allMethods:
             currentClass = currentClass[0]
 
             #Check the ClassUID table for all records that match the package and class
-            cur.execute("SELECT * FROM classUID WHERE Package = %s and class = %s",(currentPacka, currentClass))
+            cur.execute("SELECT * FROM testClassUID WHERE testPackage = %s and testClass = %s",(currentPacka, currentClass))
 
             #If we get any records returned, then obviously it's already in the table we don't
             #have to insert.  Otherwise, if there are no returned records, then we need to
             #insert them into the table.
             if cur.rowcount == 0:
                 try:
-                    cur.execute("INSERT INTO classUID(classUID, Package, Class) VALUES \
-                                    (NULL, %s, %s)",(currentPacka, currentClass))
+                    cur.execute("INSERT INTO testClassUID(testClassUID, testPackage, testClass) \
+                                VALUES (NULL, %s, %s)",(currentPacka, currentClass))
                 except e:
                     #debug
                     #print(e[0] + "|" + e[1])
@@ -63,8 +63,8 @@ for line in allMethods:
             else:
                 pass
                 #debug
-                #print("PKG: " + currentPacka.ljust(20) + " | CLS: " + currentClass.ljust(20) + \
-                #            " | Already exists in DB.")
+                print("PKG: " + currentPacka.ljust(20) + " | CLS: " + currentClass.ljust(20) + \
+                            " | Already exists in DB.")
 
         elif "enum" not in line: #for example: public String getNote () {
             #split on the parenthesis, grab the first element. since that's gonna include the
@@ -75,31 +75,29 @@ for line in allMethods:
             #Ignore the '', since if there's a space between ( and the method name, it'll split
             #into an empty string.  Then, the next item immediately after the blank/parenthesis
             #is the method name!
-            for item in reversed(part):
-                if item == "":
+            for test in reversed(part):
+                if test == "":
                     continue
                 else:
-                    part = item
                     break
 
             #Ignore new lines, for safety.
-            if item == "\n":
+            if test == "\n":
                 continue
 
             #If we get any records returned, then obviously it's already in the table we don't
             #have to insert.  Otherwise, if there are no returned records, then we need to
             #insert them into the table.
-            # TODO: FIX NUMBER
-            cur.execute("SELECT * FROM methodUID WHERE ClassUID = 0 and \
-                                Method = %s",(item))
+            # TODO: FIX THE UID
+            cur.execute("SELECT * FROM testMethodUID WHERE testClassUID = 0 and \
+                                testMethodName = %s",(test))
             if cur.rowcount == 0:
                 #debug
-                #print("PKG: " + currentPacka.ljust(20) + " | CLS: " + currentClass.ljust(30) + \
-                #        " | MTD: " + item.ljust(40) + " | Adding to DB.")
+                print("PKG: " + currentPacka.ljust(20) + " | CLS: " + currentClass.ljust(30) + \
+                        " | MTD: " + test.ljust(40) + " | Adding to DB.")
                 try:
-                    #TODO: FIX NUMBER
-                    cur.execute("INSERT INTO methodUID(methodUID, ClassUID, Method) VALUES \
-                                    (NULL, 0, %s)",(item))
+                    cur.execute("INSERT INTO testMethodUID(testMethodUID, testClassUID, testMethodName) VALUES \
+                                    (NULL, 0, %s)",(test))
                 except e:
                     #debug
                     print(e[0] + "|" + e[1])
@@ -107,8 +105,8 @@ for line in allMethods:
             else:
                 pass
                 #debug
-                #print("PKG: " + currentPacka.ljust(20) + " | CLS: " + currentClass.ljust(30) + \
-                #        " | MTD: " + item.ljust(40) + " | Already exists in DB.")
+                print("PKG: " + currentPacka.ljust(20) + " | CLS: " + currentClass.ljust(30) + \
+                        " | MTD: " + test.ljust(40) + " | Already exists in DB.")
 
 
 methodsFile.close()
