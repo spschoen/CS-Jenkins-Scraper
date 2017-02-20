@@ -1,17 +1,16 @@
 #!/bin/bash
 
-function dirScan { 
+function dirScan {
     cd "$1"
     #echo "Dir: $1"
     for D in *; do
-        if [ -d "${D}" ] && [[ "${D}" != "gui" ]]; then
-            #echo "dir ${D}"
+        if [ -d "${D}" ] && [[ "${D}" != "gui" ]] && [[ "${D}" != "test"* ]]; then
+            echo "dir ${D}"
             dirScan "${D}"
         else
-            
             if [[ "${D}" == *.java ]]; then
-                echo "    ${D}"
-                less "${D}" | egrep -o '(publ|priv|prot).*' | grep "(" | egrep -v "\*|;"
+                less "${D}" | egrep -o '(publ|priv|prot).*' | egrep -v "\*|;"
+                echo ""
             fi
         fi
     done

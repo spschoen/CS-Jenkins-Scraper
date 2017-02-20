@@ -1,28 +1,40 @@
-# @authors Renata Ann Zeitler and Samuel Schoeneberger 02/2017
+#!/bin/bash
 
-from __future__ import print_function
-from xml.dom.minidom import parse
-import xml.dom.minidom
-import sys
-import os
-import pymysql.cursors
-from git import *
-from git.objects.util import *
+function dirScan {
+    cd "$1"
+    #echo "Dir: $1"
+    for D in *; do
+        if [ -d "${D}" ] && [[ "${D}" != "gui" ]] && [[ "${D}" != "src" ]]; then
+            #echo "dir ${D}"
+            dirScan "${D}"
+        else
+            if [[ "${D}" == *.java ]]; then
+                less "${D}" | egrep -o '(publ|priv|prot).*' | egrep -v "\*|;"
+                echo ""
+            fi
+        fi
+    done
+    cd ..
+}
 
-# Setting up the XML to read
-FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))
-for arg in sys.argv[len(sys.argv) - 1].split("/"):
-    if arg == "":
-        continue
-    FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
-    #print(FILE_DIR)
+#Don't forget to change directory to wherever we are.
+cd "$(dirname "$0")"
 
-try:
-    findbuggies = xml.dom.minidom.parse('../ExampleXML/findbugs.xml')
-except:
-    print("ERROR: Could not interact with file", FILE_DIR + '/findbugs.xml')
-    print("Script exiting.")
-    sys.exit()
+#Check if user supplied arguments
+if [ $# -ne 1 ]; then
+    echo "ERR: Not given expected arguments.."
+    echo "Expected [directory of directories interact with]"
+    echo "Exiting program with status 0."
+    exit 0
+fi
 
-#root is the first <> element in the XML file.
-root = findbuggies.documentElement
+if [ ! -d $1 ]; then
+    echo "ERR: Argument 1 is not a directory, or directory does not exist."
+    echo "Exiting program with status 0."
+    exit 0
+fi
+
+#Saving directory.
+DIRECTORY="$1"
+
+dirScan $DIRECTORY
