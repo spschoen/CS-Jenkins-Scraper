@@ -56,8 +56,8 @@ for line in allMethods:
             #insert them into the table.
             if cur.rowcount == 0:
                 #debug
-                print("\nAdding record to DB.         | PKG: " + currentPacka.ljust(20) + " | CLS: " \
-                        + currentClass.ljust(30))
+                print("\nAdding record to DB.         | PKG: " + currentPacka.ljust(20) + \
+                        " | CLS: " + currentClass.ljust(30))
                 try:
                     cur.execute("INSERT INTO testClassUID(testClassUID, testPackage, testClass) \
                                 VALUES (NULL, %s, %s)",(currentPacka, currentClass))
@@ -68,8 +68,8 @@ for line in allMethods:
             else:
                 pass
                 #debug
-                print("\nRecord already exists in DB. | PKG: " + currentPacka.ljust(20) + " | CLS: " \
-                        + currentClass.ljust(20))
+                print("\nRecord already exists in DB. | PKG: " + currentPacka.ljust(20) + \
+                        " | CLS: " + currentClass.ljust(20))
 
             #Execute the same select, so we can get the new classUID
             cur.execute("SELECT * FROM testClassUID WHERE testPackage = %s and \
@@ -107,15 +107,15 @@ for line in allMethods:
             #If we get any records returned, then obviously it's already in the table we don't
             #have to insert.  Otherwise, if there are no returned records, then we need to
             #insert them into the table.
-            # TODO: FIX THE UID
-            cur.execute("SELECT * FROM testMethodUID WHERE testClassUID = %d and testMethodName = '%s'" % (classUID, test))
+            cur.execute("SELECT * FROM testMethodUID WHERE testClassUID = %d and \
+                            testMethodName = '%s'" % (classUID, test))
             if cur.rowcount == 0:
                 #debug
                 print("Adding record to DB.         | PKG: " + currentPacka.ljust(20) + " | CLS: " \
                         + currentClass.ljust(30) + " | MTD: " + test.ljust(40))
                 try:
-                    cur.execute("INSERT INTO testMethodUID(testMethodUID, testClassUID, testMethodName) VALUES \
-                                    (NULL, %s, %s)", (classUID, test))
+                    cur.execute("INSERT INTO testMethodUID(testMethodUID, testClassUID, \
+                                    testMethodName) VALUES (NULL, %s, %s)", (classUID, test))
                 except e:
                     #debug
                     #print(e[0] + "|" + e[1])
