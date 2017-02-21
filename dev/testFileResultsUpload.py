@@ -14,11 +14,12 @@ from datetime import date, datetime, timedelta
 
 # Setting up the XML to read
 FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))
-# for arg in sys.argv[len(sys.argv) - 1].split("/"):
-#     if arg == "":
-#         continue
-#     FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg)).split("/"):
-#     # print(FILE_DIR)
+for arg in sys.argv[len(sys.argv) - 1].split("/"):
+    if arg == "":
+        continue
+    FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
+    #debug
+    #print(FILE_DIR)
 
 filesListed = os.listdir(FILE_DIR + '/test-reports/');
 
@@ -41,7 +42,7 @@ testName = ""
 passing = ""
 
 while (count < len(filesListed)):
-    print(filesListed[count])
+    #print(filesListed[count])
     if (filesListed[count] != '.DS_Store'):
         try:
             DOMTree = xml.dom.minidom.parse(FILE_DIR + '/test-reports/' + filesListed[count])
@@ -55,19 +56,39 @@ while (count < len(filesListed)):
 
         if root.hasAttribute("name"):
             className = root.getAttribute("name").split(".")[-1]
-            print(className)
+            #print(className)
             for node in root.childNodes:
                 if node.nodeName == "testcase":
                     if node.hasAttribute("name"):
                         testName = node.getAttribute("name")
-                        print(testName)
+                        #print(testName)
                     if len(node.childNodes) != 0:
                         passing = "F"
-                        print(passing)
                     else:
                         passing = "P"
-                        print(passing)
+                    #print(passing)
 
+                    #If we get any records returned, then obviously it's already in the table we don't
+                    #have to insert.  Otherwise, if there are no returned records, then we need to
+                    #insert them into the table.
+                    cur.execute("SELECT * FROM testTable WHERE Package = %s and Class = %s and \
+                                        Method = %s",(currentPacka, currentClass, item))
+                    if cur.rowcount == 0:
+                        #debug
+                        #print("PKG: " + currentPacka.ljust(20) + " | CLS: " + currentClass.ljust(30) + \
+                        #        " | MTD: " + item.ljust(40) + " | Adding to DB.")
+                        try:
+                            cur.execute("INSERT INTO methodUID(methodUID, Package, Class, Method) VALUES \
+                                            (NULL, %s, %s, %s)",(currentPacka, currentClass, item))
+                        except e:
+                            #debug
+                            print(e[0] + "|" + e[1])
+                            connection.rollback()
+                    else:
+                        pass
+                        #debug
+                        #print("PKG: " + currentPacka.ljust(20) + " | CLS: " + currentClass.ljust(30) + \
+                        #        " | MTD: " + item.ljust(40) + " | Already exists in DB.")
                     # Gets information ready to be added to DB
                     # This one goes to testTable
                     try:
