@@ -1,7 +1,6 @@
 #Building custom Checkstyle parser since none exist. RIP @me
 # @authors Renata Ann Zeitler and Samuel Schoeneberger 02/2017
 
-from __future__ import print_function
 from xml.dom.minidom import parse
 import xml.dom.minidom
 import sys
@@ -41,7 +40,8 @@ connection = pymysql.connect(host="152.46.20.243",
 cur = connection.cursor()
 
 if root.hasAttribute("version"):
-    print("FindBugs Version : %s" % root.getAttribute("version"))
+    pass
+    #print("FindBugs Version : %s" % root.getAttribute("version"))
 
 package = ""
 className = ""
@@ -78,15 +78,15 @@ for node in root.childNodes:
         try:
             add_methodUID = ("INSERT INTO methodUID(methodUID, Package, Class, Method) " \
                 "VALUES (NULL, '%s', '%s', '%s')" % ( package, className, method))
-            print(add_methodUID)
+            #print(add_methodUID)
         except:
             print("Messup 1")
 
         # This one goes to findbugs
         try:
             add_findbugs = ("INSERT INTO findBugs(CommitsUID, MethodUID, BugType, Priority, Rank, Category, Line) " \
-                  "VALUES ( '%d', '%d', '%s', '%d', '%d', '%s', '%d')" % ( 0, -1, bugType, priority, rank, cat, line))
-            print(add_findbugs)
+                  "VALUES ( '%d', '%d', '%s', '%d', '%d', '%s', '%d')" % ( -1, -1, bugType, priority, rank, cat, line))
+            #print(add_findbugs)
         except:
             print("Messup 2", sys.exc_info())
         # Attempts to insert information into database. If it doesn't match, it catches in the except and prints it.

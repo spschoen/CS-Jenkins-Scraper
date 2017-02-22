@@ -38,13 +38,55 @@ echo "    [Data Miner] Executing test uploader"
 python3 testScanner.py
 
 ##################################
+# Checkstyle uploading.          #
+##################################
+
+echo "    [Data Miner] Copying checkstyle uploader into $WORKDIR"
+cp /home/jenkins/scripts/dev/checkstyleUpload.py $WORKDIR/checkstyleUpload.py
+
+echo "    [Data Miner] Executing checkstyle uploader"
+python3 checkstyleUpload.py ./
+
+##################################
+# FindBugs uploading.            #
+##################################
+
+echo "    [Data Miner] Copying FindBugs uploader into $WORKDIR"
+cp /home/jenkins/scripts/dev/findbugsUpload.py $WORKDIR/findbugsUpload.py
+
+echo "    [Data Miner] Executing FindBugs uploader"
+python3 findbugsUpload.py ./
+
+##################################
+# PMD uploading.                 #
+##################################
+
+echo "    [Data Miner] Copying PMD uploader into $WORKDIR"
+cp /home/jenkins/scripts/dev/pmdUpload.py $WORKDIR/pmdUpload.py
+
+echo "    [Data Miner] Executing PMD uploader"
+python3 pmdUpload.py ./
+
+##################################
+# [Next Step in data process]    #
+##################################
+
+echo "    [Data Miner] Test Results uploader fails; needs review."
+
+echo "    [Data Miner] Copying Test Results uploader into $WORKDIR"
+#cp /home/jenkins/scripts/dev/testFileResultsUpload.py $WORKDIR/testFileResultsUpload.py
+
+echo "    [Data Miner] Executing Test Results uploader"
+#python3 testFileResultsUpload.py ./
+
+##################################
 # [Next Step in data process]    #
 ##################################
 
  # some code goes here.
 
 ##################################
-# [Next Step in data process]    #
+# Cleaning up the local dir.     #
 ##################################
 
 echo "    [Data Miner] Cleaning up."

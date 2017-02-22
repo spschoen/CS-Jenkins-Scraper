@@ -94,10 +94,10 @@ while (count < len(filesListed)):
                     try:
 
                         add_testTable = ("INSERT INTO testTable (CommitUID, Class, Name, Passing) " \
-                              "VALUES ( '%d', '%s', '%s', '%s')" % ( 0, className, testName, passing))
+                              "VALUES ( '%d', '%s', '%s', '%s')" % ( -1, className, testName, passing))
 
                         #Checking, delete print
-                        print(add_testTable)
+                        #print(add_testTable)
                     except:
                         print("Messup", sys.exc_info())
                     # Attempts to insert information into database. If it doesn't match, it catches in the except and prints it.

@@ -73,19 +73,19 @@ for file in root.childNodes:
                 # Gets information ready to be added to DB
                 # This one is for methodUID
                 try:
-                    add_methodUID = ("INSERT INTO methodUID(methodUID, Package, Class, Method) " \
-                        "VALUES (NULL, '%s', '%s', '%s')" % ( package, className, method))
+                    add_methodUID = ("INSERT INTO methodUID(methodUID, ClassUID, Method) " \
+                        "VALUES (NULL, '%s', '%s')" % ( -1, method))
 
-                    print(add_methodUID)
+                    #print(add_methodUID)
                 except:
                     print("Messup 1")
 
                 # This one goes to pmd
                 try:
                     add_pmd = ("INSERT INTO PMD(CommitUID, MethodUID, Ruleset, Rule, Line) " \
-                          "VALUES ( '%d', '%d', '%s', '%s', '%d')" % ( 0, -1, ruleset, rule, line))
+                          "VALUES ( '%d', '%d', '%s', '%s', '%d')" % ( -1, -1, ruleset, rule, line))
 
-                    print(add_pmd)
+                    #print(add_pmd)
                 except:
                     print("Messup 2", sys.exc_info())
                 # Attempts to insert information into database. If it doesn't match, it catches in the except and prints it.

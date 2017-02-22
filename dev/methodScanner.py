@@ -58,7 +58,7 @@ for line in allMethods:
                             + newClass + " to Database")
                 try:
                     cur.execute("INSERT INTO classUID(classUID, Package, Class) VALUES \
-                                    (NULL, %s, %s)",(Pacakge, newClass))
+                                    (NULL, %s, %s)", (Pacakge, newClass))
                 except e:
                     #debug
                     #print(e[0] + "|" + e[1])
@@ -130,8 +130,6 @@ for line in allMethods:
 
 
 methodsFile.close()
-
-print()
 
 # Closing connection
 connection.close()

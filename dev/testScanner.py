@@ -18,11 +18,11 @@ connection = pymysql.connect(host="152.46.20.243",
 cur = connection.cursor()
 # Connection setup
 
-methodsFile = open("tests.txt", "r" )
-allMethods = list(methodsFile)
+testsFile = open("tests.txt", "r" )
+allMethods = list(testsFile)
 
-currentClass = ""
-currentPacka = ""
+newClass = ""
+Pacakge = ""
 classUID = -1
 for line in allMethods:
     # New lines are added by the scanner, don't need 'em.
@@ -30,26 +30,26 @@ for line in allMethods:
         continue
     else:
         if "dir" in line: #for example: dir bug_tracker
-            currentPacka = line.split(" ")[1].replace("\n","")
+            Pacakge = line.split(" ")[1].replace("\n","")
             #Split the string on spaces, then take the second value
             #which is the directory/package, then remove the new line
 
         elif "class" in line or "interface" in line: #for example: public class TrackedBug {
-            currentClass = line.replace("\n","").split(" ")
+            newClass = line.replace("\n","").split(" ")
             #Remove new line, split on space.
 
             #While we haven't hit class/interface, remove previous elements.
             #Since access can be optional (none is accepted), we have to iterate until we hit
             #class/interface.  Once we get it, we delete class/interface and the first element
             #is the class name.
-            while currentClass[0] != "class" and currentClass[0] != "interface":
-                del currentClass[0]
-            del currentClass[0]
-            currentClass = currentClass[0]
+            while newClass[0] != "class" and newClass[0] != "interface":
+                del newClass[0]
+            del newClass[0]
+            newClass = newClass[0]
 
             #Check the ClassUID table for all records that match the package and class
             cur.execute("SELECT * FROM testClassUID WHERE testPackage = %s and \
-                            testClass = %s",(currentPacka, currentClass))
+                            testClass = %s",(Pacakge, newClass))
 
             #If we get any records returned, then obviously it's already in the table we don't
             #have to insert.  Otherwise, if there are no returned records, then we need to
@@ -57,12 +57,12 @@ for line in allMethods:
             if cur.rowcount == 0:
                 #debug
                 print("    [Data Miner] Detecting new test class to be added to database.  " +  
-                            "Adding " + currentClass + " to Database")
-                '''print("\nAdding record to DB.         | PKG: " + currentPacka.ljust(20) + \
-                        " | CLS: " + currentClass.ljust(30))'''
+                            "Adding " + newClass + " to Database")
+                '''print("\nAdding record to DB.         | PKG: " + Pacakge.ljust(20) + \
+                        " | CLS: " + newClass.ljust(30))'''
                 try:
                     cur.execute("INSERT INTO testClassUID(testClassUID, testPackage, testClass) \
-                                VALUES (NULL, %s, %s)",(currentPacka, currentClass))
+                                VALUES (NULL, %s, %s)",(Pacakge, newClass))
                 except e:
                     #debug
                     #print(e[0] + "|" + e[1])
@@ -70,12 +70,12 @@ for line in allMethods:
             else:
                 pass
                 #debug
-                '''print("\nRecord already exists in DB. | PKG: " + currentPacka.ljust(20) + \
-                        " | CLS: " + currentClass.ljust(20))'''
+                '''print("\nRecord already exists in DB. | PKG: " + Pacakge.ljust(20) + \
+                        " | CLS: " + newClass.ljust(20))'''
 
             #Execute the same select, so we can get the new classUID
             cur.execute("SELECT * FROM testClassUID WHERE testPackage = %s and \
-                            testClass = %s",(currentPacka, currentClass))
+                            testClass = %s",(Pacakge, newClass))
             if cur.rowcount == 0:
                 print("Somehow, we inserted and could not insert a test classUID.  Exiting.")
                 sys.exit()
@@ -115,8 +115,8 @@ for line in allMethods:
                 #debug
                 print("    [Data Miner] Detecting new test to be added to database.  Adding " \
                             + test + " to Database")
-                '''print("Adding record to DB.         | PKG: " + currentPacka.ljust(20) + " | CLS: " \
-                        + currentClass.ljust(30) + " | MTD: " + test.ljust(40))'''
+                '''print("Adding record to DB.         | PKG: " + Pacakge.ljust(20) + " | CLS: " \
+                        + newClass.ljust(30) + " | MTD: " + test.ljust(40))'''
                 try:
                     cur.execute("INSERT INTO testMethodUID(testMethodUID, testClassUID, \
                                     testMethodName) VALUES (NULL, %s, %s)", (classUID, test))
@@ -127,13 +127,11 @@ for line in allMethods:
             else:
                 pass
                 #debug
-                '''print("Record already exists in DB. | PKG: " + currentPacka.ljust(20) + " | CLS: " \
-                        + currentClass.ljust(30) + " | MTD: " + test.ljust(40))'''
+                '''print("Record already exists in DB. | PKG: " + Pacakge.ljust(20) + " | CLS: " \
+                        + newClass.ljust(30) + " | MTD: " + test.ljust(40))'''
 
 
-methodsFile.close()
-
-print()
+testsFile.close()
 
 # Closing connection
 connection.close()
