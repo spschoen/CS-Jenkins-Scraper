@@ -1,4 +1,5 @@
 #!/bin/bash
+#RZandSSwhereHere2017
 
 echo "Data Miner:"
 
