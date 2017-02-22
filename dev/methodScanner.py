@@ -54,6 +54,8 @@ for line in allMethods:
             #have to insert.  Otherwise, if there are no returned records, then we need to
             #insert them into the table.
             if cur.rowcount == 0:
+                print("    [Data Miner] Detecting new Class to be added to database.  Adding " \
+                            + newClass + " to Database")
                 try:
                     cur.execute("INSERT INTO classUID(classUID, Package, Class) VALUES \
                                     (NULL, %s, %s)",(Pacakge, newClass))
@@ -109,6 +111,8 @@ for line in allMethods:
                             (classUID, methodName))
             if cur.rowcount == 0:
                 #debug
+                print("    [Data Miner] Detecting new method to be added to database.  Adding " \
+                            + methodName + " to Database")
                 #print("PKG: " + Pacakge.ljust(20) + " | CLS: " + newClass.ljust(30) + \
                 #        " | MTD: " + methodName.ljust(40) + " | Adding to DB.")
                 try:

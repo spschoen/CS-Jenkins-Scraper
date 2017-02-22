@@ -56,8 +56,10 @@ for line in allMethods:
             #insert them into the table.
             if cur.rowcount == 0:
                 #debug
-                print("\nAdding record to DB.         | PKG: " + currentPacka.ljust(20) + \
-                        " | CLS: " + currentClass.ljust(30))
+                print("    [Data Miner] Detecting new test class to be added to database.  " +  
+                            "Adding " + currentClass + " to Database")
+                '''print("\nAdding record to DB.         | PKG: " + currentPacka.ljust(20) + \
+                        " | CLS: " + currentClass.ljust(30))'''
                 try:
                     cur.execute("INSERT INTO testClassUID(testClassUID, testPackage, testClass) \
                                 VALUES (NULL, %s, %s)",(currentPacka, currentClass))
@@ -68,8 +70,8 @@ for line in allMethods:
             else:
                 pass
                 #debug
-                print("\nRecord already exists in DB. | PKG: " + currentPacka.ljust(20) + \
-                        " | CLS: " + currentClass.ljust(20))
+                '''print("\nRecord already exists in DB. | PKG: " + currentPacka.ljust(20) + \
+                        " | CLS: " + currentClass.ljust(20))'''
 
             #Execute the same select, so we can get the new classUID
             cur.execute("SELECT * FROM testClassUID WHERE testPackage = %s and \
@@ -111,8 +113,10 @@ for line in allMethods:
                             testMethodName = '%s'" % (classUID, test))
             if cur.rowcount == 0:
                 #debug
-                print("Adding record to DB.         | PKG: " + currentPacka.ljust(20) + " | CLS: " \
-                        + currentClass.ljust(30) + " | MTD: " + test.ljust(40))
+                print("    [Data Miner] Detecting new test to be added to database.  Adding " \
+                            + test + " to Database")
+                '''print("Adding record to DB.         | PKG: " + currentPacka.ljust(20) + " | CLS: " \
+                        + currentClass.ljust(30) + " | MTD: " + test.ljust(40))'''
                 try:
                     cur.execute("INSERT INTO testMethodUID(testMethodUID, testClassUID, \
                                     testMethodName) VALUES (NULL, %s, %s)", (classUID, test))
@@ -123,8 +127,8 @@ for line in allMethods:
             else:
                 pass
                 #debug
-                print("Record already exists in DB. | PKG: " + currentPacka.ljust(20) + " | CLS: " \
-                        + currentClass.ljust(30) + " | MTD: " + test.ljust(40))
+                '''print("Record already exists in DB. | PKG: " + currentPacka.ljust(20) + " | CLS: " \
+                        + currentClass.ljust(30) + " | MTD: " + test.ljust(40))'''
 
 
 methodsFile.close()
