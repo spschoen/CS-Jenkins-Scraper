@@ -56,8 +56,8 @@ for line in allMethods:
             #insert them into the table.
             if cur.rowcount == 0:
                 #debug
-                print("    [Data Miner] Detecting new test class to be added to database.  " +  
-                            "Adding " + newClass + " to Database")
+                '''print("    [Data Miner] Detecting new test class to be added to database.  " +
+                            "Adding " + newClass + " to Database")'''
                 '''print("\nAdding record to DB.         | PKG: " + Pacakge.ljust(20) + \
                         " | CLS: " + newClass.ljust(30))'''
                 try:
@@ -66,6 +66,7 @@ for line in allMethods:
                 except e:
                     #debug
                     #print(e[0] + "|" + e[1])
+                    # TODO: email when failure happens.
                     connection.rollback()
             else:
                 pass
@@ -78,9 +79,11 @@ for line in allMethods:
                             testClass = %s",(Pacakge, newClass))
             if cur.rowcount == 0:
                 print("Somehow, we inserted and could not insert a test classUID.  Exiting.")
+                # TODO: email when failure happens.
                 sys.exit()
             elif cur.rowcount != 1:
                 print("Multiple matches for testclassUID table.  What?")
+                # TODO: email when failure happens.
                 sys.exit()
             else:
                 #Now we can actually get the number.
@@ -113,8 +116,8 @@ for line in allMethods:
                             testMethodName = '%s'" % (classUID, test))
             if cur.rowcount == 0:
                 #debug
-                print("    [Data Miner] Detecting new test to be added to database.  Adding " \
-                            + test + " to Database")
+                '''print("    [Data Miner] Detecting new test to be added to database.  Adding " \
+                            + test + " to Database")'''
                 '''print("Adding record to DB.         | PKG: " + Pacakge.ljust(20) + " | CLS: " \
                         + newClass.ljust(30) + " | MTD: " + test.ljust(40))'''
                 try:
@@ -123,6 +126,7 @@ for line in allMethods:
                 except e:
                     #debug
                     #print(e[0] + "|" + e[1])
+                    # TODO: email when failure happens.
                     connection.rollback()
             else:
                 pass
