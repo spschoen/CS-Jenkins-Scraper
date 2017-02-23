@@ -1,9 +1,23 @@
-commitUpload: started developing but couldn't get working directory correct, probably can when I'm not exhausted
+MySQL 
+- changed testTable to contain testClassUID instead of class, because that’s the purpose of testClassUID… herp derp
 
-checkstyleUpload: done
-findbugsUpload: done
-pmdUpload: done
-testFileResultsUpload:  Only works it test-reports file is within dev, but done
 
-coverageUpload: ntd
+TestFileParser 
+- has funky error where it hits the Mess-up error line at the bottom, but not exactly sure where it’s stemming from as of rn. It’s still entering the data into the table somehow tho. Only happens twice
 
+Status: done until commitUID is running
+
+
+CheckstyleUpload:
+-Some errors do not have a column number, so they will print as a -1 in the DB
+
+Status: done until commitUID is running
+
+
+findBugsUpload:
+
+Status: ntd, should be super easy at this point
+
+pmdUpload
+
+Status: ntd, should be super easy at this point

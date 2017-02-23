@@ -63,6 +63,7 @@ for first in root.childNodes:
                 className = className.split('.')[0]
                 package = package.split('/')[-2]
         for node in first.childNodes:
+            #Some errors do not have a column number, so they will print as a -1
             col = -1
             #Ignoes TEXT_NODES because they cause problems
             if node.nodeType != node.TEXT_NODE:
@@ -78,38 +79,44 @@ for first in root.childNodes:
                     source = node.getAttribute("source").split('.')[-1]
 
                 # Gets information ready to be added to DB
-                # This one is for ClassUID
+                cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s",(package, className ))
+
+                if cur.rowcount == 0: #They don't exist, so add the values into the testMethod and testClass tables
+                #Insert into classUID table first to generate the classUID for the testMethodUID table
+
+                    # Try creating a new ClassUID for this
+                    try:
+                        cur.execute("INSERT INTO classUID(classUID, Package, Class) " \
+                            "VALUES (NULL,'%s', '%s')" % ( package, className))
+                    except:
+                        print("1. Error in committing", sys.exc_info()[0]) 
+                        connection.rollback()
+
+                #By now the classUID should exist, so we call it again to make sure to grab a newly generated classUID
+                cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s",(package, className ))
+                
+                #Checking again, looking to make sure that we uploaded.
+                if cur.rowcount == 0:
+                    print("Somehow, we inserted and could not insert a classUID.  Exiting.")
+                    sys.exit()
+                elif cur.rowcount != 1:
+                    print("Multiple matches for testClassUID table.  How even?")
+                    sys.exit()
+                else:
+                    #Now we can actually get the number.
+                    classUID = int(cur.fetchone()[0])
+                
+                # Attempts to insert information into database. If it doesn't match, it catches in the except and prints it.
                 try:
-                    add_classUID = ("INSERT INTO classUID(classUID, Package, Class) " \
-                        "VALUES (NULL,'%s', '%s')" % ( package, className))
-                    #Checking, delete print
-                    print(add_classUID)
-                except:
-                    print("Messup 1")
-
-                # This one goes to checkstyle
-                try:
-                    # print(type(source))
-                    # print(type(sev))
-                    # print(type(line))
-                    # print(type(col))
-                    # print(type(mess))
-
-
                     add_checkstyle = ("INSERT INTO checkstyle (CommitUID, ClassUID, ErrorType, Severity, ErrorMessage, Line, Col) " \
-                          "VALUES ( '%d', '%d', '%s', '%s', '%s', '%d', '%d')" % ( 0, -1, source, sev, mess.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50], line, col))
+                          "VALUES ( '%d', '%d', '%s', '%s', '%s', '%d', '%d')" % ( 0, classUID, source, sev, mess.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50], line, col))
+                    cur.execute(add_checkstyle)
 
                     #Checking, delete print
                     print(add_checkstyle)
                 except:
-                    print("Messup 2", sys.exc_info()[0])
-                # Attempts to insert information into database. If it doesn't match, it catches in the except and prints it.
-                try:
-                    cur.execute(add_classUID)
-                    cur.execute(add_checkstyle)
-                    cur.commit()
-                except:
-                    print("Error in committing", sys.exc_info())
+                    print("2. Error in committing", sys.exc_info()[0])
+                    connection.rollback();
 
 # Closing connection
 connection.close()
