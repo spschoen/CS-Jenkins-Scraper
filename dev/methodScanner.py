@@ -120,7 +120,7 @@ for line in allMethods:
                         " | MTD: " + methodName.ljust(40) + " | Adding to DB.")'''
                 try:
                     cur.execute("INSERT INTO methodUID(methodUID, ClassUID, Method) VALUES \
-                                    (NULL, %s, %s)",(classUID, methodName))
+                                    (NULL, %s, %s)", (classUID, methodName))
                 except e:
                     #debug
                     #print(e[0] + "|" + e[1])
