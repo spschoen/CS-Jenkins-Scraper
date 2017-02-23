@@ -54,20 +54,21 @@ for line in allMethods:
             #have to insert.  Otherwise, if there are no returned records, then we need to
             #insert them into the table.
             if cur.rowcount == 0:
-                print("    [Data Miner] Detecting new Class to be added to database.  Adding " \
-                            + newClass + " to Database")
+                '''print("    [Data Miner] Detecting new Class to be added to database.  Adding " \
+                            + newClass + " to Database")'''
                 try:
                     cur.execute("INSERT INTO classUID(classUID, Package, Class) VALUES \
                                     (NULL, %s, %s)", (Pacakge, newClass))
                 except e:
                     #debug
                     #print(e[0] + "|" + e[1])
+                    # TODO: email when failure happens.
                     connection.rollback()
             else:
                 pass
                 #debug
-                #print("PKG: " + Pacakge.ljust(20) + " | CLS: " + newClass.ljust(20) + \
-                #            " | Already exists in DB.")
+                '''print("PKG: " + Pacakge.ljust(20) + " | CLS: " + newClass.ljust(20) + \
+                            " | Already exists in DB.")'''
 
             #Execute the same select, so we can get the new classUID
             cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s", \
@@ -76,9 +77,11 @@ for line in allMethods:
             #Checking again, looking to make sure that we uploaded.
             if cur.rowcount == 0:
                 print("Somehow, we inserted and could not insert a classUID.  Exiting.")
+                # TODO: email when failure happens.
                 sys.exit()
             elif cur.rowcount != 1:
                 print("Multiple matches for classUID table.  What?")
+                # TODO: email when failure happens.
                 sys.exit()
             else:
                 #Now we can actually get the number.
@@ -111,16 +114,17 @@ for line in allMethods:
                             (classUID, methodName))
             if cur.rowcount == 0:
                 #debug
-                print("    [Data Miner] Detecting new method to be added to database.  Adding " \
-                            + methodName + " to Database")
-                #print("PKG: " + Pacakge.ljust(20) + " | CLS: " + newClass.ljust(30) + \
-                #        " | MTD: " + methodName.ljust(40) + " | Adding to DB.")
+                '''print("    [Data Miner] Detecting new method to be added to database.  Adding " \
+                            + methodName + " to Database")'''
+                '''print("PKG: " + Pacakge.ljust(20) + " | CLS: " + newClass.ljust(30) + \
+                        " | MTD: " + methodName.ljust(40) + " | Adding to DB.")'''
                 try:
                     cur.execute("INSERT INTO methodUID(methodUID, ClassUID, Method) VALUES \
-                                    (NULL, %s, %s)",(classUID, methodName))
+                                    (NULL, %s, %s)", (classUID, methodName))
                 except e:
                     #debug
-                    print(e[0] + "|" + e[1])
+                    #print(e[0] + "|" + e[1])
+                    # TODO: email when failure happens.
                     connection.rollback()
             else:
                 pass

@@ -1,86 +1,129 @@
-# Custome commit uploader
+# Custom commit uploader
 # @authors Renata Ann Zeitler and Samuel Schoeneberger 02/2017
 
-from __future__ import print_function
-from xml.dom.minidom import parse
-import xml.dom.minidom
+# Execution: python3 commitUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT $BUILD_NUM
+# 2. WORKSPACE  : /path/to/.git (ABSOLUTE: As given by $WORKSPACE) DO NOT ADD .git
+# 3. PROJECT_ID : PW-XYZ
+# 4. GIT_COMMIT : [40 char commit hash]
+# 5. BUILD_NUM  : integer
+
 import sys
 import os
 import pymysql.cursors
+import xml.dom.minidom
+import shutil
+import subprocess
 from git import *
-from git.objects.util import *
 from datetime import date, datetime, timedelta
-import os.path as osp
-
 
 # Setting up the DB connection
-# TODO: Change this to either enter or the master IP.
-# Future people: change this to your master IP
-# Or wherever your DB is.
-connection = pymysql.connect(host="152.46.20.243",
-                                user="root",
-                                password="",
-                                db="repoinfo")
+connection = pymysql.connect(host="152.46.20.243", user="root", password="", db="repoinfo")
 cur = connection.cursor()
 
+# Getting path to .git directory.
 
-join = osp.join
+FILE_DIR = "/"
+# Iterate through the path to git to set up the directory.
+for arg in sys.argv[1].split("/"):
+    if arg != "":
+        FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
+    #print(arg.ljust(20) + " | " + FILE_DIR)
 
-# rorepo is a Repo instance pointing to the git-python repository.
-repo = Repo(self.rorepo.working_tree_dir)
-assert not repo.bare
+hash = sys.argv[2]
+repoID = sys.argv[3]
 
-#The repo of wherever this script is run.
-# repo = Repo(os.getcwd() + "/.git")
-default_pulled = 1000
+cur.execute("SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s", (hash, repoID) )
 
-#Second line *SHOULD* handle if a repo has more than 1000 commits.
-first_commits = list(repo.iter_commits('master', max_count=default_pulled))
-first_commits = list(repo.iter_commits('master', \
-                                        max_count=first_commits[0].count()))
-
-f = open(os.path.join(os.getcwd()+"\output\lines_of_code.dat"), "r")
-data = f.readlines()
-for line in data:
-    data[data.index(line)] = line.replace('\n','')
-
-
-#Gets each commit for the DB
-#i is used to make sure we aren't doing some weird duration calculation.
-i = 0
-#counts the difference in lines between each commit
-prevLines = 0;
-for commit in reversed(first_commits):
-    #Seting insert to be blank, duration to 0, and then checking if there's a
-    #Previous commit.  If there is, calculate how much time elapsed between
-    #them.
-    insert = ""
-    dur = 0
-    if i != 0:
-        # Future note to me - figure out the longest time between possible commits.
-        # and then pad out the duration with zeros to fit that.
-        last = first_commits[first_commits[0].count() - i].committed_date
-        now = commit.committed_date
-        dur = now - last
-        loc = int(data[i].replace("\n","").split(" ")[1])
-        lineDiff = loc - int(prevLines)
-
+if cur.rowcount == 0:
     try:
-        insert = "INSERT INTO commits(CommitUID, Build_Num, Author, Time, Duration, Message, LOC , LOC_DIFF)" \
-                    "VALUES (NULL, '%d', '%s', '%d', '%d', '%s', '%d', '%d')" % \
-                        (commits.Build_Num, commits.Author.name[:8], commits.committed_date, dur, \
-                        commits.message.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50], \
-                        loc, lineDiff)
-    except:
-        print("Error 1". sys.exc_info())
+        pass
+        insert = "INSERT INTO commitUID (commitUID, Hexsha, Repo) VALUES (NULL, %s, %s)"
+        cur.execute( insert, (hash, repoID) )
+    except e:
+        # debug
+        # print(e[0] + "|" + e[1])
+        # TODO: email when failure happens.
+        connection.rollback()
 
+# So that was to get the commitUID set in there.
+cur.execute("SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s", (hash, repoID) )
+
+# And this is the new CUID!
+CUID = cur.fetchone()[0]
+Build_Num = sys.argv[4]
+
+repo = Repo(path=FILE_DIR)
+tree = repo.tree()
+
+last_commit = list(repo.iter_commits(paths=FILE_DIR, max_count=2))[0]
+second_to_last_commit = list(repo.iter_commits(paths=FILE_DIR, max_count=2))[1]
+Author = last_commit.author.name
+Message = last_commit.summary
+Time = last_commit.committed_date
+
+# CLOC and parsing.
+
+LOC = 0
+
+#Verifying the CLOC is installed
+#Commented out because doesn't work on Windows.
+if shutil.which("cloc") == None:
+    print("ERROR: CLOC utility is required to be installed.")
+    print("Script exiting.")
+    sys.exit()
+
+#Sending cloc output to /dev/null
+DEVNULL = open(os.devnull, 'wb')
+
+#Commented out because doesn't work on Windows.
+subprocess.call(["cloc", FILE_DIR, "--by-file-by-lang", \
+ "--exclude-ext=xml", "--exclude-dir=gui,reference,output", \
+ "--xml", "--out=cloc.xml"], stdout=DEVNULL)
+
+#Get the parser, set it up to parse cloc.xml
+try:
+    DOMTree = xml.dom.minidom.parse('cloc.xml')
+except:
+    LOC = -1
+
+root = DOMTree.documentElement.getElementsByTagName('languages')[0]
+for node in root.childNodes:
+    if node.nodeType == node.TEXT_NODE:
+        continue;
+    if node.hasAttribute("name") and "Java" in node.getAttribute("name"):
+        if node.hasAttribute("code") and not node.getAttribute("code") == "":
+            LOC = node.getAttribute("code")
+        else:
+            sys.exit()
+
+# CLOC done.
+# LOC Diff, thanks to git, below.
+
+LOC_DIFF = 0
+
+for item in last_commit.stats.total:
+    if item == "insertions":
+        LOC_DIFF += last_commit.stats.total.get(item)
+    if item == "deletions":
+        LOC_DIFF -= last_commit.stats.total.get(item)
+
+# lololol
+Duration = Time - second_to_last_commit.committed_date
+
+commitFind = "SELECT * FROM commits WHERE CommitUID = %s and Build_Num = %s and Author = %s " + \
+                "and Time = %s and Duration = %s and LOC = %s and LOC_DIFF = %s"
+
+cur.execute( commitFind, (CUID, Build_Num, Author, Time, Duration, LOC, LOC_DIFF) )
+
+if cur.rowcount == 0:
     try:
-        cur.execute(insert)
-        cnx.commit()
-    except:
-        print("Error commiting to DB", sys.exc_info())
-
-    i += 1
-    prevLines = loc
+        insert = "INSERT INTO commits (CommitUID, Build_Num, Author, Time, Duration, Message, " + \
+                    "LOC, LOC_DIFF) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        cur.execute( insert, (CUID, Build_Num, Author, Time, Duration, Message, LOC, LOC_DIFF) )
+    except e:
+        # debug
+        # print(e[0] + "|" + e[1])
+        # TODO: email when failure happens.
+        connection.rollback()
 
 connection.close()
