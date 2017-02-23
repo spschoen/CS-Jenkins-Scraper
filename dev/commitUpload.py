@@ -1,60 +1,129 @@
 # Custom commit uploader
 # @authors Renata Ann Zeitler and Samuel Schoeneberger 02/2017
 
-# Execution: python3 commitUpload.py path/to/.git $GIT_URL $GIT_COMMIT
+# Execution: python3 commitUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT $BUILD_NUM
+# 2. WORKSPACE  : /path/to/.git (ABSOLUTE: As given by $WORKSPACE) DO NOT ADD .git
+# 3. PROJECT_ID : PW-XYZ
+# 4. GIT_COMMIT : [40 char commit hash]
+# 5. BUILD_NUM  : integer
 
 import sys
 import os
 import pymysql.cursors
+import xml.dom.minidom
+import shutil
+import subprocess
 from git import *
 from datetime import date, datetime, timedelta
 
-
 # Setting up the DB connection
-# TODO: Change this to either enter or the master IP.
-# Future people: change this to your master IP
-# Or wherever your DB is.
-connection = pymysql.connect(host="152.46.20.243",
-                                user="root",
-                                password="",
-                                db="repoinfo")
+connection = pymysql.connect(host="152.46.20.243", user="root", password="", db="repoinfo")
 cur = connection.cursor()
 
 # Getting path to .git directory.
-FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))
+
+FILE_DIR = "/"
+# Iterate through the path to git to set up the directory.
 for arg in sys.argv[1].split("/"):
-    if arg == "" or ".py" in arg:
-        continue
-    FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
+    if arg != "":
+        FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
+    #print(arg.ljust(20) + " | " + FILE_DIR)
 
-# Checking if user supplied .git directory, or just dir where .git is.
-# If the latter, add /.git
-if FILE_DIR[-4:] != ".git":
-    FILE_DIR = FILE_DIR + "/.git"
+hash = sys.argv[2]
+repoID = sys.argv[3]
 
-# repoID = PX-ABC
-# FILE_DIR = /home/jenkins/.../
-repoID = FILE_DIR.split("/")[-2][-6:]
-if repoID[0] != "P":
-    #print("Wrong directory.  If you see this, please email spschoen immediately.")
-    sys.exit()
-
-repo = Repo(FILE_DIR)
-tree = repo.tree()
-hash = repo.head.object.hexsha
-
-cur.execute("SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s", (hash, repoID))
+cur.execute("SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s", (hash, repoID) )
 
 if cur.rowcount == 0:
     try:
-        insert = "INSERT INTO commitUID (commitUID, Hexsha, Repo) VALUES (NULL, '%s', '%s')"
+        pass
+        insert = "INSERT INTO commitUID (commitUID, Hexsha, Repo) VALUES (NULL, %s, %s)"
         cur.execute( insert, (hash, repoID) )
     except e:
-        #debug
-        print(e[0] + "|" + e[1])
+        # debug
+        # print(e[0] + "|" + e[1])
         # TODO: email when failure happens.
         connection.rollback()
-else:
-    pass
+
+# So that was to get the commitUID set in there.
+cur.execute("SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s", (hash, repoID) )
+
+# And this is the new CUID!
+CUID = cur.fetchone()[0]
+Build_Num = sys.argv[4]
+
+repo = Repo(path=FILE_DIR)
+tree = repo.tree()
+
+last_commit = list(repo.iter_commits(paths=FILE_DIR, max_count=2))[0]
+second_to_last_commit = list(repo.iter_commits(paths=FILE_DIR, max_count=2))[1]
+Author = last_commit.author.name
+Message = last_commit.summary
+Time = last_commit.committed_date
+
+# CLOC and parsing.
+
+LOC = 0
+
+#Verifying the CLOC is installed
+#Commented out because doesn't work on Windows.
+if shutil.which("cloc") == None:
+    print("ERROR: CLOC utility is required to be installed.")
+    print("Script exiting.")
+    sys.exit()
+
+#Sending cloc output to /dev/null
+DEVNULL = open(os.devnull, 'wb')
+
+#Commented out because doesn't work on Windows.
+subprocess.call(["cloc", FILE_DIR, "--by-file-by-lang", \
+ "--exclude-ext=xml", "--exclude-dir=gui,reference,output", \
+ "--xml", "--out=cloc.xml"], stdout=DEVNULL)
+
+#Get the parser, set it up to parse cloc.xml
+try:
+    DOMTree = xml.dom.minidom.parse('cloc.xml')
+except:
+    LOC = -1
+
+root = DOMTree.documentElement.getElementsByTagName('languages')[0]
+for node in root.childNodes:
+    if node.nodeType == node.TEXT_NODE:
+        continue;
+    if node.hasAttribute("name") and "Java" in node.getAttribute("name"):
+        if node.hasAttribute("code") and not node.getAttribute("code") == "":
+            LOC = node.getAttribute("code")
+        else:
+            sys.exit()
+
+# CLOC done.
+# LOC Diff, thanks to git, below.
+
+LOC_DIFF = 0
+
+for item in last_commit.stats.total:
+    if item == "insertions":
+        LOC_DIFF += last_commit.stats.total.get(item)
+    if item == "deletions":
+        LOC_DIFF -= last_commit.stats.total.get(item)
+
+# lololol
+Duration = Time - second_to_last_commit.committed_date
+
+commitFind = "SELECT * FROM commits WHERE CommitUID = %s and Build_Num = %s and Author = %s " + \
+                "and Time = %s and Duration = %s and LOC = %s and LOC_DIFF = %s"
+
+cur.execute( commitFind, (CUID, Build_Num, Author, Time, Duration, LOC, LOC_DIFF) )
+
+if cur.rowcount == 0:
+    try:
+        insert = "INSERT INTO commits (CommitUID, Build_Num, Author, Time, Duration, Message, " + \
+                    "LOC, LOC_DIFF) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        cur.execute( insert, (CUID, Build_Num, Author, Time, Duration, Message, LOC, LOC_DIFF) )
+    except e:
+        # debug
+        # print(e[0] + "|" + e[1])
+        # TODO: email when failure happens.
+        connection.rollback()
 
 connection.close()

@@ -5,7 +5,6 @@
 #Uses Python 3.6
 
 #Import the actual DOM Processors/parsers
-from xml.dom.minidom import parse
 import xml.dom.minidom
 import shutil
 import sys

@@ -1,9 +1,25 @@
 #!/bin/bash
 
+# Removing these from the directory; hiding them from students.
+rm -rf ts_test
+rm -rf ts_bin
+
 echo "Data Miner:"
 
 echo "    [Data Miner] Beginning mining."
 cd $WORKDIR
+
+##################################
+# Getting Project ID for CUID    #
+##################################
+
+# echo "    [Data Miner] Acquiring ProjectID scanner"
+cp /home/jenkins/scripts/dev/splitter.sh $WORKDIR/splitter.sh
+
+# echo "    [Data Miner] Getting Project ID"
+PROJECT_ID=$(bash splitter.sh $GIT_URL)
+
+echo $PROJECT_ID
 
 ##################################
 # Uploading Commit Information.  #
@@ -15,7 +31,7 @@ cd $WORKDIR
 #cp /home/jenkins/scripts/dev/commitUpload.py $WORKDIR/commitUpload.py
 
 # echo "    [Data Miner] Executing commit information uploader"
-#python3 commitUpload.py ./
+# python3 commitUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT $BUILD_NUMBER
 
 ##################################
 # Scanning for methods           #
