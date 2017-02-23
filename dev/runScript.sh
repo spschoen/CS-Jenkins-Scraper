@@ -2,8 +2,8 @@
 #RZandSSwereHere2017
 
 # Removing these from the directory; hiding them from students.
-rm -rf ts_test
-rm -rf ts_bin
+rm -rf $WORKDIR/ts_test
+rm -rf $WORKDIR/ts_bin
 
 echo "Data Miner:"
 
@@ -14,25 +14,23 @@ cd $WORKDIR
 # Getting Project ID for CUID    #
 ##################################
 
-# echo "    [Data Miner] Acquiring ProjectID scanner"
+ echo "    [Data Miner] Acquiring ProjectID scanner"
 cp /home/jenkins/scripts/dev/splitter.sh $WORKDIR/splitter.sh
 
-# echo "    [Data Miner] Getting Project ID"
+ echo "    [Data Miner] Getting Project ID"
 PROJECT_ID=$(bash splitter.sh $GIT_URL)
-
-echo $PROJECT_ID
 
 ##################################
 # Uploading Commit Information.  #
 ##################################
 
-# echo "    [Data Miner] Commit Information uploader fails; needs review."
+ echo "    [Data Miner] Commit Information uploader fails; needs review."
 
-# echo "    [Data Miner] Acquiring commit information uploader"
-#cp /home/jenkins/scripts/dev/commitUpload.py $WORKDIR/commitUpload.py
+ echo "    [Data Miner] Acquiring commit information uploader"
+cp /home/jenkins/scripts/dev/commitUpload.py $WORKDIR/commitUpload.py
 
-# echo "    [Data Miner] Executing commit information uploader"
-# python3 commitUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT $BUILD_NUMBER
+ echo "    [Data Miner] Executing commit information uploader"
+python3 commitUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT $BUILD_NUMBER
 
 ##################################
 # Scanning for methods           #

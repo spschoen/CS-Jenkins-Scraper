@@ -2,10 +2,11 @@
 # @authors Renata Ann Zeitler and Samuel Schoeneberger 02/2017
 
 # Execution: python3 commitUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT $BUILD_NUM
-# 2. WORKSPACE  : /path/to/.git (ABSOLUTE: As given by $WORKSPACE) DO NOT ADD .git
-# 3. PROJECT_ID : PW-XYZ
-# 4. GIT_COMMIT : [40 char commit hash]
-# 5. BUILD_NUM  : integer
+# 0. commitUpload.py
+# 1. WORKSPACE  : /path/to/.git (ABSOLUTE: As given by $WORKSPACE) DO NOT ADD .git
+# 2. PROJECT_ID : PW-XYZ
+# 3. GIT_COMMIT : [40 char commit hash]
+# 4. BUILD_NUM  : integer
 
 import sys
 import os
@@ -21,16 +22,19 @@ connection = pymysql.connect(host="152.46.20.243", user="root", password="", db=
 cur = connection.cursor()
 
 # Getting path to .git directory.
-
 FILE_DIR = "/"
 # Iterate through the path to git to set up the directory.
 for arg in sys.argv[1].split("/"):
     if arg != "":
         FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
     #print(arg.ljust(20) + " | " + FILE_DIR)
+    print(FILE_DIR)
+    
+FILE_DIR += "/.git"
+print(FILE_DIR)
 
-hash = sys.argv[2]
-repoID = sys.argv[3]
+repoID = sys.argv[2]
+hash = sys.argv[3]
 
 cur.execute("SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s", (hash, repoID) )
 
