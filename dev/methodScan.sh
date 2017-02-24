@@ -9,7 +9,7 @@ function dirScan {
             dirScan "${D}"
         else
             if [[ "${D}" == *.java ]]; then
-                less "${D}" | egrep -o '(publ|priv|prot).*' | egrep -v "\*|;"
+                less "${D}" | egrep -o '(publ|priv|prot).*' | egrep -v "\*|;|interface"
                 echo ""
             fi
         fi

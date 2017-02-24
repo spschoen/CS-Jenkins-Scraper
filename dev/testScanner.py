@@ -34,7 +34,7 @@ for line in allMethods:
             #Split the string on spaces, then take the second value
             #which is the directory/package, then remove the new line
 
-        elif "class" in line or "interface" in line: #for example: public class TrackedBug {
+        elif "class" in line: #for example: public class TrackedBug {
             newClass = line.replace("\n","").split(" ")
             #Remove new line, split on space.
 
