@@ -153,9 +153,8 @@ while (count < len(filesListed)):
                             #print("Already in table, not inserting.")
 
                     except:
-                        #for error in sys.exec_info():
-                        #    print(error)
-                        print(sys.exec_info())
+                        for error in sys.exc_info():
+                            print(error)
                         connection.rollback()
     count += 1
 

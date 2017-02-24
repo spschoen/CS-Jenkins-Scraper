@@ -39,6 +39,9 @@ connection = pymysql.connect(host="152.46.20.243", user="root", password="", db=
 cur = connection.cursor()
 # Connection setup
 
+repoID = sys.argv[2]
+hash = sys.argv[3]
+
 #CommitUID getting
 CUID = -1
 commitUIDSelect = "SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s"
