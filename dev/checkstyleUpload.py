@@ -13,7 +13,7 @@ from datetime import date, datetime, timedelta
 
 # Setting up the XML to read
 FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))
-for arg in sys.argv[len(sys.argv) - 1].split("/"):
+for arg in sys.argv[1].split("/"):
     if arg == "":
         continue
     FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
