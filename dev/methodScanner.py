@@ -114,8 +114,6 @@ for line in allMethods:
                             (classUID, methodName))
             if cur.rowcount == 0:
                 #debug
-                '''print("    [Data Miner] Detecting new method to be added to database.  Adding " \
-                            + methodName + " to Database")'''
                 '''print("PKG: " + Pacakge.ljust(20) + " | CLS: " + newClass.ljust(30) + \
                         " | MTD: " + methodName.ljust(40) + " | Adding to DB.")'''
                 try:

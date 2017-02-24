@@ -18,7 +18,7 @@ for arg in sys.argv[len(sys.argv) - 1].split("/"):
     if arg == "":
         continue
     FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
-    print(FILE_DIR)
+    #print(FILE_DIR)
 
 #Getting to the right directory
 filesListed = os.listdir(FILE_DIR + '/test-reports/');
@@ -67,26 +67,26 @@ while (count < len(filesListed)):
                     else:
                         passing = "P"
 
-                    # If we get any records returned, then it's already in the table. Otherwise, if there are no returned records, 
+                    # If we get any records returned, then it's already in the table. Otherwise, if there are no returned records,
                     # then we need to insert them into the table.
                     cur.execute("SELECT * FROM testMethodUID WHERE testMethodName = %s", (testName))
-                    
+
                     if cur.rowcount == 0: #The values do not exist in the testMethodUID table
-                        
+
                         #Check if classUID values at least exist, which may not be possible if methodUID doesn't exist, but it's double checking.
                         cur.execute("SELECT * FROM testClassUID WHERE testPackage = %s and testClass = %s",(package, className ))
 
                         if cur.rowcount == 0: #They don't exist, so add the values into the testMethod and testClass tables
-                        
+
                             #Insert into classUID table first to generate the classUID for the testMethodUID table
                             try:
                                 cur.execute("INSERT INTO testClassUID(testClassUID, testClass, testPackage)" \
                                 " VALUES (NULL, %s, %s)", (className, package))
-                                
+
                             except e:
                                 print(e[0] + "|" + e[1])
                                 connection.rollback()
-                        
+
                             #Execute the same select, so we can get the new classUID
                             cur.execute("SELECT * FROM testClassUID WHERE testPackage = %s and testClass = %s",(package, className ))
                             #Checking again, looking to make sure that we uploaded.
@@ -104,11 +104,11 @@ while (count < len(filesListed)):
                             try:
                                 cur.execute("INSERT INTO testMethodUID(testMethodUID, testClassUID, testMethodName)" \
                                 " VALUES (NULL, %s, %s)", (classUID, testName))
-                                
+
                             except e:
                                 print(e[0] + "|" + e[1])
                                 connection.rollback()
-                        else: 
+                        else:
                         #The classUID existed somehow but the methodUID didn't, so go ahead and add in the method
                         #Execute the same select, so we can get the new classUID
                             cur.execute("SELECT * FROM testClassUID WHERE testPackage = %s and testClass = %s",(package, className ))
@@ -127,7 +127,7 @@ while (count < len(filesListed)):
                             try:
                                 cur.execute("INSERT INTO testMethodUID(testMethodUID, testClassUID, testMethodName)" \
                                 " VALUES (NULL, %s, %s)", (classUID, testName))
-                                
+
                             except e:
                                 print(e[0] + "|" + e[1])
                                 connection.rollback()
@@ -136,7 +136,7 @@ while (count < len(filesListed)):
                         #Execute yet again so we can get the new classUID if it was created above
                         cur.execute("SELECT * FROM testClassUID WHERE testPackage = %s and testClass = %s",(package, className ))
                         classUID = int(cur.fetchone()[0])
-#TODO: get commitUID
+                        #TODO: get commitUID
                         add_testTable = ("INSERT INTO testTable (CommitUID, testClassUID, Name, Passing) " \
                               "VALUES ( '%d', '%s', '%s', '%s')" % ( -1, classUID, testName, passing))
 
