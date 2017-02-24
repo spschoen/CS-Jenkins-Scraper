@@ -129,7 +129,7 @@ for first in root.childNodes:
                 # Attempts to insert information into database. If it doesn't match, it catches in the except and prints it.
                 try:
                     add_checkstyle = ("INSERT INTO checkstyle (CommitUID, ClassUID, ErrorType, Severity, ErrorMessage, Line, Col) " \
-                          "VALUES ( '%d', '%d', '%s', '%s', '%s', '%d', '%d')" % ( 0, classUID, source, sev, mess.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50], line, col))
+                          "VALUES ( '%d', '%d', '%s', '%s', '%s', '%d', '%d')" % ( CUID, classUID, source, sev, mess.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50], line, col))
                     cur.execute(add_checkstyle)
 
                     #Checking, delete print
