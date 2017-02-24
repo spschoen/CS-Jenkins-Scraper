@@ -26,6 +26,26 @@ except:
     print("Script exiting.")
     sys.exit()
 
+#CommitUID getting
+CUID = -1
+commitUIDSelect = "SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s"
+cur.execute(commitUIDSelect, (hash, repoID) )
+if cur.rowcount == 0: #UID doesn't exist
+    try:
+        cur.execute("INSERT INTO commitUID(commitUID, Hexsha, Repo) VALUES \
+                        (NULL, %s, %s)", (hash, repoID) )
+        cur.execute(commitUIDSelect, (hash, repoID) )
+        CUID = cur.fetchone()[0]
+    except e:
+        print(e[0] + "|" + e[1])
+        connection.rollback()
+else:
+    CUID = cur.fetchone()[0] #Get the actual UID since it exists
+
+if CUID == -1:
+    print("Could not get CUID")
+    sys.exit()
+
 #root is the first <> element in the XML file.
 root = checkstalio.documentElement
 
@@ -79,7 +99,7 @@ for first in root.childNodes:
                     source = node.getAttribute("source").split('.')[-1]
 
                 # Gets information ready to be added to DB
-                cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s",(package, className ))
+                cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s",(package, className))
 
                 if cur.rowcount == 0: #They don't exist, so add the values into the testMethod and testClass tables
                 #Insert into classUID table first to generate the classUID for the testMethodUID table
@@ -93,7 +113,7 @@ for first in root.childNodes:
                         connection.rollback()
 
                 #By now the classUID should exist, so we call it again to make sure to grab a newly generated classUID
-                cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s",(package, className ))
+                cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s",(package, className))
 
                 #Checking again, looking to make sure that we uploaded.
                 if cur.rowcount == 0:
