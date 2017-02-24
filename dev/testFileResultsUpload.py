@@ -76,7 +76,7 @@ while (count < len(filesListed)):
                         #Check if classUID values at least exist, which may not be possible if methodUID doesn't exist, but it's double checking.
                         cur.execute("SELECT * FROM testClassUID WHERE testPackage = %s and testClass = %s",(package, className ))
 
-                        if cur.rowcount == 0: #They don't exist, so add the values into the testMethod and testClass tables
+                        if cur.rowcount == 0: #It don't exist, so add the values into the testClass table
 
                             #Insert into classUID table first to generate the classUID for the testMethodUID table
                             try:
@@ -86,62 +86,36 @@ while (count < len(filesListed)):
                             except e:
                                 print(e[0] + "|" + e[1])
                                 connection.rollback()
-
-                            #Execute the same select, so we can get the new classUID
+                        
+                            #Execute the same select, so we can get the new classUID if there is one and create the methodUID
                             cur.execute("SELECT * FROM testClassUID WHERE testPackage = %s and testClass = %s",(package, className ))
-                            #Checking again, looking to make sure that we uploaded.
-                            if cur.rowcount == 0:
-                                print("Somehow, we inserted and could not insert a testClassUID.  Exiting.")
-                                sys.exit()
-                            elif cur.rowcount != 1:
-                                print("Multiple matches for testClassUID table.  How even?")
-                                sys.exit()
-                            else:
-                                #Now we can actually get the number.
-                                classUID = int(cur.fetchone()[0])
-
-                            #Insert into methodUID table
-                            try:
-                                cur.execute("INSERT INTO testMethodUID(testMethodUID, testClassUID, testMethodName)" \
-                                " VALUES (NULL, %s, %s)", (classUID, testName))
-
-                            except e:
-                                print(e[0] + "|" + e[1])
-                                connection.rollback()
+                        #Checking again, looking to make sure that we uploaded.
+                        if cur.rowcount == 0:
+                            print("Somehow, we inserted and could not insert a testClassUID.  Exiting.")
+                            sys.exit()
+                        elif cur.rowcount != 1:
+                            print("Multiple matches for testClassUID table.  How even?")
+                            sys.exit()
                         else:
-                        #The classUID existed somehow but the methodUID didn't, so go ahead and add in the method
-                        #Execute the same select, so we can get the new classUID
-                            cur.execute("SELECT * FROM testClassUID WHERE testPackage = %s and testClass = %s",(package, className ))
-                            #Checking again, looking to make sure that we uploaded.
-                            if cur.rowcount == 0:
-                                print("Somehow, we inserted and could not insert a testClassUID.  Exiting.")
-                                sys.exit()
-                            elif cur.rowcount != 1:
-                                print("Multiple matches for testClassUID table.  How even?")
-                                sys.exit()
-                            else:
-                                #Now we can actually get the number.
-                                classUID = int(cur.fetchone()[0])
+                            #Now we can actually get the number.
+                            classUID = int(cur.fetchone()[0])
 
-                            #Insert into methodUID table
-                            try:
-                                cur.execute("INSERT INTO testMethodUID(testMethodUID, testClassUID, testMethodName)" \
-                                " VALUES (NULL, %s, %s)", (classUID, testName))
+                        #Insert into methodUID table
+                        try:
+                            cur.execute("INSERT INTO testMethodUID(testMethodUID, testClassUID, testMethodName)" \
+                            " VALUES (NULL, %s, %s)", (classUID, testName))
 
-                            except e:
-                                print(e[0] + "|" + e[1])
-                                connection.rollback()
+                        except e:
+                            print(e[0] + "|" + e[1])
+                            connection.rollback()
                     #By now the classUID and methodUID should exist, and things should be all peachy.
                     try:
                         #Execute yet again so we can get the new classUID if it was created above
-                        cur.execute("SELECT * FROM testClassUID WHERE testPackage = %s and testClass = %s",(package, className ))
-                        classUID = int(cur.fetchone()[0])
                         #TODO: get commitUID
                         add_testTable = ("INSERT INTO testTable (CommitUID, testClassUID, Name, Passing) " \
                               "VALUES ( '%d', '%s', '%s', '%s')" % ( -1, classUID, testName, passing))
 
                     except:
-                        print(testName) # Here for testing purposes, delete afterwards
                         print("Messup", sys.exc_info())
                         connection.rollback()
 
