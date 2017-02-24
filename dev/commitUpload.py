@@ -125,7 +125,7 @@ if cur.rowcount == 0:
         insert = "INSERT INTO commits (CommitUID, Build_Num, Author, Time, Duration, Message, " + \
                     "LOC, LOC_DIFF) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
         cur.execute( insert, (CUID, Build_Num, Author, Time, Duration, Message, LOC, LOC_DIFF) )
-    except e:
+    except:
         # debug
         # print(e[0] + "|" + e[1])
         # TODO: email when failure happens.

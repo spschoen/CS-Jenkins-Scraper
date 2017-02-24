@@ -34,6 +34,18 @@ except:
 repoID = sys.argv[2]
 hash = sys.argv[3]
 
+#root is the first <> element in the XML file.
+root = findbuggies.documentElement
+
+# Set up to read XML
+
+# Setting up the DB connection
+# TODO: Change this to either enter or the master IP.
+# Future people: change this to your master IP
+# Or wherever your DB is.
+connection = pymysql.connect(host="152.46.20.243", user="root", password="", db="repoinfo")
+cur = connection.cursor()
+
 #CommitUID getting
 CUID = -1
 commitUIDSelect = "SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s"
@@ -53,19 +65,6 @@ else:
 if CUID == -1:
     print("Could not get CUID")
     sys.exit()
-
-
-#root is the first <> element in the XML file.
-root = findbuggies.documentElement
-
-# Set up to read XML
-
-# Setting up the DB connection
-# TODO: Change this to either enter or the master IP.
-# Future people: change this to your master IP
-# Or wherever your DB is.
-connection = pymysql.connect(host="152.46.20.243", user="root", password="", db="repoinfo")
-cur = connection.cursor()
 
 if root.hasAttribute("version"):
     pass

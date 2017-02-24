@@ -26,26 +26,6 @@ except:
     print("Script exiting.")
     sys.exit()
 
-#CommitUID getting
-CUID = -1
-commitUIDSelect = "SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s"
-cur.execute(commitUIDSelect, (hash, repoID) )
-if cur.rowcount == 0: #UID doesn't exist
-    try:
-        cur.execute("INSERT INTO commitUID(commitUID, Hexsha, Repo) VALUES \
-                        (NULL, %s, %s)", (hash, repoID) )
-        cur.execute(commitUIDSelect, (hash, repoID) )
-        CUID = cur.fetchone()[0]
-    except e:
-        print(e[0] + "|" + e[1])
-        connection.rollback()
-else:
-    CUID = cur.fetchone()[0] #Get the actual UID since it exists
-
-if CUID == -1:
-    print("Could not get CUID")
-    sys.exit()
-
 #root is the first <> element in the XML file.
 root = checkstalio.documentElement
 
@@ -55,12 +35,29 @@ root = checkstalio.documentElement
 # TODO: Change this to either enter or the master IP.
 # Future people: change this to your master IP
 # Or wherever your DB is.
-connection = pymysql.connect(host="152.46.20.243",
-                                user="root",
-                                password="",
-                                db="repoinfo")
+connection = pymysql.connect(host="152.46.20.243", user="root", password="", db="repoinfo")
 cur = connection.cursor()
 # Connection setup
+
+#CommitUID getting
+CUID = -1
+commitUIDSelect = "SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s"
+cur.execute(commitUIDSelect, (hash, repoID) )
+if cur.rowcount == 0: #UID doesn't exist
+try:
+    cur.execute("INSERT INTO commitUID(commitUID, Hexsha, Repo) VALUES \
+                    (NULL, %s, %s)", (hash, repoID) )
+    cur.execute(commitUIDSelect, (hash, repoID) )
+    CUID = cur.fetchone()[0]
+except e:
+    print(e[0] + "|" + e[1])
+    connection.rollback()
+else:
+CUID = cur.fetchone()[0] #Get the actual UID since it exists
+
+if CUID == -1:
+print("Could not get CUID")
+sys.exit()
 
 #A basic for loop, to look at all the nodes (<> elements) inside the file node
 #(which is now the root node) and print out their information to the DB.
