@@ -31,6 +31,12 @@ if "test-reports" not in FILE_DIR:
 repoID = sys.argv[2]
 hash = sys.argv[3]
 
+# Setting up the DB connection
+# Future people: change this to your master IP
+# Or wherever your DB is.
+connection = pymysql.connect(host="152.46.20.243", user="root", password="", db="repoinfo")
+cur = connection.cursor()
+
 #CommitUID getting
 CUID = -1
 commitUIDSelect = "SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s"
@@ -50,12 +56,6 @@ else:
 if CUID == -1:
     print("Could not get CUID")
     sys.exit()
-
-# Setting up the DB connection
-# Future people: change this to your master IP
-# Or wherever your DB is.
-connection = pymysql.connect(host="152.46.20.243", user="root", password="", db="repoinfo")
-cur = connection.cursor()
 
 count = 0
 

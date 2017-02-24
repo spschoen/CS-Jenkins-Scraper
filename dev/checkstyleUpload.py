@@ -44,16 +44,16 @@ CUID = -1
 commitUIDSelect = "SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s"
 cur.execute(commitUIDSelect, (hash, repoID) )
 if cur.rowcount == 0: #UID doesn't exist
-try:
-    cur.execute("INSERT INTO commitUID(commitUID, Hexsha, Repo) VALUES \
-                    (NULL, %s, %s)", (hash, repoID) )
-    cur.execute(commitUIDSelect, (hash, repoID) )
-    CUID = cur.fetchone()[0]
-except e:
-    print(e[0] + "|" + e[1])
-    connection.rollback()
+    try:
+        cur.execute("INSERT INTO commitUID(commitUID, Hexsha, Repo) VALUES \
+                        (NULL, %s, %s)", (hash, repoID) )
+        cur.execute(commitUIDSelect, (hash, repoID) )
+        CUID = cur.fetchone()[0]
+    except e:
+        print(e[0] + "|" + e[1])
+        connection.rollback()
 else:
-CUID = cur.fetchone()[0] #Get the actual UID since it exists
+    CUID = cur.fetchone()[0] #Get the actual UID since it exists
 
 if CUID == -1:
 print("Could not get CUID")

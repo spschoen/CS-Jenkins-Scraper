@@ -31,6 +31,16 @@ except:
 repoID = sys.argv[2]
 hash = sys.argv[3]
 
+#root is the first <> element in the XML file.
+root = pmd.documentElement
+
+# Set up to read XML
+
+# Setting up the DB connection
+# TODO: Change this to either enter or the master IP.
+connection = pymysql.connect(host="152.46.20.243", user="root", passwd="", db="repoinfo")
+cur = connection.cursor()
+
 #CommitUID getting
 CUID = -1
 commitUIDSelect = "SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s"
@@ -50,16 +60,6 @@ else:
 if CUID == -1:
     print("Could not get CUID")
     sys.exit()
-
-#root is the first <> element in the XML file.
-root = pmd.documentElement
-
-# Set up to read XML
-
-# Setting up the DB connection
-# TODO: Change this to either enter or the master IP.
-connection = pymysql.connect(host="152.46.20.243", user="root", passwd="", db="repoinfo")
-cur = connection.cursor()
 
 package = ""
 className = ""
