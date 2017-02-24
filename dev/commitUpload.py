@@ -29,7 +29,7 @@ for arg in sys.argv[1].split("/"):
         FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
     #print(arg.ljust(20) + " | " + FILE_DIR)
     print(FILE_DIR)
-    
+
 FILE_DIR += "/.git"
 print(FILE_DIR)
 
@@ -55,9 +55,13 @@ cur.execute("SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s", (hash, re
 # And this is the new CUID!
 CUID = cur.fetchone()[0]
 Build_Num = sys.argv[4]
-
-repo = Repo(path=FILE_DIR)
-tree = repo.tree()
+try:
+    repo = Repo(path=FILE_DIR)
+    tree = repo.tree()
+except e:
+    # debug
+    print(e[0] + "|" + e[1])
+    # TODO: email when failure happens.
 
 last_commit = list(repo.iter_commits(paths=FILE_DIR, max_count=2))[0]
 second_to_last_commit = list(repo.iter_commits(paths=FILE_DIR, max_count=2))[1]
