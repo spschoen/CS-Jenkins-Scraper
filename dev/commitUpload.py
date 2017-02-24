@@ -1,4 +1,3 @@
-# Custom commit uploader
 # @authors Renata Ann Zeitler and Samuel Schoeneberger 02/2017
 
 # Execution: python3 commitUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT $BUILD_NUM
@@ -29,9 +28,6 @@ for arg in sys.argv[1].split("/"):
         FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
     #print(arg.ljust(20) + " | " + FILE_DIR)
 
-#Curious to see what happens.
-#FILE_DIR += "/.git"
-
 repoID = sys.argv[2]
 hash = sys.argv[3]
 
@@ -42,14 +38,14 @@ if cur.rowcount == 0:
         pass
         insert = "INSERT INTO commitUID (commitUID, Hexsha, Repo) VALUES (NULL, %s, %s)"
         cur.execute( insert, (hash, repoID) )
+
+        # So that was to get the commitUID set in there.
+        cur.execute("SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s", (hash, repoID) )
     except e:
         # debug
         # print(e[0] + "|" + e[1])
         # TODO: email when failure happens.
         connection.rollback()
-
-# So that was to get the commitUID set in there.
-cur.execute("SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s", (hash, repoID) )
 
 # And this is the new CUID!
 CUID = cur.fetchone()[0]
