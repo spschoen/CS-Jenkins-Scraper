@@ -79,15 +79,6 @@ for node in root.childNodes:
                 if classNode.nodeName == "SourceLine":
                     if classNode.hasAttribute("start"):
                         line = int(classNode.getAttribute("start"))
-        print("PKG: " + package)
-        print("CLN: " + className)
-        print("MTD: " + method)
-        print("BGT: " + bugType)
-        print("PRI: " + str(priority))
-        print("RNK: " + str(rank))
-        print("CAT: " + cat)
-        print("LIN: " + str(line))
-        print("------------------")
 
         # If we get any records returned, then it's already in the table. Otherwise, if there are no returned records,
         # then we need to insert them into the table.
@@ -140,7 +131,8 @@ for node in root.childNodes:
                   "VALUES ( '%d', '%d', '%s', '%d', '%d', '%s', '%d')" % ( -1, methodUID, bugType, priority, rank, cat, line))
             cur.execute(add_findbugs)
         except:
-            print("Messup", sys.exc_info())
+            for error in sys.exec_info():
+                print(error)
 
 # Closing connection
 connection.close()
