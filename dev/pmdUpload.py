@@ -1,23 +1,23 @@
-#Building custom Checkstyle parser since none exist. RIP @me
 # @authors Renata Ann Zeitler and Samuel Schoeneberger 02/2017
 
-from __future__ import print_function
-from xml.dom.minidom import parse
+# Execution: python3 pmdUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT
+# 0. pmdUpload.py
+# 1. WORKSPACE  : /path/to/test-reports/
+# 2. PROJECT_ID : PW-XYZ
+# 3. GIT_COMMIT : [40 char commit hash]
+
 import xml.dom.minidom
 import sys
 import os
 import pymysql.cursors
 from git import *
 from git.objects.util import *
-from datetime import date, datetime, timedelta
-# import pymysql.connector
 
 # Setting up the XML to read
 FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))
-for arg in sys.argv[len(sys.argv) - 1].split("/"):
-    if arg == "":
-        continue
-    FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
+for arg in sys.argv[1].split("/"):
+    if arg != "":
+        FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
     #print(FILE_DIR)
 
 try:
@@ -34,13 +34,7 @@ root = pmd.documentElement
 
 # Setting up the DB connection
 # TODO: Change this to either enter or the master IP.
-# Future people: change this to your master IP
-# Or wherever your DB is.
-# Don't forget to
-connection = pymysql.connect(host="152.46.20.243",
-   user="root",
-   passwd="",
-   db="repoinfo")
+connection = pymysql.connect(host="152.46.20.243", user="root", passwd="", db="repoinfo")
 cur = connection.cursor()
 
 package = ""
@@ -69,6 +63,44 @@ for file in root.childNodes:
                     className = node.getAttribute("class")
                 if node.hasAttribute("method"):
                     method = node.getAttribute("method")
+
+
+    cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s", (package, className) )
+    classUID = -1
+    if cur.rowcount == 0:
+        insertClassUID = "INSERT INTO classUID(classUID, Package, Class) VALUES (NULL, %s, %s)"
+        try:
+            cur.execute(insertClassUID, (package, className) )
+        except:
+            for error in sys.exec_info():
+                print(error)
+            sys.exit()
+
+    cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s", (package, className) )
+    classUID = int(cur.fetchone()[0])
+
+    cur.execute("SELECT * FROM methodUID WHERE ClassUID = %s and Method = %s")
+    methodUID = -1
+    if cur.rowcount == 0:
+        insertClassUID = "INSERT INTO methodUID(methodUID, ClasUID, Method) VALUES (NULL, %s, %s)"
+        try:
+            cur.execute(insertClassUID, (package, className) )
+        except:
+            for error in sys.exec_info():
+                print(error)
+            sys.exit()
+
+    cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s", (package, className) )
+    classUID = int(cur.fetchone()[0])
+
+    insertMethodUID = "INSERT INTO methodUID(methodUID, ClassUID, Method) VALUES (NULL, %s, %s)"
+
+    try:
+
+    except:
+        for error in sys.exec_info():
+            print(error)
+        sys.exit()
 
                 # Gets information ready to be added to DB
                 # This one is for methodUID

@@ -1,14 +1,11 @@
-#Custom TestFile parser
 # @authors Renata Ann Zeitler and Samuel Schoeneberger 02/2017
 
 # Execution: python3 testFileResultsUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT
-# 0. commitUpload.py
+# 0. testFileResultsUpload.py
 # 1. WORKSPACE  : /path/to/test-reports/
 # 2. PROJECT_ID : PW-XYZ
 # 3. GIT_COMMIT : [40 char commit hash]
 
-from __future__ import print_function
-from xml.dom.minidom import parse
 import xml.dom.minidom
 import sys
 import os
