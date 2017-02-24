@@ -62,6 +62,7 @@ except:
     # debug
     for error in sys.exc_info():
         print("Unexpected error:", error)
+    sys.exit()
     # TODO: email when failure happens.
 
 last_commit = list(repo.iter_commits(paths=FILE_DIR, max_count=2))[0]
