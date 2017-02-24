@@ -6,7 +6,6 @@
 # 1. WORKSPACE  : /path/to/working/directory
 # 2. PROJECT_ID : PW-XYZ
 # 3. GIT_COMMIT : [40 char commit hash]
-# 4. BUILD_NUM  : integer
 
 from xml.dom.minidom import parse
 import xml.dom.minidom
@@ -30,6 +29,31 @@ except:
     print("ERROR: Could not interact with file", FILE_DIR + '/findbugs.xml')
     print("Script exiting.")
     sys.exit()
+
+# Getting commitUID info
+repoID = sys.argv[2]
+hash = sys.argv[3]
+
+#CommitUID getting
+CUID = -1
+commitUIDSelect = "SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s"
+cur.execute(commitUIDSelect, (hash, repoID) )
+if cur.rowcount == 0: #UID doesn't exist
+    try:
+        cur.execute("INSERT INTO commitUID(commitUID, Hexsha, Repo) VALUES \
+                        (NULL, %s, %s)", (hash, repoID) )
+        cur.execute(commitUIDSelect, (hash, repoID) )
+        CUID = cur.fetchone()[0]
+    except e:
+        print(e[0] + "|" + e[1])
+        connection.rollback()
+else:
+    CUID = cur.fetchone()[0] #Get the actual UID since it exists
+
+if CUID == -1:
+    print("Could not get CUID")
+    sys.exit()
+
 
 #root is the first <> element in the XML file.
 root = findbuggies.documentElement
@@ -79,15 +103,6 @@ for node in root.childNodes:
                 if classNode.nodeName == "SourceLine":
                     if classNode.hasAttribute("start"):
                         line = int(classNode.getAttribute("start"))
-        print("PKG: " + package)
-        print("CLN: " + className)
-        print("MTD: " + method)
-        print("BGT: " + bugType)
-        print("PRI: " + str(priority))
-        print("RNK: " + str(rank))
-        print("CAT: " + cat)
-        print("LIN: " + str(line))
-        print("------------------")
 
         # If we get any records returned, then it's already in the table. Otherwise, if there are no returned records,
         # then we need to insert them into the table.
