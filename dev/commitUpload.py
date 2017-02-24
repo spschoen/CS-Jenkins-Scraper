@@ -115,10 +115,14 @@ for item in last_commit.stats.total:
 # lololol
 Duration = Time - second_to_last_commit.committed_date
 
-commitFind = "SELECT * FROM commits WHERE CommitUID = %s and Build_Num = %s and Author = %s " + \
+# Build number is ignored because, fun fact, it can be different while
+# the rest is the same.  This causes an error where commitUID is the say when it should be
+# changed.  I can't explain it well but trust me.
+# TODO: update Build_Num in this situation
+commitFind = "SELECT * FROM commits WHERE CommitUID = %s and Author = %s " + \
                 "and Time = %s and Duration = %s and LOC = %s and LOC_DIFF = %s"
 
-cur.execute( commitFind, (CUID, Build_Num, Author, Time, Duration, LOC, LOC_DIFF) )
+cur.execute( commitFind, (CUID, Author, Time, Duration, LOC, LOC_DIFF) )
 
 if cur.rowcount == 0:
     try:
