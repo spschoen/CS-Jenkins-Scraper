@@ -27,6 +27,30 @@ except:
     print("Script exiting.")
     sys.exit()
 
+# Getting commitUID info
+repoID = sys.argv[2]
+hash = sys.argv[3]
+
+#CommitUID getting
+CUID = -1
+commitUIDSelect = "SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s"
+cur.execute(commitUIDSelect, (hash, repoID) )
+if cur.rowcount == 0:
+    try:
+        cur.execute("INSERT INTO commitUID(commitUID, Hexsha, Repo) VALUES \
+                        (NULL, %s, %s)", (hash, repoID) )
+        cur.execute(commitUIDSelect, (hash, repoID) )
+        CUID = cur.fetchone()[0]
+    except e:
+        print(e[0] + "|" + e[1])
+        connection.rollback()
+else:
+    CUID = int(cur.fetchone()[0])
+
+if CUID == -1:
+    print("Could not get CUID")
+    sys.exit()
+
 #root is the first <> element in the XML file.
 root = pmd.documentElement
 
@@ -64,7 +88,12 @@ for file in root.childNodes:
                 if node.hasAttribute("method"):
                     method = node.getAttribute("method")
 
+    # holy FRAK it fits on the 100 limit!
+    if package == "" or className == "" or method == "" or rule == "" or ruleset == "" or line == 0:
+        #print("Could not find an attribute.  Rerun with print debugging.")
+        continue
 
+    # Class UID
     cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s", (package, className) )
     classUID = -1
     if cur.rowcount == 0:
@@ -79,53 +108,31 @@ for file in root.childNodes:
     cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s", (package, className) )
     classUID = int(cur.fetchone()[0])
 
-    cur.execute("SELECT * FROM methodUID WHERE ClassUID = %s and Method = %s")
+    # Method UID
+    cur.execute("SELECT * FROM methodUID WHERE ClassUID = %s and Method = %s", (classUID, method) )
     methodUID = -1
     if cur.rowcount == 0:
-        insertClassUID = "INSERT INTO methodUID(methodUID, ClasUID, Method) VALUES (NULL, %s, %s)"
+        insertMethodUID = "INSERT INTO methodUID(methodUID, ClasUID, Method) VALUES (NULL, %s, %s)"
         try:
-            cur.execute(insertClassUID, (package, className) )
+            cur.execute(insertMethodUID, (classUID, method) )
         except:
             for error in sys.exec_info():
                 print(error)
             sys.exit()
 
-    cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s", (package, className) )
-    classUID = int(cur.fetchone()[0])
+    cur.execute("SELECT * FROM methodUID WHERE ClassUID = %s and Method = %s", (classUID, method) )
+    methodUID = int(cur.fetchone()[0])
 
-    insertMethodUID = "INSERT INTO methodUID(methodUID, ClassUID, Method) VALUES (NULL, %s, %s)"
+    # PMD time!
+    insertPMD = "INSERT INTO PMD(CommitUID, MethodUID, Ruleset, Rule, Line) "
+    insertPMD += "VALUES ( '%d', '%d', '%s', '%s', '%d')"
 
     try:
-
+        cur.execute(insertPMD, ( CUID, methodUID, ruleset, rule, line) )
     except:
         for error in sys.exec_info():
             print(error)
         sys.exit()
-
-                # Gets information ready to be added to DB
-                # This one is for methodUID
-                try:
-                    add_methodUID = ("INSERT INTO methodUID(methodUID, ClassUID, Method) " \
-                        "VALUES (NULL, '%s', '%s')" % ( -1, method))
-
-                    #print(add_methodUID)
-                except:
-                    print("Messup 1")
-
-                # This one goes to pmd
-                try:
-                    add_pmd = ("INSERT INTO PMD(CommitUID, MethodUID, Ruleset, Rule, Line) " \
-                          "VALUES ( '%d', '%d', '%s', '%s', '%d')" % ( -1, -1, ruleset, rule, line))
-
-                    #print(add_pmd)
-                except:
-                    print("Messup 2", sys.exc_info())
-                # Attempts to insert information into database. If it doesn't match, it catches in the except and prints it.
-                try:
-                    cur.execute(add_methodUID)
-                    cur.execute(add_pmd)
-                except:
-                    print("Error in committing", sys.exc_info())
 
 # Closing connection
 connection.close()
