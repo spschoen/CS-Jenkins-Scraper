@@ -1,6 +1,12 @@
 #Custom TestFile parser
 # @authors Renata Ann Zeitler and Samuel Schoeneberger 02/2017
 
+# Execution: python3 testFileResultsUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT
+# 0. commitUpload.py
+# 1. WORKSPACE  : /path/to/test-reports/
+# 2. PROJECT_ID : PW-XYZ
+# 3. GIT_COMMIT : [40 char commit hash]
+
 from __future__ import print_function
 from xml.dom.minidom import parse
 import xml.dom.minidom
@@ -11,27 +17,48 @@ from git import *
 from git.objects.util import *
 from datetime import date, datetime, timedelta
 
-
 # Setting up the XML to read
 FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))
-for arg in sys.argv[len(sys.argv) - 1].split("/"):
-    if arg == "":
-        continue
-    FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
+for arg in sys.argv[1].split("/"):
+    if arg != "":
+        FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
     #print(FILE_DIR)
 
 #Getting to the right directory
-filesListed = os.listdir(FILE_DIR + '/test-reports/');
+if "test-reports" not in FILE_DIR:
+    filesListed = os.listdir(FILE_DIR + '/test-reports/');
+
+# Directory to XML set up.
+
+# Getting commitUID info
+repoID = sys.argv[2]
+hash = sys.argv[3]
+
+#CommitUID getting
+CUID = -1
+commitUIDSelect = "SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s"
+cur.execute(commitUIDSelect, (hash, repoID) )
+if cur.rowcount == 0:
+    try:
+        cur.execute("INSERT INTO commitUID(commitUID, Hexsha, Repo) VALUES \
+                        (NULL, %s, %s)", (hash, repoID) )
+        cur.execute(commitUIDSelect, (hash, repoID) )
+        CUID = cur.fetchone()[0]
+    except e:
+        print(e[0] + "|" + e[1])
+        connection.rollback()
+else:
+    CUID = cur.fetchone()[0]
+
+if CUID == -1:
+    print("Could not get CUID")
+    sys.exit()
 
 # Setting up the DB connection
 # Future people: change this to your master IP
 # Or wherever your DB is.
-connection = pymysql.connect(host="152.46.20.243",
-                                user="root",
-                                password="",
-                                db="repoinfo")
+connection = pymysql.connect(host="152.46.20.243", user="root", password="", db="repoinfo")
 cur = connection.cursor()
-
 
 count = 0
 
@@ -134,22 +161,26 @@ while (count < len(filesListed)):
                     #By now the classUID and methodUID should exist, and things should be all peachy.
                     try:
                         #Execute yet again so we can get the new classUID if it was created above
-                        cur.execute("SELECT * FROM testClassUID WHERE testPackage = %s and testClass = %s",(package, className ))
+                        cur.execute("SELECT * FROM testClassUID WHERE testPackage = %s and \
+                                        testClass = %s", (package, className) )
                         classUID = int(cur.fetchone()[0])
-                        #TODO: get commitUID
-                        add_testTable = ("INSERT INTO testTable (CommitUID, testClassUID, Name, Passing) " \
-                              "VALUES ( '%d', '%s', '%s', '%s')" % ( -1, classUID, testName, passing))
+
+                        find = "SELECT * FROM testTable WHERE CommitUID = %s and testClassUID = %s "
+                        find += "and Name = %s and Passing = %s"
+
+                        cur.execute(find, (CUID, classUID, testName, passing) )
+
+                        if cur.rowcount == 0:
+                            testInsert = "INSERT INTO testTable(CommitUID, testClassUID, Name, "
+                            testInsert += "Passing ) VALUES (%s, %s, %s, %s)"
+                            cur.execute(testInsert, (CUId, classUID, testName, passing) )
+                        else:
+                            pass
+                            #print("Already in table, not inserting.")
 
                     except:
-                        print(testName) # Here for testing purposes, delete afterwards
-                        print("Messup", sys.exc_info())
+                        print(sys.exc_info())
                         connection.rollback()
-
-                    # Attempts to insert information into database. If it doesn't match, it catches in the except and prints it.
-                    try:
-                        cur.execute(add_testTable)
-                    except:
-                        print("Error in committing", sys.exc_info())
     count += 1
 
 # Closing connection
