@@ -147,14 +147,15 @@ while (count < len(filesListed)):
                         if cur.rowcount == 0:
                             testInsert = "INSERT INTO testTable(CommitUID, testClassUID, Name, "
                             testInsert += "Passing ) VALUES (%s, %s, %s, %s)"
-                            cur.execute(testInsert, (CUId, classUID, testName, passing) )
+                            cur.execute(testInsert, (CUID, classUID, testName, passing) )
                         else:
                             pass
                             #print("Already in table, not inserting.")
 
                     except:
-                        for error in sys.exec_info():
-                            print(error)
+                        #for error in sys.exec_info():
+                        #    print(error)
+                        print(sys.exec_info())
                         connection.rollback()
     count += 1
 

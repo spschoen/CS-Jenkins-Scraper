@@ -56,8 +56,8 @@ else:
     CUID = cur.fetchone()[0] #Get the actual UID since it exists
 
 if CUID == -1:
-print("Could not get CUID")
-sys.exit()
+    print("Could not get CUID")
+    sys.exit()
 
 #A basic for loop, to look at all the nodes (<> elements) inside the file node
 #(which is now the root node) and print out their information to the DB.

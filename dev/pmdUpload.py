@@ -125,13 +125,14 @@ for file in root.childNodes:
 
     # PMD time!
     insertPMD = "INSERT INTO PMD(CommitUID, MethodUID, Ruleset, Rule, Line) "
-    insertPMD += "VALUES ( '%d', '%d', '%s', '%s', '%d')"
+    insertPMD += "VALUES ( %s, %d, %s, %s, %d )"
 
     try:
         cur.execute(insertPMD, ( CUID, methodUID, ruleset, rule, line) )
     except:
-        for error in sys.exec_info():
-            print(error)
+        #for error in sys.exec_info():
+        #    print(error)
+        print(sys.exec_info())
         sys.exit()
 
 # Closing connection
