@@ -89,12 +89,12 @@ for first in root.childNodes:
                         cur.execute("INSERT INTO classUID(classUID, Package, Class) " \
                             "VALUES (NULL,'%s', '%s')" % ( package, className))
                     except:
-                        print("1. Error in committing", sys.exc_info()[0]) 
+                        print("1. Error in committing", sys.exc_info()[0])
                         connection.rollback()
 
                 #By now the classUID should exist, so we call it again to make sure to grab a newly generated classUID
                 cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s",(package, className ))
-                
+
                 #Checking again, looking to make sure that we uploaded.
                 if cur.rowcount == 0:
                     print("Somehow, we inserted and could not insert a classUID.  Exiting.")
@@ -105,7 +105,7 @@ for first in root.childNodes:
                 else:
                     #Now we can actually get the number.
                     classUID = int(cur.fetchone()[0])
-                
+
                 # Attempts to insert information into database. If it doesn't match, it catches in the except and prints it.
                 try:
                     add_checkstyle = ("INSERT INTO checkstyle (CommitUID, ClassUID, ErrorType, Severity, ErrorMessage, Line, Col) " \
@@ -113,7 +113,7 @@ for first in root.childNodes:
                     cur.execute(add_checkstyle)
 
                     #Checking, delete print
-                    print(add_checkstyle)
+                    #print(add_checkstyle)
                 except:
                     print("2. Error in committing", sys.exc_info()[0])
                     connection.rollback();

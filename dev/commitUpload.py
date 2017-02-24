@@ -28,10 +28,9 @@ for arg in sys.argv[1].split("/"):
     if arg != "":
         FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
     #print(arg.ljust(20) + " | " + FILE_DIR)
-    print(FILE_DIR)
 
-FILE_DIR += "/.git"
-print(FILE_DIR)
+#Curious to see what happens.
+#FILE_DIR += "/.git"
 
 repoID = sys.argv[2]
 hash = sys.argv[3]
@@ -65,8 +64,8 @@ except:
     sys.exit()
     # TODO: email when failure happens.
 
-last_commit = list(repo.iter_commits(paths=FILE_DIR, max_count=2))[0]
-second_to_last_commit = list(repo.iter_commits(paths=FILE_DIR, max_count=2))[1]
+last_commit = list(repo.iter_commits(paths=FILE_DIR))[0]
+second_to_last_commit = list(repo.iter_commits(paths=FILE_DIR))[1]
 Author = last_commit.author.name
 Message = last_commit.summary
 Time = last_commit.committed_date

@@ -1,11 +1,18 @@
 #!/bin/bash
 #RZandSSwereHere2017
 
+echo ""
+
 # Removing these from the directory; hiding them from students.
 rm -rf $WORKDIR/ts_test
 rm -rf $WORKDIR/ts_bin
 
 echo "Data Miner:"
+
+# TODO: Make this work without logging in.  Probably easier than I think.
+#cd /home/jenkins/scripts/
+#git pull
+#cd $WORKDIR
 
 echo "    [Data Miner] Beginning mining."
 cd $WORKDIR
@@ -101,10 +108,10 @@ python3 pmdUpload.py ./
 # echo "    [Data Miner] Test Results uploader fails; needs review."
 
 # echo "    [Data Miner] Acquiring Test Results uploader"
-#cp /home/jenkins/scripts/dev/testFileResultsUpload.py $WORKDIR/testFileResultsUpload.py
+cp /home/jenkins/scripts/dev/testFileResultsUpload.py $WORKDIR/testFileResultsUpload.py
 
 # echo "    [Data Miner] Executing Test Results uploader"
-#python3 testFileResultsUpload.py ./
+python3 testFileResultsUpload.py ./
 
 ##################################
 # [Next Step in data process]    #
@@ -121,6 +128,8 @@ rm -f *.sh *.py *.txt
 
 echo "    [Data Miner] Mining complete."
 cd ..
+
+echo ""
 
 #echo $BUILD_NUMBER
 #this just works, fwiw
