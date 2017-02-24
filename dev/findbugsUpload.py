@@ -148,7 +148,7 @@ for node in root.childNodes:
         # This one goes to findbugs
         try:
             add_findbugs = ("INSERT INTO findBugs(CommitsUID, MethodUID, BugType, Priority, Rank, Category, Line) " \
-                  "VALUES ( '%d', '%d', '%s', '%d', '%d', '%s', '%d')" % ( -1, methodUID, bugType, priority, rank, cat, line))
+                  "VALUES ( '%d', '%d', '%s', '%d', '%d', '%s', '%d')" % ( CUID, methodUID, bugType, priority, rank, cat, line))
             cur.execute(add_findbugs)
         except:
             for error in sys.exec_info():
