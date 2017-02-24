@@ -58,9 +58,10 @@ Build_Num = sys.argv[4]
 try:
     repo = Repo(path=FILE_DIR)
     tree = repo.tree()
-except e:
+except:
     # debug
-    print(e[0] + "|" + e[1])
+    for error in sys.exc_info():
+        print("Unexpected error:", error)
     # TODO: email when failure happens.
 
 last_commit = list(repo.iter_commits(paths=FILE_DIR, max_count=2))[0]
