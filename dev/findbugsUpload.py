@@ -64,10 +64,7 @@ root = findbuggies.documentElement
 # TODO: Change this to either enter or the master IP.
 # Future people: change this to your master IP
 # Or wherever your DB is.
-connection = pymysql.connect(host="152.46.20.243",
-                                user="root",
-                                password="",
-                                db="repoinfo")
+connection = pymysql.connect(host="152.46.20.243", user="root", password="", db="repoinfo")
 cur = connection.cursor()
 
 if root.hasAttribute("version"):
@@ -155,7 +152,8 @@ for node in root.childNodes:
                   "VALUES ( '%d', '%d', '%s', '%d', '%d', '%s', '%d')" % ( -1, methodUID, bugType, priority, rank, cat, line))
             cur.execute(add_findbugs)
         except:
-            print("Messup", sys.exc_info())
+            for error in sys.exec_info():
+                print(error)
 
 # Closing connection
 connection.close()
