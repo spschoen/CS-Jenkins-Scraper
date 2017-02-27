@@ -126,7 +126,7 @@ python3 testFileResultsUpload.py ./ $PROJECT_ID $GIT_COMMIT
 cp /home/jenkins/scripts/dev/coverageUpload.py $WORKDIR/coverageUpload.py
 
  echo "    [Data Miner] Executing Coverage uploader"
-python3 coverageUpload.py ./ $WORKDIR $PROJECT_ID $GIT_COMMIT
+python3 coverageUpload.py $WORKDIR $PROJECT_ID $GIT_COMMIT
 
 ##################################
 # Cleaning up the local dir.     #
