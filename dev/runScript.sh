@@ -102,10 +102,8 @@ cp /home/jenkins/scripts/dev/pmdUpload.py $WORKDIR/pmdUpload.py
 python3 pmdUpload.py ./ $PROJECT_ID $GIT_COMMIT
 
 ##################################
-# [Next Step in data process]    #
+# Test Results uploading.        #
 ##################################
-
- echo "    [Data Miner] Test Results uploader fails; needs review."
 
  echo "    [Data Miner] Acquiring Test Results uploader"
 cp /home/jenkins/scripts/dev/testFileResultsUpload.py $WORKDIR/testFileResultsUpload.py
@@ -114,10 +112,14 @@ cp /home/jenkins/scripts/dev/testFileResultsUpload.py $WORKDIR/testFileResultsUp
 python3 testFileResultsUpload.py ./ $PROJECT_ID $GIT_COMMIT
 
 ##################################
-# [Next Step in data process]    #
+# Coverage uploading.            #
 ##################################
 
- # some code goes here.
+ echo "    [Data Miner] Acquiring Coverage uploader"
+cp /home/jenkins/scripts/dev/coverageUpload.py $WORKDIR/coverageUpload.py
+
+ echo "    [Data Miner] Executing Coverage uploader"
+python3 coverageUpload.py ./ $WORKDIR $PROJECT_ID $GIT_COMMIT
 
 ##################################
 # Cleaning up the local dir.     #
