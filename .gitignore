@@ -96,3 +96,5 @@ cloc.xml
 .DS_Store
 methods.txt
 tests.txt
+site/
+jacoco/

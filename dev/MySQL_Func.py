@@ -79,7 +79,6 @@ def getClassUID(IP, user, pw, DB, className, package):
         try:
             insert = "INSERT INTO classUID(classUID, Package, Class) VALUES (Null, %s, %s)"
             cur.execute(insert, (package, className))
-            raise ValueError("This is a simple error message to force badness.")
         except e:
             ErrorString = e[0] + "\n----------\n"
             ErrorString += e[1] + "\n----------\n"
@@ -114,7 +113,6 @@ def getClassUID(IP, user, pw, DB, className, package):
     else:
         try:
             insert = "INSERT INTO classUID(classUID, Package, Class) VALUES (Null, %s, %s)"
-            raise ValueError("This is a simple error message to force badness.")
         except:
             ErrorString = str(sys.exc_info()[0]) + "\n----------\n"
             ErrorString += str(sys.exc_info()[1]) + "\n----------\n"

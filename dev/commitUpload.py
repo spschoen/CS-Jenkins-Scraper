@@ -14,7 +14,6 @@ import xml.dom.minidom
 import shutil
 import subprocess
 from git import *
-from datetime import date, datetime, timedelta
 
 # Setting up the DB connection
 connection = pymysql.connect(host="152.46.20.243", user="root", password="", db="repoinfo")
