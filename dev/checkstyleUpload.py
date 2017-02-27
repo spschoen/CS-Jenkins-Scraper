@@ -1,15 +1,10 @@
 #Building custom Checkstyle parser since none exist. RIP @me
 # @authors Renata Ann Zeitler and Samuel Schoeneberger 02/2017
 
-from __future__ import print_function
-from xml.dom.minidom import parse
 import xml.dom.minidom
 import sys
 import os
 import pymysql.cursors
-from git import *
-from git.objects.util import *
-from datetime import date, datetime, timedelta
 
 # Setting up the XML to read
 FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))

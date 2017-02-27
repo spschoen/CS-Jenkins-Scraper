@@ -1,43 +1,62 @@
-from xml.dom.minidom import parse
-import xml.dom.minidom
+"""
+@authors Samuel Schoeneberger 02/2017
+
+Execution: python3 csvReader.py $WORKSPACE $PROJECT_ID $GIT_COMMIT
+0. commitUpload.py
+1. WORKSPACE  : /path/to/report.csv (DO NOT INCLUDE report.csv)
+2. PROJECT_ID : PW-XYZ
+3. GIT_COMMIT : [40 char commit hash]
+"""
+
+import csv
 import sys
 import os
-import pymysql.cursors
-from git import *
-from git.objects.util import *
+import pymysql
+import MySQL_Func
 
-# Setting up the XML to read
-FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))
-for arg in sys.argv[len(sys.argv) - 1].split("/"):
-    if arg == "":
-        continue
-    FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
-    #print(FILE_DIR)
-
-try:
-    checkstalio = xml.dom.minidom.parse(FILE_DIR + '/checkstyle.xml')
-except:
-    print("ERROR: Could not interact with file", FILE_DIR + '/checkstyle.xml')
-    print("Script exiting.")
+if len(sys.argv) != 4:
+    print("Did not get expected args.")
     sys.exit()
 
-#root is the first <> element in the XML file.
-root = checkstalio.documentElement
+# TODO: CHANGE THESE IN PRODUCTION
+IP = "152.46.20.243"
+user = "root"
+pw = ""
+DB = "repoinfo"
 
-# Set up to read XML
+connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
+cur = connection.cursor()
 
-# Setting up the DB connection
-# TODO: Change this to either enter or the master IP.
-# Future people: change this to your master IP
-# Or wherever your DB is.
-connection = pymysql.connect(host="152.46.20.243",
-                                user="root",
-                                password="",
-                                db="repoinfo")
-cur = cnx.cursor()
-# Connection setup
+# Getting path to report.csv
+FILE_DIR = "/"
+# Iterate through $WORKSPACE to set up the directory.
+for arg in sys.argv[1].split("/"):
+    if arg != "":
+        FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
 
-# TODO: Actual code goes here.
+repoID = sys.argv[2]
+hash = sys.argv[3]
 
-# Closing connection
-cnx.close()
+commitUID = MySQL_Func.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
+
+# TODO: take argument
+csvfile = open('site/jacoco/report.csv', newline='')
+report = csv.DictReader(csvfile, delimiter=',')
+for row in report:
+    if "gui" not in row['PACKAGE'].lower() and row['CLASS'][-4:].lower() != "test":
+        classUID = MySQL_Func.getClassUID(
+                        IP=IP,
+                        user=user,
+                        pw=pw,
+                        DB=DB,
+                        className=row['CLASS'].split(".")[-1],
+                        package=row['PACKAGE'].split(".")[-1])
+        coverage = int(row['LINE_COVERED']) / (int(row['LINE_MISSED']) + int(row['LINE_COVERED']))
+
+        insert = "INSERT INTO coverage(CommitUID, ClassUID, Line) VALUES (%s, %s, %s)"
+        try:
+            cur.execute(insert, (commitUID, classUID, str(round(coverage * 100))))
+        except:
+            #TODO: Email on Failure
+            for error in sys.exc_info():
+                print(error)
