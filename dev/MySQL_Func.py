@@ -53,33 +53,13 @@ def getMethodUID(IP, user, pw, DB, method, className, package):
             ErrorString = e[0] + "\n----------\n"
             ErrorString += e[1] + "\n----------\n"
             ErrorString += e[2]
-            fromMail = "spschoen.alerts@gmail.com"
-            to = "spschoen.alerts@gmail.com"
-            subject = "Failure to insert into methodUID!"
-            body = "The following insert statement failed:\n\n"
-            body += "%s\n\n".format(insert)
-            body += "With the following variables (package | class):\n\n"
-            body += "%s | %s".format(classUID, method)
-            body += "The following error message was produced:\n\n%s".format(ErrorString)
-
-            email_text = """\
-            From: %s,
-            To: %s,
-            Subject: %s
-
-            %s
-            """, (fromMail, ", ".join(to), subject, body)
-            try:
-                server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-                server.ehlo()
-                # TODO: SECURE THE PASSWORD BUT FOR NOW YOU HAVE TO EDIT IT IN.
-                server.login("spschoen.alerts@gmail.com", "PASSWORD")
-                server.sendmail(fromMail, to, email_text)
-                server.close()
-            except:
-                print("Couldn't even send an email, wot")
-                for error in sys.exc_info():
-                    print(error)
+            sendFailEmail("Failure to insert into methodUID!",
+                            "The following insert statement failed: ",
+                            insert,
+                            "The variables were: ",
+                            ErrorString,
+                            package,
+                            className)
 
     cur.execute(select, (package, className))
     methodUID = str(cur.fetchone()[0])
@@ -133,33 +113,13 @@ def getClassUID(IP, user, pw, DB, className, package):
             ErrorString = e[0] + "\n----------\n"
             ErrorString += e[1] + "\n----------\n"
             ErrorString += e[2]
-            fromMail = "spschoen.alerts@gmail.com"
-            to = "spschoen.alerts@gmail.com"
-            subject = "Failure to insert into classUID!"
-            body = "The following insert statement failed:\n\n"
-            body += "%s\n\n".format(insert)
-            body += "With the following variables (package | class):\n\n"
-            body += "%s | %s".format(package, className)
-            body += "The following error message was produced:\n\n%s".format(ErrorString)
-
-            email_text = """\
-            From: %s,
-            To: %s,
-            Subject: %s
-
-            %s
-            """, (fromMail, ", ".join(to), subject, body)
-            try:
-                server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-                server.ehlo()
-                # TODO: SECURE THE PASSWORD BUT FOR NOW YOU HAVE TO EDIT IT IN.
-                server.login("spschoen.alerts@gmail.com", "PASSWORD")
-                server.sendmail(fromMail, to, email_text)
-                server.close()
-            except:
-                print("Couldn't even send an email, wot")
-                for error in sys.exc_info():
-                    print(error)
+            sendFailEmail("Failure to insert into classUID!",
+                            "The following insert statement failed: ",
+                            insert,
+                            "The variables were: ",
+                            ErrorString,
+                            package,
+                            className)
 
     cur.execute(select, (package, className))
     classUID = str(cur.fetchone()[0])
@@ -170,7 +130,7 @@ def getClassUID(IP, user, pw, DB, className, package):
 def getCommitUID(IP, user, pw, DB, hash, repoID):
     """
     getCommitUID will take args to connect to a Database, as well as
-    the Project ID and commit Hash, to get the correct commitUID.
+    the Project ID and commit hash, to get the correct commitUID.
     Will create a commitUID if it doesn't exist.
 
     @author Samuel Schoeneberger
@@ -199,15 +159,72 @@ def getCommitUID(IP, user, pw, DB, hash, repoID):
     cur.execute(commitUIDSelect, (hash, repoID) )
     if cur.rowcount == 0: #UID doesn't exist
         try:
-            cur.execute("INSERT INTO commitUID(commitUID, Hexsha, Repo) VALUES \
-                            (NULL, %s, %s)", (hash, repoID) )
+            insert = "INSERT INTO commitUID(commitUID, Hexsha, Repo) VALUES  (NULL, %s, %s)"
+            cur.execute(insert, (hash, repoID) )
             cur.execute(commitUIDSelect, (hash, repoID) )
             CUID = str(cur.fetchone()[0])
         except e:
-            print(e[0] + "|" + e[1])
+            sendFailEmail("Failure to insert commitUID!",
+                            "The following insert failed: ",
+                            insert,
+                            "The variables were: ",
+                            "[traceback]",
+                            hash,
+                            repoID)
             connection.rollback()
     else:
         CUID = str(cur.fetchone()[0]) #Get the actual UID since it exists
 
     connection.close()
     return CUID
+
+def sendFailEmail(subject, failure_message, command, variable_list, trace, *variables):
+    """
+    Emails information provided to alert system.
+
+    @author Samuel Schoeneberger
+    @version 1.0
+
+    @param subject         - the subject of the email to send
+                             "Failure to [do a thing]"
+    @param failure_message - the first line of the email.
+                             "The following [command] failed:"
+    @param variable_list   - the line containing the descriptions of the variables.
+                             "With the following variables ([variable 1] | [variable 2] | ...):"
+    @param trace           - the trace, should be created by concatenating the traceback.
+    @param variables       - the list of variables that are related to the variable list.
+
+    @return methodUID, the UID of the method in the methodUID table.
+    """
+    fromMail = "spschoen.alerts@gmail.com"
+    to = "spschoen.alerts@gmail.com"
+
+    body = failure_message + "\n\n" + command + "\n\n"
+    body += str(variable_list) + "\n\n"
+    body += str(list(variables)) + "\n\n"
+    body += "The following error message was produced:\n\n" + str(trace)
+
+    email_text = """\
+    From: %s,
+    To: %s,
+    Subject: %s
+
+    %s
+    """, (fromMail, ", ".join(to), subject, body)
+
+    email_text = "From: " + fromMail + ",\n"
+    email_text += "To: " + to + ",\n"
+    email_text += "Subject: " + subject + "\n\n"
+    email_text += body
+
+    try:
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.ehlo()
+        # TODO: SECURE THE PASSWORD BUT FOR NOW YOU HAVE TO EDIT IT IN.
+        server.login("spschoen.alerts@gmail.com", "PASSWORD")
+        server.sendmail(fromMail, to, str(email_text))
+        server.close()
+    except:
+        print("Couldn't even send an email, wot")
+        for error in sys.exc_info():
+            print(error + "")
