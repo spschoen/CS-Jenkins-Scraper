@@ -18,6 +18,13 @@ echo "    [Data Miner] Beginning mining."
 cd $WORKDIR
 
 ##################################
+# Grabbing the library.          #
+##################################
+
+ echo "    [Data Miner] Pulling library functions."
+cp /home/jenkins/scripts/dev/MySQL_Func.py $WORKDIR/MySQL_Func.py
+
+##################################
 # Getting Project ID for CUID    #
 ##################################
 
