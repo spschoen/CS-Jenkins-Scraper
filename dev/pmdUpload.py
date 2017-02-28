@@ -9,9 +9,8 @@
 import xml.dom.minidom
 import sys
 import os
-import pymysql.cursors
-from git import *
-from git.objects.util import *
+import pymysql
+import MySQL_Func
 
 # Setting up the XML to read
 FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))
@@ -38,28 +37,17 @@ root = pmd.documentElement
 
 # Setting up the DB connection
 # TODO: Change this to either enter or the master IP.
-connection = pymysql.connect(host="152.46.20.243", user="root", passwd="", db="repoinfo")
+# TODO: CHANGE THESE IN PRODUCTION
+IP = "152.46.20.243"
+user = "root"
+pw = ""
+DB = "repoinfo"
+
+connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
 
 #CommitUID getting
-CUID = -1
-commitUIDSelect = "SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s"
-cur.execute(commitUIDSelect, (hash, repoID) )
-if cur.rowcount == 0:
-    try:
-        cur.execute("INSERT INTO commitUID(commitUID, Hexsha, Repo) VALUES \
-                        (NULL, %s, %s)", (hash, repoID) )
-        cur.execute(commitUIDSelect, (hash, repoID) )
-        CUID = cur.fetchone()[0]
-    except e:
-        print(e[0] + "|" + e[1])
-        connection.rollback()
-else:
-    CUID = int(cur.fetchone()[0])
-
-if CUID == -1:
-    print("Could not get CUID")
-    sys.exit()
+CUID = MySQL_Func.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
 
 package = ""
 className = ""
@@ -87,6 +75,8 @@ for file in root.childNodes:
                     className = node.getAttribute("class")
                 if node.hasAttribute("method"):
                     method = node.getAttribute("method")
+    else:
+        continue
 
     # holy FRAK it fits on the 100 limit!
     if package == "" or className == "" or method == "" or rule == "" or ruleset == "" or line == 0:
@@ -94,45 +84,28 @@ for file in root.childNodes:
         continue
 
     # Class UID
-    cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s", (package, className) )
-    classUID = -1
-    if cur.rowcount == 0:
-        insertClassUID = "INSERT INTO classUID(classUID, Package, Class) VALUES (NULL, %s, %s)"
-        try:
-            cur.execute(insertClassUID, (package, className) )
-        except:
-            for error in sys.exec_info():
-                print(error)
-            sys.exit()
-
-    cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s", (package, className) )
-    classUID = int(cur.fetchone()[0])
-
-    # Method UID
-    cur.execute("SELECT * FROM methodUID WHERE ClassUID = %s and Method = %s", (classUID, method) )
-    methodUID = -1
-    if cur.rowcount == 0:
-        insertMethodUID = "INSERT INTO methodUID(methodUID, ClasUID, Method) VALUES (NULL, %s, %s)"
-        try:
-            cur.execute(insertMethodUID, (classUID, method) )
-        except:
-            for error in sys.exec_info():
-                print(error)
-            sys.exit()
-
-    cur.execute("SELECT * FROM methodUID WHERE ClassUID = %s and Method = %s", (classUID, method) )
-    methodUID = int(cur.fetchone()[0])
+    methodUID = MySQL_Func.getClassUID(IP=IP, user=user, pw=pw, DB=DB, className=className,
+                                        package=package, method=method)
 
     # PMD time!
     insertPMD = "INSERT INTO PMD(CommitUID, MethodUID, Ruleset, Rule, Line) "
     insertPMD += "VALUES ( %s, %s, %s, %s, %s )"
 
     try:
-        cur.execute(insertPMD, ( str(CUID), str(methodUID), str(ruleset), str(rule), str(line)) )
+        cur.execute(insertPMD, (str(CUID), str(methodUID), str(ruleset), str(rule), str(line)))
     except:
-        for error in sys.exc_info():
-            print(error)
-        sys.exit()
+        connection.rollback()
+        ErrorString = sys.exc_info()[0] + "\n----------\n"
+        ErrorString += sys.exc_info()[1] + "\n----------\n"
+        ErrorString += sys.exc_info()[2]
+
+        v_list = "(CommitUID, MethodUID, Ruleset, Rule, Line)"
+        MySQL_Func.sendFailEmail("Failed to insert into PMD table!",
+                                    "The following insert failed:",
+                                    insertPMD,
+                                    v_list,
+                                    ErrorString,
+                                    str(CUID), str(methodUID), str(ruleset), str(rule), str(line))
 
 # Closing connection
 connection.close()

@@ -4,7 +4,8 @@
 import xml.dom.minidom
 import sys
 import os
-import pymysql.cursors
+import pymysql
+import MySQL_Func
 
 # Setting up the XML to read
 FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))
@@ -17,6 +18,7 @@ for arg in sys.argv[1].split("/"):
 try:
     checkstalio = xml.dom.minidom.parse(FILE_DIR + '/checkstyle.xml')
 except:
+    #TODO: error email
     print("ERROR: Could not interact with file", FILE_DIR + '/checkstyle.xml')
     print("Script exiting.")
     sys.exit()
@@ -30,7 +32,13 @@ root = checkstalio.documentElement
 # TODO: Change this to either enter or the master IP.
 # Future people: change this to your master IP
 # Or wherever your DB is.
-connection = pymysql.connect(host="152.46.20.243", user="root", password="", db="repoinfo")
+# TODO: CHANGE THESE IN PRODUCTION
+IP = "152.46.20.243"
+user = "root"
+pw = ""
+DB = "repoinfo"
+
+connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
 # Connection setup
 
@@ -38,24 +46,7 @@ repoID = sys.argv[2]
 hash = sys.argv[3]
 
 #CommitUID getting
-CUID = -1
-commitUIDSelect = "SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s"
-cur.execute(commitUIDSelect, (hash, repoID) )
-if cur.rowcount == 0: #UID doesn't exist
-    try:
-        cur.execute("INSERT INTO commitUID(commitUID, Hexsha, Repo) VALUES \
-                        (NULL, %s, %s)", (hash, repoID) )
-        cur.execute(commitUIDSelect, (hash, repoID) )
-        CUID = cur.fetchone()[0]
-    except e:
-        print(e[0] + "|" + e[1])
-        connection.rollback()
-else:
-    CUID = cur.fetchone()[0] #Get the actual UID since it exists
-
-if CUID == -1:
-    print("Could not get CUID")
-    sys.exit()
+CUID = MySQL_Func.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
 
 #A basic for loop, to look at all the nodes (<> elements) inside the file node
 #(which is now the root node) and print out their information to the DB.
@@ -72,11 +63,10 @@ for first in root.childNodes:
     if first.nodeType != first.TEXT_NODE:
         #Ignore messages about tabs
         if first.hasAttribute("name"):
-            if first.hasAttribute("name"):
-                package = first.getAttribute("name")
-                className = package.split('/')[-1]
-                className = className.split('.')[0]
-                package = package.split('/')[-2]
+            package = first.getAttribute("name")
+            className = package.split('/')[-1]
+            className = className.split('.')[0]
+            package = package.split('/')[-2]
         for node in first.childNodes:
             #Some errors do not have a column number, so they will print as a -1
             col = -1
@@ -90,48 +80,34 @@ for first in root.childNodes:
                     sev = node.getAttribute("severity")
                 if node.hasAttribute("message"):
                     mess = node.getAttribute("message")
+                    mess = mess.replace("\\","\\\\").replace('\'','\\\'')[:50]
                 if node.hasAttribute("source"):
                     source = node.getAttribute("source").split('.')[-1]
 
                 # Gets information ready to be added to DB
-                cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s",(package, className))
+                classUID = MySQL_Func.getClassUID(IP=IP, user=user, pw=pw, DB=DB,
+                                        className=className, package=package)
 
-                if cur.rowcount == 0: #They don't exist, so add the values into the testMethod and testClass tables
-                #Insert into classUID table first to generate the classUID for the testMethodUID table
-
-                    # Try creating a new ClassUID for this
-                    try:
-                        cur.execute("INSERT INTO classUID(classUID, Package, Class) " \
-                            "VALUES (NULL,'%s', '%s')" % ( package, className))
-                    except:
-                        print("1. Error in committing", sys.exc_info()[0])
-                        connection.rollback()
-
-                #By now the classUID should exist, so we call it again to make sure to grab a newly generated classUID
-                cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s",(package, className))
-
-                #Checking again, looking to make sure that we uploaded.
-                if cur.rowcount == 0:
-                    print("Somehow, we inserted and could not insert a classUID.  Exiting.")
-                    sys.exit()
-                elif cur.rowcount != 1:
-                    print("Multiple matches for testClassUID table.  How even?")
-                    sys.exit()
-                else:
-                    #Now we can actually get the number.
-                    classUID = int(cur.fetchone()[0])
-
-                # Attempts to insert information into database. If it doesn't match, it catches in the except and prints it.
+                # Attempts to insert information into database.
+                # If it doesn't match, it catches in the except and prints it.
+                add_checkstyle = "INSERT INTO checkstyle (CommitUID, ClassUID, ErrorType, "
+                add_checkstyle += "Severity, ErrorMessage, Line, Col) VALUES "
+                add_checkstyle += " ( '%d', '%d', '%s', '%s', '%s', '%d', '%d')"
                 try:
-                    add_checkstyle = ("INSERT INTO checkstyle (CommitUID, ClassUID, ErrorType, Severity, ErrorMessage, Line, Col) " \
-                          "VALUES ( '%d', '%d', '%s', '%s', '%s', '%d', '%d')" % ( CUID, classUID, source, sev, mess.replace('\n\n',' - ').replace('\n','').replace('\'','\\\'')[:50], line, col))
-                    cur.execute(add_checkstyle)
-
-                    #Checking, delete print
-                    #print(add_checkstyle)
+                    cur.execute(add_checkstyle, (CUID, classUID, source, sev, mess, line, col))
                 except:
-                    print("2. Error in committing", sys.exc_info()[0])
-                    connection.rollback();
+                    connection.rollback()
+                    ErrorString = sys.exc_info()[0] + "\n----------\n"
+                    ErrorString += sys.exc_info()[1] + "\n----------\n"
+                    ErrorString += sys.exc_info()[2]
+
+                    v_list = "(CommitUID, ClassUID, ErrorType, Severity, ErrorMessage, Line, Col)"
+                    MySQL_Func.sendFailEmail("Failed to insert into checkstyle table!",
+                                                "The following insert failed:",
+                                                add_checkstyle,
+                                                v_list,
+                                                ErrorString,
+                                                CUID, classUID, source, sev, mess, line, col)
 
 # Closing connection
 connection.close()

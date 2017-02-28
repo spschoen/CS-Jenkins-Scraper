@@ -1,7 +1,8 @@
+# TODO: WRITE LIBRARY FUNCTIONS TO MAKE THIS TINY.
+
 import sys
-import pymysql.cursors
-from git import *
-from git.objects.util import *
+import pymysql
+import MySQL_Func
 '''
     testScanner.py is a python file that will read tests.txt
     for all methods and classes in a student's directory,
@@ -18,7 +19,12 @@ connection = pymysql.connect(host="152.46.20.243",
 cur = connection.cursor()
 # Connection setup
 
-testsFile = open("tests.txt", "r" )
+try:
+    testsFile = open("tests.txt", "r" )
+except:
+    for error in sys.exc_info():
+        print(error + "")
+    sys.exit()
 allMethods = list(testsFile)
 
 newClass = ""

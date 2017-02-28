@@ -9,14 +9,20 @@
 
 import sys
 import os
-import pymysql.cursors
+import pymysql
 import xml.dom.minidom
 import shutil
 import subprocess
 from git import *
+import MySQL_Func
 
-# Setting up the DB connection
-connection = pymysql.connect(host="152.46.20.243", user="root", password="", db="repoinfo")
+# TODO: CHANGE THESE IN PRODUCTION
+IP = "152.46.20.243"
+user = "root"
+pw = ""
+DB = "repoinfo"
+
+connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
 
 # Getting path to .git directory.
@@ -29,26 +35,9 @@ for arg in sys.argv[1].split("/"):
 
 repoID = sys.argv[2]
 hash = sys.argv[3]
-
-cur.execute("SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s", (hash, repoID) )
-
-if cur.rowcount == 0:
-    try:
-        pass
-        insert = "INSERT INTO commitUID (commitUID, Hexsha, Repo) VALUES (NULL, %s, %s)"
-        cur.execute( insert, (hash, repoID) )
-
-        # So that was to get the commitUID set in there.
-        cur.execute("SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s", (hash, repoID) )
-    except e:
-        # debug
-        # print(e[0] + "|" + e[1])
-        # TODO: email when failure happens.
-        connection.rollback()
-
-# And this is the new CUID!
-CUID = cur.fetchone()[0]
+CUID = MySQL_Func.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
 Build_Num = sys.argv[4]
+
 try:
     repo = Repo(path=FILE_DIR)
     tree = repo.tree()
@@ -68,7 +57,6 @@ Time = last_commit.committed_date
 # CLOC and parsing.
 
 LOC = 0
-
 #Verifying the CLOC is installed
 #Commented out because doesn't work on Windows.
 if shutil.which("cloc") == None:
@@ -124,14 +112,24 @@ commitFind = "SELECT * FROM commits WHERE CommitUID = %s and Author = %s " + \
 cur.execute( commitFind, (CUID, Author, Time, Duration, LOC, LOC_DIFF) )
 
 if cur.rowcount == 0:
+    insert = "INSERT INTO commits (CommitUID, Build_Num, Author, Time, Duration, Message, "
+    insert += "LOC, LOC_DIFF) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
     try:
-        insert = "INSERT INTO commits (CommitUID, Build_Num, Author, Time, Duration, Message, " + \
-                    "LOC, LOC_DIFF) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        cur.execute( insert, (CUID, Build_Num, Author, Time, Duration, Message, LOC, LOC_DIFF) )
+        cur.execute(insert, (CUID, Build_Num, Author, Time, Duration, Message[:50], LOC, LOC_DIFF))
     except:
-        # debug
-        # print(e[0] + "|" + e[1])
-        # TODO: email when failure happens.
         connection.rollback()
+        ErrorString = sys.exc_info()[0] + "\n----------\n"
+        ErrorString += sys.exc_info()[1] + "\n----------\n"
+        ErrorString += sys.exc_info()[2]
+
+        v_list = "(CommitUID, Build_Num, Author, Time, Duration, Message, LOC, LOC_DIFF)"
+
+        MySQL_Func.sendFailEmail("Failed to insert into checkstyle table!",
+                                    "The following insert failed:",
+                                    insert,
+                                    v_list,
+                                    ErrorString,
+                                    CUID, Build_Num, Author, Time, Duration,
+                                    Message[:50], LOC, LOC_DIFF)
 
 connection.close()

@@ -1,7 +1,7 @@
 import sys
-import pymysql.cursors
-from git import *
-from git.objects.util import *
+import pymysql
+import MySQL_Func
+
 '''
     methodScanner.py is a python file that will read methods.txt
     for all methods and classes in a student's directory,
@@ -11,18 +11,25 @@ from git.objects.util import *
 # Setting up the DB connection
 # Future people: change this to your master IP
 # Or wherever your DB is.
-connection = pymysql.connect(host="152.46.20.243",
-                                user="root",
-                                password="",
-                                db="repoinfo")
+# TODO: CHANGE THESE IN PRODUCTION
+IP = "152.46.20.243"
+user = "root"
+pw = ""
+DB = "repoinfo"
+
+connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
 # Connection setup
-
-methodsFile = open("methods.txt", "r" )
+try:
+    methodsFile = open("methods.txt", "r" )
+except:
+    for error in sys.exc_info():
+        print(error + "")
+    sys.exit()
 allMethods = list(methodsFile)
 
-newClass = ""
-Pacakge = ""
+className = ""
+package = ""
 classUID = -1
 for line in allMethods:
     # New lines are added by the scanner, don't need 'em.
@@ -30,62 +37,26 @@ for line in allMethods:
         continue
     else:
         if "dir" in line: #for example: dir bug_tracker
-            Pacakge = line.split(" ")[1].replace("\n","")
+            package = line.split(" ")[1].replace("\n","")
             #Split the string on spaces, then take the second value
             #which is the directory/package, then remove the new line
 
         elif "class" in line: #for example: public class TrackedBug {
-            newClass = line.replace("\n","").split(" ")
+            className = line.replace("\n","").split(" ")
             #Remove new line, split on space.
 
             #While we haven't hit class/interface, remove previous elements.
             #Since access can be optional (none is accepted), we have to iterate until we hit
             #class/interface.  Once we get it, we delete class/interface and the first element
             #is the class name.
-            while newClass[0] != "class" and newClass[0] != "interface":
-                del newClass[0]
-            del newClass[0]
-            newClass = newClass[0]
+            while className[0] != "class" and className[0] != "interface":
+                del className[0]
+            del className[0]
+            className = className[0]
 
             #Check the ClassUID table for all records that match the package and class
-            cur.execute("SELECT * FROM classUID WHERE Package = %s and class = %s",(Pacakge, newClass))
-
-            #If we get any records returned, then obviously it's already in the table we don't
-            #have to insert.  Otherwise, if there are no returned records, then we need to
-            #insert them into the table.
-            if cur.rowcount == 0:
-                '''print("    [Data Miner] Detecting new Class to be added to database.  Adding " \
-                            + newClass + " to Database")'''
-                try:
-                    cur.execute("INSERT INTO classUID(classUID, Package, Class) VALUES \
-                                    (NULL, %s, %s)", (Pacakge, newClass))
-                except e:
-                    #debug
-                    #print(e[0] + "|" + e[1])
-                    # TODO: email when failure happens.
-                    connection.rollback()
-            else:
-                pass
-                #debug
-                '''print("PKG: " + Pacakge.ljust(20) + " | CLS: " + newClass.ljust(20) + \
-                            " | Already exists in DB.")'''
-
-            #Execute the same select, so we can get the new classUID
-            cur.execute("SELECT * FROM classUID WHERE Package = %s and Class = %s", \
-                            (Pacakge, newClass))
-
-            #Checking again, looking to make sure that we uploaded.
-            if cur.rowcount == 0:
-                print("Somehow, we inserted and could not insert a classUID.  Exiting.")
-                # TODO: email when failure happens.
-                sys.exit()
-            elif cur.rowcount != 1:
-                print("Multiple matches for classUID table.  What?")
-                # TODO: email when failure happens.
-                sys.exit()
-            else:
-                #Now we can actually get the number.
-                classUID = int(cur.fetchone()[0])
+            classUID = MySQL_Func.getClassUID(IP=IP, user=user, pw=pw, DB=DB,
+                                                className=className, package=package)
 
         elif "enum" not in line: #for example: public String getNote () {
             #split on the parenthesis, grab the first element. since that's gonna include the
@@ -107,28 +78,12 @@ for line in allMethods:
             if methodName == "\n":
                 continue
 
-            #If we get any records returned, then obviously it's already in the table we don't
-            #have to insert.  Otherwise, if there are no returned records, then we need to
-            #insert them into the table.
-            cur.execute("SELECT * FROM methodUID WHERE ClassUID = %s and Method = %s", \
-                            (classUID, methodName))
-            if cur.rowcount == 0:
-                #debug
-                '''print("PKG: " + Pacakge.ljust(20) + " | CLS: " + newClass.ljust(30) + \
-                        " | MTD: " + methodName.ljust(40) + " | Adding to DB.")'''
-                try:
-                    cur.execute("INSERT INTO methodUID(methodUID, ClassUID, Method) VALUES \
-                                    (NULL, %s, %s)", (classUID, methodName))
-                except e:
-                    #debug
-                    #print(e[0] + "|" + e[1])
-                    # TODO: email when failure happens.
-                    connection.rollback()
-            else:
-                pass
-                #debug
-                #print("PKG: " + Pacakge.ljust(20) + " | CLS: " + newClass.ljust(30) + \
-                #        " | MTD: " + methodName.ljust(40) + " | Already exists in DB.")
+            #olol this was like 30 lines now it's 3.
+            # We're discarding the return value from the function since it does the inserting
+            # as well as returning.
+            MySQL_Func.getClassUID(IP=IP, user=user, pw=pw, DB=DB,
+                                    className=className, package=package,
+                                    method=method)
 
 
 methodsFile.close()

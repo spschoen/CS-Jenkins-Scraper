@@ -1,3 +1,5 @@
+# TODO: WRITE LIBRARY FUNCTIONS TO MAKE THIS TINY.
+
 # @authors Renata Ann Zeitler and Samuel Schoeneberger 02/2017
 
 # Execution: python3 testFileResultsUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT
@@ -9,10 +11,7 @@
 import xml.dom.minidom
 import sys
 import os
-import pymysql.cursors
-from git import *
-from git.objects.util import *
-from datetime import date, datetime, timedelta
+import pymysql
 
 # Setting up the XML to read
 FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))
@@ -34,28 +33,17 @@ hash = sys.argv[3]
 # Setting up the DB connection
 # Future people: change this to your master IP
 # Or wherever your DB is.
-connection = pymysql.connect(host="152.46.20.243", user="root", password="", db="repoinfo")
+# TODO: CHANGE THESE IN PRODUCTION
+IP = "152.46.20.243"
+user = "root"
+pw = ""
+DB = "repoinfo"
+
+connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
 
 #CommitUID getting
-CUID = -1
-commitUIDSelect = "SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s"
-cur.execute(commitUIDSelect, (hash, repoID) )
-if cur.rowcount == 0:
-    try:
-        cur.execute("INSERT INTO commitUID(commitUID, Hexsha, Repo) VALUES \
-                        (NULL, %s, %s)", (hash, repoID) )
-        cur.execute(commitUIDSelect, (hash, repoID) )
-        CUID = cur.fetchone()[0]
-    except e:
-        print(e[0] + "|" + e[1])
-        connection.rollback()
-else:
-    CUID = cur.fetchone()[0]
-
-if CUID == -1:
-    print("Could not get CUID")
-    sys.exit()
+CUID = MySQL_Func.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
 
 count = 0
 
@@ -91,8 +79,9 @@ while (count < len(filesListed)):
                     else:
                         passing = "P"
 
-                    # If we get any records returned, then it's already in the table. Otherwise, if there are no returned records,
-                    # then we need to insert them into the table.
+                    # If we get any records returned, then it's already in the table.
+                    # Otherwise, if there are no returned records, then we need to insert
+                    # them into the table.
                     cur.execute("SELECT * FROM testMethodUID WHERE testMethodName = %s", (testName))
 
                     if cur.rowcount == 0: #The values do not exist in the testMethodUID table

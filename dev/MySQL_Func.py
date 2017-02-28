@@ -32,7 +32,7 @@ def getMethodUID(IP, user, pw, DB, method, className, package):
         connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
     except:
         for error in sys.exc_info():
-            print(error)
+            print(error + "")
         sys.exit()
 
     cur = connection.cursor()
@@ -92,7 +92,7 @@ def getClassUID(IP, user, pw, DB, className, package):
         connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
     except:
         for error in sys.exc_info():
-            print(error)
+            print(error + "")
         sys.exit()
 
     cur = connection.cursor()
@@ -110,6 +110,7 @@ def getClassUID(IP, user, pw, DB, className, package):
             insert = "INSERT INTO classUID(classUID, Package, Class) VALUES (Null, %s, %s)"
             cur.execute(insert, (package, className))
         except e:
+            connection.rollback()
             ErrorString = e[0] + "\n----------\n"
             ErrorString += e[1] + "\n----------\n"
             ErrorString += e[2]
@@ -150,7 +151,7 @@ def getCommitUID(IP, user, pw, DB, hash, repoID):
         connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
     except:
         for error in sys.exc_info():
-            print(error)
+            print(error + "")
         sys.exit()
     cur = connection.cursor()
 
@@ -164,11 +165,14 @@ def getCommitUID(IP, user, pw, DB, hash, repoID):
             cur.execute(commitUIDSelect, (hash, repoID) )
             CUID = str(cur.fetchone()[0])
         except e:
+            ErrorString = e[0] + "\n----------\n"
+            ErrorString += e[1] + "\n----------\n"
+            ErrorString += e[2]
             sendFailEmail("Failure to insert commitUID!",
                             "The following insert failed: ",
                             insert,
                             "The variables were: ",
-                            "[traceback]",
+                            ErrorString,
                             hash,
                             repoID)
             connection.rollback()
@@ -189,6 +193,8 @@ def sendFailEmail(subject, failure_message, command, variable_list, trace, *vari
                              "Failure to [do a thing]"
     @param failure_message - the first line of the email.
                              "The following [command] failed:"
+    @param command         - the command that failed to insert.
+                             "INSERT INTO ..."
     @param variable_list   - the line containing the descriptions of the variables.
                              "With the following variables ([variable 1] | [variable 2] | ...):"
     @param trace           - the trace, should be created by concatenating the traceback.

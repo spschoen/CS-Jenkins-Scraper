@@ -1,9 +1,11 @@
 """
 @authors Samuel Schoeneberger 02/2017
 
-Execution: python3 csvReader.py $WORKSPACE $PROJECT_ID $GIT_COMMIT
+Execution: python3 coverageUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT
 0. commitUpload.py
 1. WORKSPACE  : /path/to/report.csv (DO NOT INCLUDE report.csv)
+                    This isn't implemented yet, just because I haven't gotten the chance.  - Sam
+
 2. PROJECT_ID : PW-XYZ
 3. GIT_COMMIT : [40 char commit hash]
 """
@@ -57,6 +59,13 @@ for row in report:
         try:
             cur.execute(insert, (commitUID, classUID, str(round(coverage * 100))))
         except:
-            #TODO: Email on Failure
-            for error in sys.exc_info():
-                print(error)
+            connection.rollback()
+            ErrorString = sys.exc_info()[0] + "\n----------\n"
+            ErrorString += sys.exc_info()[1] + "\n----------\n"
+            ErrorString += sys.exc_info()[2]
+            MySQL_Func.sendFailEmail(subject="Failed to insert into Coverage table!",
+                                        failure_message="The following insert failed:",
+                                        command=insert,
+                                        variable_list="(CommitUID, ClassUID, Line)",
+                                        trace=ErrorString,
+                                        commitUID, classUID, str(round(coverage * 100)))
