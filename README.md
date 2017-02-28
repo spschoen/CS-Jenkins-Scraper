@@ -1,5 +1,3 @@
-# CSC216-Python-Analyzer
-
 ## Pre-Setup
 #### (without setup.sh)
 
@@ -10,6 +8,7 @@
 
 ```sudo pip3 install PyMySQL```    
 ```sudo pip3 install GitPython```
+
 4. Export git to path, just to be safe: ```sudo echo "PATH=$PATH:/usr/local/git/bin/"```
 5. ***RESTART THE EXECUTOR***
 
