@@ -94,7 +94,7 @@ for node in root.childNodes:
                                             className=className, package=package,
                                             method=method)
 
-        add_findbugs = "INSERT INTO findBugs(CommitsUID, MethodUID, BugType, Priority, "
+        add_findbugs = "INSERT INTO findBugs(CommitUID, MethodUID, BugType, Priority, "
         add_findbugs += "Rank, Category, Line) VALUES (%d, %d, %s, %d, %d, %s, %d)"
         # This one goes to findbugs
         try:
@@ -105,7 +105,7 @@ for node in root.childNodes:
             ErrorString += sys.exc_info()[1] + "\n----------\n"
             ErrorString += sys.exc_info()[2]
 
-            v_list = "(CommitsUID, MethodUID, BugType, Priority, Rank, Category, Line)"
+            v_list = "(CommitUID, MethodUID, BugType, Priority, Rank, Category, Line)"
             MySQL_Func.sendFailEmail("Failed to insert into findBugs table!",
                                         "The following insert failed:",
                                         add_findbugs,

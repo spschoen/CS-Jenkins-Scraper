@@ -1,0 +1,7 @@
+1. Download repo_base.sql
+2. Enter mysql:
+mysql -u root -p
+
+mysql> create database mydb;
+mysql> use mydb;
+mysql> source db_backup.dump;
