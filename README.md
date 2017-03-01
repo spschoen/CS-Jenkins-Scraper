@@ -54,3 +54,16 @@ TL;DR These are a bunch of scripts which, when run, will scrape data from all th
 3. Create the DB: ```create database [DB NAME];```
 4. Switch to the new DB: ```use [DB NAME];```
 5. Import the file. ```source repo_base.sql```
+
+## File structure
+
+* dev/
+  * *Upload.py files read local files and upload data to your Database
+  * *Scanner files scan the project for certain things (method names, packages, etc.) for Uploaders.
+  * runScript.sh is the script which should be added to the post-build
+* Docs/
+  * DB_Tables represents the structure of a database, a plain text and easy to read version of repo_base.sql
+  * Example_Database.txt is a text file output of a Database that has data from an example project.
+  * repo_base.sql is a dump file which can be imported into created databases to setup for the scripts.
+* old/
+  * These scripts are example scripts/XML which were used to create dev/ scripts.  They can be safely ignored (and deleted, which we should probably do)
