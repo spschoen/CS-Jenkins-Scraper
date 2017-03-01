@@ -57,6 +57,7 @@ for line in allMethods:
             #Check the ClassUID table for all records that match the package and class
             classUID = MySQL_Func.getClassUID(IP=IP, user=user, pw=pw, DB=DB,
                                                 className=className, package=package)
+            print(classUID, className, package)
 
         elif "enum" not in line: #for example: public String getNote () {
             #split on the parenthesis, grab the first element. since that's gonna include the
@@ -81,9 +82,10 @@ for line in allMethods:
             #olol this was like 30 lines now it's 3.
             # We're discarding the return value from the function since it does the inserting
             # as well as returning.
-            MySQL_Func.getMethodUID(IP=IP, user=user, pw=pw, DB=DB,
+            methodUID = MySQL_Func.getMethodUID(IP=IP, user=user, pw=pw, DB=DB,
                                     className=className, package=package,
                                     method=methodName)
+            print(methodUID, classUID, methodName)
 
 
 methodsFile.close()

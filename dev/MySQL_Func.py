@@ -96,10 +96,8 @@ def getClassUID(IP, user, pw, DB, className, package):
         sys.exit()
 
     cur = connection.cursor()
-    cur.execute("DELETE from classUID where Package=%s and Class=%s", ("String", "lang"))
 
     #print("Searching for classUID")
-
     select = "SELECT * FROM classUID WHERE Package = %s AND Class = %s"
     cur.execute(select, (package, className))
 
