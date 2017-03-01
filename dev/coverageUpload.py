@@ -54,11 +54,16 @@ for row in report:
                         className=row['CLASS'].split(".")[-1],
                         package=row['PACKAGE'].split(".")[-1])
         coverage = int(row['LINE_COVERED']) / (int(row['LINE_MISSED']) + int(row['LINE_COVERED']))
-        coverage = round(coverage * 100)
+        coverage = str(round(coverage * 100))
+
+        search = "SELECT * FROM coverage WHERE CommitUID = %s AND ClassUID = %s AND Line = %s"
+        cur.execute(search, (commitUID, classUID, coverage))
+        if cur.rowcount != 0:
+            continue
 
         insert = "INSERT INTO coverage(CommitUID, ClassUID, Line) VALUES (%s, %s, %s)"
         try:
-            cur.execute(insert, (commitUID, classUID, str(coverage)))
+            cur.execute(insert, (commitUID, classUID, coverage))
         except:
             connection.rollback()
             ErrorString = sys.exc_info()[0] + "\n----------\n"
@@ -69,6 +74,6 @@ for row in report:
                                         insert,
                                         "(CommitUID, ClassUID, Line)",
                                         ErrorString,
-                                        commitUID, classUID, str(coverage))
+                                        commitUID, classUID, coverage)
 
 connection.close()

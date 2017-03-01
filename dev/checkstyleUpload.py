@@ -88,6 +88,13 @@ for first in root.childNodes:
                 classUID = MySQL_Func.getClassUID(IP=IP, user=user, pw=pw, DB=DB,
                                         className=className, package=package)
 
+                search = "SELECT * FROM checkstyle WHERE CommitUID = %s AND ClassUID = %s AND "
+                search += "ErrorType = %s AND Severity = %s AND Line = %s and Col = %s"
+
+                cur.execute(search, (CUID, classUID, source, sev, mess, line, col))
+                if cur.rowcount != 0:
+                    continue
+
                 # Attempts to insert information into database.
                 # If it doesn't match, it catches in the except and prints it.
                 add_checkstyle = "INSERT INTO checkstyle (CommitUID, ClassUID, ErrorType, "

@@ -93,6 +93,12 @@ for node in root.childNodes:
         methodUID = MySQL_Func.getMethodUID(IP=IP, user=user, pw=pw, DB=DB,
                                             className=className, package=package,
                                             method=method)
+        search = "SELECT * FROM findBugs WHERE CommitUID = %s AND MethodUID = %s AND "
+        search += "BugType = %s AND Priority = %s AND Rank = %s and Category = %s AND Line = %s"
+
+        cur.execute(search, (CUID, methodUID, bugType, priority, rank, cat, line))
+        if cur.rowcount != 0:
+            continue
 
         add_findbugs = "INSERT INTO findBugs(CommitUID, MethodUID, BugType, Priority, "
         add_findbugs += "Rank, Category, Line) VALUES (%s, %s, %s, %s, %s, %s, %s)"
