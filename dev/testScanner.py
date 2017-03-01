@@ -143,5 +143,12 @@ for line in allMethods:
 
 testsFile.close()
 
+cur.execute("SELECT * FROM classUID")
+for line in cur.fetchall():
+    print(line)
+
+if cur.rowcount == 0:
+    print("lol")
+    
 # Closing connection
 connection.close()

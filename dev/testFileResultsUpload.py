@@ -97,6 +97,7 @@ while (count < len(filesListed)):
                                 " VALUES (NULL, %s, %s)", (className, package))
 
                             except e:
+                                #TODO: email
                                 print(e[0] + "|" + e[1])
                                 connection.rollback()
 
@@ -119,6 +120,7 @@ while (count < len(filesListed)):
                             " VALUES (NULL, %s, %s)", (classUID, testName))
 
                         except e:
+                            #TODO: email
                             print(e[0] + "|" + e[1])
                             connection.rollback()
                     #By now the classUID and methodUID should exist, and things should be all peachy.
@@ -137,15 +139,20 @@ while (count < len(filesListed)):
                             testInsert = "INSERT INTO testTable(CommitUID, testClassUID, Name, "
                             testInsert += "Passing ) VALUES (%s, %s, %s, %s)"
                             cur.execute(testInsert, (CUID, classUID, testName, passing) )
-                        else:
-                            pass
-                            #print("Already in table, not inserting.")
 
                     except:
+                        #TODO: email
                         for error in sys.exc_info():
                             print(error)
                         connection.rollback()
     count += 1
+
+cur.execute("SELECT * FROM classUID")
+for line in cur.fetchall():
+    print(line)
+
+if cur.rowcount == 0:
+    print("lol")
 
 # Closing connection
 connection.close()

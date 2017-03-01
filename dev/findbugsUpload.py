@@ -113,5 +113,12 @@ for node in root.childNodes:
                                         ErrorString,
                                         CUID, methodUID, bugType, priority, rank, cat, line)
 
+cur.execute("SELECT * FROM classUID")
+for line in cur.fetchall():
+    print(line)
+
+if cur.rowcount == 0:
+    print("lol")
+
 # Closing connection
 connection.close()
