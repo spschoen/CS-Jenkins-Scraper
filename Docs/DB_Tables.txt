@@ -1,32 +1,26 @@
 CommitUID
-    ProjectUID
-    HexSHA
+    commitUID (Primary Key)
+    Hexsha
     Repo
 
 MethodUID
-    Package
-    Class
+    methodUID (Primary Key)
+    ClassUID
     Method
-    MethodUID
-
-TestTable
-    CommitUID (Primary Key)
-    TestID/Name (MethodName_TSTest)
-    Pass/Fail
 
 Commits
     CommitUID (Primary Key)
-    Build Number
+    Build_Num
     Author
     Time
-    Duration (between commits)
+    Duration (Between last commit)
     Message
-    Lines of Code
-    LOC Difference
+    LOC
+    LOC_DIFF
 
 Checkstyle
-    CommitUID (Primary Key)
-    MethodUID
+    CommitUID
+    ClassUID
     Error Type
     Severity
     Error Message
@@ -34,16 +28,12 @@ Checkstyle
     Column
 
 Coverage
-    CommitUID (Primary Key)
-    MethodUID
-    Total Coverage
-    Instruction Cov.
-    Branch Cov.
-    Complexity Cov.
+    CommitUID
+    ClassUID
     Line Cov.
 
 FindBuggers
-    CommitUID (Primary Key)
+    CommitUID
     MethodUID
     Bug Type
     Priority
@@ -52,9 +42,24 @@ FindBuggers
     Line
 
 PMD
-    CommitUID (Primary Key)
+    CommitUID
     MethodUID
     Ruleset
     Rule
-    MethodID
     Line
+
+TestClassUID
+    testClassUID
+    testClass
+    testPackage
+
+TestMethodUID
+    testMethodUID
+    testClassUID
+    testMethodName
+
+TestTable
+    CommitUID
+    testClassUID
+    Name (MethodName_TSTest)
+    Pass/Fail

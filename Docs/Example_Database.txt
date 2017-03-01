@@ -1,0 +1,224 @@
+(Evaluated code donated by Samuel Schoeneberger and Joshua Good, edited by Renata Zeitler)
+
+SELECT * FROM classUID;
++----------+---------+------------------+
+| classUID | Package | Class            |
++----------+---------+------------------+
+|        1 | bug     | TrackedBug       |
+|        2 | bug     | UnconfirmedState |
+|        3 | bug     | NewState         |
+|        4 | bug     | AssignedState    |
+|        5 | bug     | ResolvedState    |
+|        6 | bug     | ClosedState      |
+|        7 | bug     | ReopenState      |
+|        8 | command | Command          |
+|        9 | tracker | BugList          |
+|       10 | tracker | BugTrackerModel  |
+|       11 | command | CommandValue     |
+|       12 | command | Resolution       |
++----------+---------+------------------+
+12 rows in set (0.00 sec)
+
+SELECT * FROM methodUID;
++-----------+----------+--------------------------+
+| methodUID | ClassUID | Method                   |
++-----------+----------+--------------------------+
+|         1 |        1 | TrackedBug               |
+|         2 |        1 | incrementCounter         |
+|         3 |        1 | getBugId                 |
+|         4 |        1 | getState                 |
+|         5 |        1 | setState                 |
+|         6 |        1 | getResolution            |
+|         7 |        1 | getResolutionString      |
+|         8 |        1 | setResolution            |
+|         9 |        1 | getOwner                 |
+|        10 |        1 | getSummary               |
+|        11 |        1 | getReporter              |
+|        12 |        1 | getCounter               |
+|        13 |        1 | getNotes                 |
+|        14 |        1 | getNotesString           |
+|        15 |        1 | getVotes                 |
+|        16 |        1 | isConfirmed              |
+|        17 |        1 | update                   |
+|        18 |        1 | getXMLBug                |
+|        19 |        1 | setCounter               |
+|        20 |        2 | updateState              |
+|        21 |        2 | getStateName             |
+|        22 |        3 | updateState              |
+|        23 |        3 | getStateName             |
+|        24 |        4 | updateState              |
+|        25 |        4 | getStateName             |
+|        26 |        5 | updateState              |
+|        27 |        5 | getStateName             |
+|        28 |        6 | updateState              |
+|        29 |        6 | getStateName             |
+|        30 |        7 | updateState              |
+|        31 |        7 | getStateName             |
+|        32 |        8 | Command                  |
+|        33 |        8 | getCommand               |
+|        34 |        8 | getDeveloperId           |
+|        35 |        8 | getResolution            |
+|        36 |        8 | getNote                  |
+|        37 |        9 | BugList                  |
+|        38 |        9 | addBug                   |
+|        39 |        9 | addXMLBugs               |
+|        40 |        9 | getBugs                  |
+|        41 |        9 | getBugsByOwner           |
+|        42 |        9 | getBugById               |
+|        43 |        9 | executeCommand           |
+|        44 |        9 | deleteBugById            |
+|        45 |       10 | BugTrackerModel          |
+|        46 |       10 | getInstance              |
+|        47 |       10 | saveBugsToFile           |
+|        48 |       10 | loadBugsFromFile         |
+|        49 |       10 | createNewBugList         |
+|        50 |       10 | getBugListAsArray        |
+|        51 |       10 | getBugListByOwnerAsArray |
+|        52 |       10 | getBugById               |
+|        53 |       10 | executeCommand           |
+|        54 |       10 | deleteBugById            |
+|        55 |       10 | addBugToList             |
+|        56 |        8 | <init>                   |
++-----------+----------+--------------------------+
+56 rows in set (0.00 sec)
+
+SELECT * FROM commitUID;
++-----------+------------------------------------------+--------+
+| commitUID | Hexsha                                   | Repo   |
++-----------+------------------------------------------+--------+
+|         1 | f880f5f9bf8236076106e210acced6f2f960e677 | P2-096 |
++-----------+------------------------------------------+--------+
+1 row in set (0.00 sec)
+
+SELECT * FROM commits;
++-----------+-----------+----------+------------+----------+------------------------+------+----------+
+| CommitUID | Build_Num | Author   | Time       | Duration | Message                | LOC  | LOC_DIFF |
++-----------+-----------+----------+------------+----------+------------------------+------+----------+
+|         1 |       127 | spschoen | 1488229837 |      133 | Fixing another error.. | 1242 |        0 |
++-----------+-----------+----------+------------+----------+------------------------+------+----------+
+1 row in set (0.00 sec)
+
+SELECT * FROM checkstyle;
++-----------+----------+----------------------+----------+-------------------------------------------------+------+------+
+| CommitUID | ClassUID | ErrorType            | Severity | ErrorMessage                                    | Line | Col  |
++-----------+----------+----------------------+----------+-------------------------------------------------+------+------+
+|         1 |        8 | JavadocTypeCheck     | warning  | Type Javadoc comment is missing an @author tag. |    8 |   -1 |
+|         1 |        8 | JavadocVariableCheck | warning  | Missing a Javadoc comment.                      |   10 |    9 |
+|         1 |       10 | JavadocTypeCheck     | warning  | Type Javadoc comment is missing an @author tag. |   20 |   -1 |
++-----------+----------+----------------------+----------+-------------------------------------------------+------+------+
+3 rows in set (0.00 sec)
+
+SELECT * FROM coverage;
++-----------+----------+------+
+| CommitUID | ClassUID | Line |
++-----------+----------+------+
+|         1 |        9 |   95 |
+|         1 |       10 |   63 |
+|         1 |        1 |   88 |
+|         1 |        3 |   86 |
+|         1 |        7 |    7 |
+|         1 |        2 |   93 |
+|         1 |        4 |   78 |
+|         1 |        5 |   15 |
+|         1 |        6 |   22 |
+|         1 |        8 |   95 |
+|         1 |       11 |  100 |
+|         1 |       12 |  100 |
++-----------+----------+------+
+12 rows in set (0.00 sec)
+
+SELECT * FROM findBugs;
++-----------+-----------+-------------------------+----------+------+-------------+------+
+| CommitUID | MethodUID | BugType                 | Priority | Rank | Category    | Line |
++-----------+-----------+-------------------------+----------+------+-------------+------+
+|         1 |        56 | RV_RETURN_VALUE_IGNORED | 1        | 3    | CORRECTNESS |   50 |
++-----------+-----------+-------------------------+----------+------+-------------+------+
+1 row in set (0.00 sec)
+
+SELECT * FROM PMD;
++-----------+-----------+-------------+-----------------------------+------+
+| CommitUID | MethodUID | Ruleset     | Rule                        | Line |
++-----------+-----------+-------------+-----------------------------+------+
+|         1 |        32 | Unnecessary | UselessOperationOnImmutable |   50 |
+|         1 |        41 | Basic       | BrokenNullCheck             |  111 |
++-----------+-----------+-------------+-----------------------------+------+
+2 rows in set (0.00 sec)
+
+SELECT * FROM testClassUID;
++--------------+---------------------+-------------+
+| testClassUID | testClass           | testPackage |
++--------------+---------------------+-------------+
+|            1 | TrackedBugTest      | bug         |
+|            2 | CommandTest         | command     |
+|            3 | BugListTest         | tracker     |
+|            4 | BugTrackerModelTest | tracker     |
++--------------+---------------------+-------------+
+4 rows in set (0.00 sec)
+
+SELECT * FROM testMethodUID;
++---------------+--------------+------------------------------+
+| testMethodUID | testClassUID | testMethodName               |
++---------------+--------------+------------------------------+
+|             1 |            1 | setup                        |
+|             2 |            1 | testIncrementCounter         |
+|             3 |            1 | testGetBugId                 |
+|             4 |            1 | testGetResolution            |
+|             5 |            1 | testGetOwner                 |
+|             6 |            1 | testGetNotesString           |
+|             7 |            1 | testStateTests               |
+|             8 |            1 | testGetXMLBug                |
+|             9 |            1 | testResolution               |
+|            10 |            2 | setUp                        |
+|            11 |            2 | testCommand                  |
+|            12 |            3 | setUp                        |
+|            13 |            3 | testBugList                  |
+|            14 |            3 | testAddBug                   |
+|            15 |            3 | testAddXMLBugs               |
+|            16 |            3 | testGetBugsByOwner           |
+|            17 |            3 | testGetBugById               |
+|            18 |            3 | testExecuteCommand           |
+|            19 |            3 | testDeleteBugById            |
+|            20 |            3 | testEmptyList                |
+|            21 |            3 | testInvalidResolution        |
+|            22 |            4 | setUp                        |
+|            23 |            4 | testLoadBugsFromFile         |
+|            24 |            4 | testGetBugListAsArray        |
+|            25 |            4 | testGetBugListByOwnerAsArray |
+|            26 |            4 | testGetBugById               |
+|            27 |            4 | testExecuteCommand           |
+|            28 |            4 | testDeleteBugById            |
+|            29 |            4 | testAddBugToList             |
++---------------+--------------+------------------------------+
+29 rows in set (0.00 sec)
+
+SELECT * FROM testTable;
++-----------+--------------+------------------------------+---------+
+| CommitUID | testClassUID | Name                         | Passing |
++-----------+--------------+------------------------------+---------+
+|         1 | 4            | testExecuteCommand           | P       |
+|         1 | 4            | testGetBugById               | P       |
+|         1 | 4            | testGetBugListAsArray        | F       |
+|         1 | 4            | testLoadBugsFromFile         | P       |
+|         1 | 4            | testAddBugToList             | F       |
+|         1 | 4            | testGetBugListByOwnerAsArray | F       |
+|         1 | 4            | testDeleteBugById            | P       |
+|         1 | 1            | testGetBugId                 | P       |
+|         1 | 1            | testGetNotesString           | P       |
+|         1 | 1            | testGetOwner                 | P       |
+|         1 | 1            | testGetResolution            | P       |
+|         1 | 1            | testGetXMLBug                | P       |
+|         1 | 1            | testIncrementCounter         | F       |
+|         1 | 1            | testResolution               | P       |
+|         1 | 1            | testStateTests               | F       |
+|         1 | 2            | testCommand                  | P       |
+|         1 | 3            | testInvalidResolution        | P       |
+|         1 | 3            | testAddXMLBugs               | F       |
+|         1 | 3            | testExecuteCommand           | F       |
+|         1 | 3            | testEmptyList                | P       |
+|         1 | 3            | testBugList                  | P       |
+|         1 | 3            | testGetBugsByOwner           | F       |
+|         1 | 3            | testGetBugById               | P       |
+|         1 | 3            | testAddBug                   | F       |
+|         1 | 3            | testDeleteBugById            | P       |
++-----------+--------------+------------------------------+---------+
+25 rows in set (0.00 sec)
