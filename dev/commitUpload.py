@@ -102,20 +102,17 @@ for item in last_commit.stats.total:
 # lololol
 Duration = Time - second_to_last_commit.committed_date
 
-# Build number is ignored because, fun fact, it can be different while
-# the rest is the same.  This causes an error where commitUID is the say when it should be
-# changed.  I can't explain it well but trust me.
-# TODO: update Build_Num in this situation
-commitFind = "SELECT * FROM commits WHERE CommitUID = %s and Author = %s " + \
-                "and Time = %s and Duration = %s and LOC = %s and LOC_DIFF = %s"
+# So much gets ignored, mostly because CommitUID and Time are unique enough that we don't have to
+# find the others - also, they can be different (like build number)
+commitFind = "SELECT * FROM commits WHERE CommitUID = %s and Time = %s"
 
-cur.execute( commitFind, (CUID, Author, Time, Duration, LOC, LOC_DIFF) )
+cur.execute( commitFind, (CUID, Time) )
 
 if cur.rowcount == 0:
     insert = "INSERT INTO commits (CommitUID, Build_Num, Author, Time, Duration, Message, "
-    insert += "LOC, LOC_DIFF) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+    insert += "LOC, LOC_DIFF) VALUES (Null, %s, %s, %s, %s, %s, %s, %s)"
     try:
-        cur.execute(insert, (CUID, Build_Num, Author, Time, Duration, Message[:50], LOC, LOC_DIFF))
+        cur.execute(insert, (Build_Num, Author, Time, Duration, Message[:50], LOC, LOC_DIFF))
     except:
         connection.rollback()
         ErrorString = sys.exc_info()[0] + "\n----------\n"
