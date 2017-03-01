@@ -1,3 +1,19 @@
+# Jenkins Data Scrapers
+
+Do you have dozens, hundreds of students constantly pushing to Jenkins, building Megs and Megs of untapped data that you could use to write grant proposals with?  Do you want to know exactly what test was the worst test to deal with for all students?  Do you find Databases fun?
+
+Then use these scrapers, plain and simple.  Follow the instructions below to setup (or contact spschoen@ncsu.edu or razeitle@ncsu.edu for help) these scripts to pull information from each student submission to Jenkins, and place into a database of your choosing.
+
+Warning: Data is not anonymized and can be traced back to students if malicious folks got access to the database.
+
+ * Do not leave Databases unsecured
+ * Do not leave Databases unattended
+ * Unattended databases will be asked to hold ```Robert'); DROP TABLE Students; --```
+
+Alternatively, you can (manually) remove the Author column from the Commits table, and the respective usage in the scripts, and it'll be nearly anonymized.
+
+TL;DR These are a bunch of scripts which, when run, will scrape data from all the xml files produced by Jenkins, and feed that information into a Database, for future calculations.
+
 ## Pre-Setup
 #### (without setup.sh)
 
@@ -28,6 +44,7 @@
 1. Setup MySQL Server on your Master (I shouldn't have to explain this)
 2. **Change IP, user, pw, and Database in each file** (Change DB w/ Project)
 3. Add runscript.sh to your post-build action in Jenkins (cp it to the Workspace/ProjectName dir, run)
+4. Ensure ant builds include JaCoCo coverage report output.
 
 
 ## Database Setup
