@@ -44,7 +44,7 @@ try:
 except:
     # debug
     for error in sys.exc_info():
-        print("Unexpected error:", error)
+        print("Unexpected error:", error + "")
     sys.exit()
     # TODO: email when failure happens.
 

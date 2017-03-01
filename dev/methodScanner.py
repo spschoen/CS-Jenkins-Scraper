@@ -43,7 +43,6 @@ for line in allMethods:
 
         elif "class" in line: #for example: public class TrackedBug {
             className = line.replace("\n","").split(" ")
-            print(className)
             #Remove new line, split on space.
 
             #While we haven't hit class/interface, remove previous elements.
@@ -88,13 +87,6 @@ for line in allMethods:
 
 
 methodsFile.close()
-
-cur.execute("SELECT * FROM classUID")
-for line in cur.fetchall():
-    print(line)
-
-if cur.rowcount == 0:
-    print("lol")
 
 # Closing connection
 connection.close()

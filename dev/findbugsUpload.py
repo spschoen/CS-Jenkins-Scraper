@@ -78,7 +78,7 @@ for node in root.childNodes:
         if node.hasAttribute("category"):
             cat = node.getAttribute("category")
             for classNode in node.childNodes:
-                if classNode.nodeName == "Method":
+                if classNode.nodeName == "Method" and not classNode.hasAttribute("role"):
                     if classNode.hasAttribute("classname"):
                         string = classNode.getAttribute("classname")
                         package = string.split(".")[-1]
@@ -95,7 +95,7 @@ for node in root.childNodes:
                                             method=method)
 
         add_findbugs = "INSERT INTO findBugs(CommitUID, MethodUID, BugType, Priority, "
-        add_findbugs += "Rank, Category, Line) VALUES (%d, %d, %s, %d, %d, %s, %d)"
+        add_findbugs += "Rank, Category, Line) VALUES (%s, %s, %s, %s, %s, %s, %s)"
         # This one goes to findbugs
         try:
             cur.execute(add_findbugs, (CUID, methodUID, bugType, priority, rank, cat, line))

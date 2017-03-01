@@ -58,17 +58,17 @@ for row in report:
 
         insert = "INSERT INTO coverage(CommitUID, ClassUID, Line) VALUES (%s, %s, %s)"
         try:
-            cur.execute(insert, (commitUID, classUID, str(coverage))
+            cur.execute(insert, (commitUID, classUID, str(coverage)))
         except:
             connection.rollback()
             ErrorString = sys.exc_info()[0] + "\n----------\n"
             ErrorString += sys.exc_info()[1] + "\n----------\n"
             ErrorString += sys.exc_info()[2]
-            MySQL_Func.sendFailEmail(subject="Failed to insert into Coverage table!",
-                                        failure_message="The following insert failed:",
-                                        command=insert,
-                                        variable_list="(CommitUID, ClassUID, Line)",
-                                        trace=ErrorString,
-                                        commitUID, classUID, str(round(coverage * 100)))
+            MySQL_Func.sendFailEmail("Failed to insert into Coverage table!",
+                                        "The following insert failed:",
+                                        insert,
+                                        "(CommitUID, ClassUID, Line)",
+                                        ErrorString,
+                                        commitUID, classUID, str(coverage))
 
 connection.close()
