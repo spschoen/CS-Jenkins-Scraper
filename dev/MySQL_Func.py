@@ -61,7 +61,7 @@ def getMethodUID(IP, user, pw, DB, method, className, package):
                             package,
                             className)
 
-    cur.execute(select, (package, className))
+    cur.execute(select, (classUID, method))
     methodUID = str(cur.fetchone()[0])
 
     connection.close()
