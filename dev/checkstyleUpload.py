@@ -91,7 +91,7 @@ for first in root.childNodes:
                 search = "SELECT * FROM checkstyle WHERE CommitUID = %s AND ClassUID = %s AND "
                 search += "ErrorType = %s AND Severity = %s AND Line = %s and Col = %s"
 
-                cur.execute(search, (CUID, classUID, source, sev, mess, line, col))
+                cur.execute(search, (CUID, classUID, source, sev, line, col))
                 if cur.rowcount != 0:
                     continue
 

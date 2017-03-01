@@ -87,6 +87,12 @@ for file in root.childNodes:
     methodUID = MySQL_Func.getMethodUID(IP=IP, user=user, pw=pw, DB=DB, className=className,
                                         package=package, method=method)
 
+    search = "SELECT * FROM PMD WHERE CommitUID = %s AND MethodUID = %s AND Ruleset = %s AND "
+    search += "Rule = %s AND Line = %s"
+    cur.execute(search, (str(CUID), str(methodUID), str(ruleset), str(rule), str(line)))
+    if cur.rowcount != 0:
+        continue
+
     # PMD time!
     insertPMD = "INSERT INTO PMD(CommitUID, MethodUID, Ruleset, Rule, Line) "
     insertPMD += "VALUES ( %s, %s, %s, %s, %s )"
