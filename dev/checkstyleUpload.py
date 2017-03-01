@@ -92,10 +92,9 @@ for first in root.childNodes:
                 # If it doesn't match, it catches in the except and prints it.
                 add_checkstyle = "INSERT INTO checkstyle (CommitUID, ClassUID, ErrorType, "
                 add_checkstyle += "Severity, ErrorMessage, Line, Col) VALUES "
-                add_checkstyle += " (%d, %d, %s, %s, %s, %d, %d)"
+                add_checkstyle += " (%s, %s, %s, %s, %s, %s, %s)"
                 try:
-                    cur.execute(add_checkstyle, (int(CUID), int(classUID), source,
-                    sev, mess, int(line), int(col)))
+                    cur.execute(add_checkstyle, (CUID, classUID, source, sev, mess, line, col))
                 except:
                     connection.rollback()
                     ErrorString = sys.exc_info()[0] + "\n----------\n"

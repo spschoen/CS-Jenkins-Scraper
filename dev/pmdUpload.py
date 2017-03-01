@@ -84,7 +84,7 @@ for file in root.childNodes:
         continue
 
     # Class UID
-    methodUID = MySQL_Func.getClassUID(IP=IP, user=user, pw=pw, DB=DB, className=className,
+    methodUID = MySQL_Func.getMethodUID(IP=IP, user=user, pw=pw, DB=DB, className=className,
                                         package=package, method=method)
 
     # PMD time!

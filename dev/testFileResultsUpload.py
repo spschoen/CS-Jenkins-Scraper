@@ -12,6 +12,7 @@ import xml.dom.minidom
 import sys
 import os
 import pymysql
+import MySQL_Func
 
 # Setting up the XML to read
 FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))

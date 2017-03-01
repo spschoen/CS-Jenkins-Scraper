@@ -54,10 +54,11 @@ for row in report:
                         className=row['CLASS'].split(".")[-1],
                         package=row['PACKAGE'].split(".")[-1])
         coverage = int(row['LINE_COVERED']) / (int(row['LINE_MISSED']) + int(row['LINE_COVERED']))
+        coverage = round(coverage * 100))
 
         insert = "INSERT INTO coverage(CommitUID, ClassUID, Line) VALUES (%s, %s, %s)"
         try:
-            cur.execute(insert, (commitUID, classUID, str(round(coverage * 100))))
+            cur.execute(insert, (commitUID, classUID, str(coverage))
         except:
             connection.rollback()
             ErrorString = sys.exc_info()[0] + "\n----------\n"

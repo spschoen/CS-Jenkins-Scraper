@@ -90,7 +90,7 @@ for node in root.childNodes:
                         line = int(classNode.getAttribute("start"))
 
         #Grab methodUID for below. By now, it should definitely exist
-        methodUID = MySQL_Func.getClassUID(IP=IP, user=user, pw=pw, DB=DB,
+        methodUID = MySQL_Func.getMethodUID(IP=IP, user=user, pw=pw, DB=DB,
                                             className=className, package=package,
                                             method=method)
 

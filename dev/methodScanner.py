@@ -81,7 +81,7 @@ for line in allMethods:
             #olol this was like 30 lines now it's 3.
             # We're discarding the return value from the function since it does the inserting
             # as well as returning.
-            MySQL_Func.getClassUID(IP=IP, user=user, pw=pw, DB=DB,
+            MySQL_Func.getMethodUID(IP=IP, user=user, pw=pw, DB=DB,
                                     className=className, package=package,
                                     method=methodName)
 
