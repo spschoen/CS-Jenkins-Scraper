@@ -71,11 +71,4 @@ for row in report:
                                         trace=ErrorString,
                                         commitUID, classUID, str(round(coverage * 100)))
 
-cur.execute("SELECT * FROM classUID")
-for line in cur.fetchall():
-    print(line)
-
-if cur.rowcount == 0:
-    print("lol")
-
 connection.close()

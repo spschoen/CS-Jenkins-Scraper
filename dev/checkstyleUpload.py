@@ -109,12 +109,5 @@ for first in root.childNodes:
                                                 ErrorString,
                                                 CUID, classUID, source, sev, mess, line, col)
 
-cur.execute("SELECT * FROM classUID")
-for line in cur.fetchall():
-    print(line)
-
-if cur.rowcount == 0:
-    print("lol")
-
 # Closing connection
 connection.close()

@@ -132,11 +132,4 @@ if cur.rowcount == 0:
                                     CUID, Build_Num, Author, Time, Duration,
                                     Message[:50], LOC, LOC_DIFF)
 
-cur.execute("SELECT * FROM classUID")
-for line in cur.fetchall():
-    print(line)
-
-if cur.rowcount == 0:
-    print("lol")
-
 connection.close()
