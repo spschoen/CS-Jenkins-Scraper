@@ -83,7 +83,7 @@ for line in allMethods:
             # as well as returning.
             MySQL_Func.getClassUID(IP=IP, user=user, pw=pw, DB=DB,
                                     className=className, package=package,
-                                    method=method)
+                                    method=methodName)
 
 
 methodsFile.close()

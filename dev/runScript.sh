@@ -18,13 +18,6 @@ echo "    [Data Miner] Beginning mining."
 cd $WORKDIR
 
 ##################################
-# Grabbing the library.          #
-##################################
-
- echo "    [Data Miner] Pulling library functions."
-cp /home/jenkins/scripts/dev/MySQL_Func.py $WORKDIR/MySQL_Func.py
-
-##################################
 # Getting Project ID for CUID    #
 ##################################
 
@@ -35,16 +28,11 @@ cp /home/jenkins/scripts/dev/splitter.sh $WORKDIR/splitter.sh
 PROJECT_ID=$(bash splitter.sh $GIT_URL)
 
 ##################################
-# Uploading Commit Information.  #
+# Grabbing the library.          #
 ##################################
 
- echo "    [Data Miner] Commit Information uploader fails; needs review."
-
- echo "    [Data Miner] Acquiring commit information uploader"
-cp /home/jenkins/scripts/dev/commitUpload.py $WORKDIR/commitUpload.py
-
- echo "    [Data Miner] Executing commit information uploader"
-python3 commitUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT $BUILD_NUMBER
+ echo "    [Data Miner] Pulling library functions."
+cp /home/jenkins/scripts/dev/MySQL_Func.py $WORKDIR/MySQL_Func.py
 
 ##################################
 # Scanning for methods           #
@@ -77,6 +65,16 @@ cp /home/jenkins/scripts/dev/testScanner.py $WORKDIR/testScanner.py
 
  echo "    [Data Miner] Executing test uploader"
 python3 testScanner.py
+
+##################################
+# Uploading Commit Information.  #
+##################################
+
+ echo "    [Data Miner] Acquiring commit information uploader"
+cp /home/jenkins/scripts/dev/commitUpload.py $WORKDIR/commitUpload.py
+
+ echo "    [Data Miner] Executing commit information uploader"
+python3 commitUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT $BUILD_NUMBER
 
 ##################################
 # Checkstyle uploading.          #
