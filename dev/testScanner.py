@@ -82,7 +82,7 @@ for line in allMethods:
             #have to insert.  Otherwise, if there are no returned records, then we need to
             #insert them into the table.
             MySQL_Func.getTestMethodUID(IP=IP, user=user, pw=pw, DB=DB, className=newClass,
-                                        package=package, method=test)
+                                        package=Package, method=test)
 
 
 testsFile.close()
