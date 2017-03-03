@@ -28,7 +28,7 @@ except:
 allMethods = list(testsFile)
 
 newClass = ""
-Pacakge = ""
+Package = ""
 classUID = -1
 for line in allMethods:
     # New lines are added by the scanner, don't need 'em.
@@ -36,7 +36,7 @@ for line in allMethods:
         continue
     else:
         if "dir" in line: #for example: dir bug_tracker
-            Pacakge = line.split(" ")[1].replace("\n","")
+            Package = line.split(" ")[1].replace("\n","")
             #Split the string on spaces, then take the second value
             #which is the directory/package, then remove the new line
 
