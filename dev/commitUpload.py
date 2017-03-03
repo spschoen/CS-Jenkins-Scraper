@@ -42,6 +42,7 @@ try:
     repo = Repo(path=FILE_DIR)
     tree = repo.tree()
 except:
+    pass
     #FIXME: wtf do we do if this happens????
 
 last_commit = list(repo.iter_commits(paths=FILE_DIR))[0]

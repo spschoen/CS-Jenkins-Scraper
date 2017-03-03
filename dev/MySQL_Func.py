@@ -235,7 +235,7 @@ def getTestClassUID(IP, user, pw, DB, className, package):
 
     if cur.rowcount == 0:
         try:
-            insert = "INSERT INTO testClassUID(classUID, testPackage, testClass) VALUES "
+            insert = "INSERT INTO testClassUID(testClassUID, testPackage, testClass) VALUES "
             insert += "(Null, %s, %s)"
             cur.execute(insert, (package, className))
         except e:
