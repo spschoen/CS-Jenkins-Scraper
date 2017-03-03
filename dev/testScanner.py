@@ -1,5 +1,3 @@
-# TODO: WRITE LIBRARY FUNCTIONS TO MAKE THIS TINY.
-
 import sys
 import pymysql
 import MySQL_Func
@@ -12,10 +10,12 @@ import MySQL_Func
 # Setting up the DB connection
 # Future people: change this to your master IP
 # Or wherever your DB is.
-connection = pymysql.connect(host="152.46.20.243",
-                                user="root",
-                                password="",
-                                db="repoinfo")
+# FIXME: Change these to whatever your production DB is at.
+IP = "152.46.20.243"
+user = "root"
+pw = ""
+DB = "repoinfo"
+connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
 # Connection setup
 
@@ -54,46 +54,9 @@ for line in allMethods:
             newClass = newClass[0]
 
             #Check the ClassUID table for all records that match the package and class
-            cur.execute("SELECT * FROM testClassUID WHERE testPackage = %s and \
-                            testClass = %s",(Pacakge, newClass))
-
-            #If we get any records returned, then obviously it's already in the table we don't
-            #have to insert.  Otherwise, if there are no returned records, then we need to
-            #insert them into the table.
-            if cur.rowcount == 0:
-                #debug
-                '''print("    [Data Miner] Detecting new test class to be added to database.  " +
-                            "Adding " + newClass + " to Database")'''
-                '''print("\nAdding record to DB.         | PKG: " + Pacakge.ljust(20) + \
-                        " | CLS: " + newClass.ljust(30))'''
-                try:
-                    cur.execute("INSERT INTO testClassUID(testClassUID, testPackage, testClass) \
-                                VALUES (NULL, %s, %s)",(Pacakge, newClass))
-                except e:
-                    #debug
-                    #print(e[0] + "|" + e[1])
-                    # TODO: email when failure happens.
-                    connection.rollback()
-            else:
-                pass
-                #debug
-                '''print("\nRecord already exists in DB. | PKG: " + Pacakge.ljust(20) + \
-                        " | CLS: " + newClass.ljust(20))'''
-
-            #Execute the same select, so we can get the new classUID
-            cur.execute("SELECT * FROM testClassUID WHERE testPackage = %s and \
-                            testClass = %s",(Pacakge, newClass))
-            if cur.rowcount == 0:
-                print("Somehow, we inserted and could not insert a test classUID.  Exiting.")
-                # TODO: email when failure happens.
-                sys.exit()
-            elif cur.rowcount != 1:
-                print("Multiple matches for testclassUID table.  What?")
-                # TODO: email when failure happens.
-                sys.exit()
-            else:
-                #Now we can actually get the number.
-                classUID = int(cur.fetchone()[0])
+            testClassUID = testClassUID = MySQL_Func.getTestClassUID(IP=IP, user=user, pw=pw,
+                                                                        DB=DB, package=package,
+                                                                        className=newClass)
 
         elif "enum" not in line: #for example: public String getNote () {
 
@@ -118,27 +81,8 @@ for line in allMethods:
             #If we get any records returned, then obviously it's already in the table we don't
             #have to insert.  Otherwise, if there are no returned records, then we need to
             #insert them into the table.
-            cur.execute("SELECT * FROM testMethodUID WHERE testClassUID = %d and \
-                            testMethodName = '%s'" % (classUID, test))
-            if cur.rowcount == 0:
-                #debug
-                '''print("    [Data Miner] Detecting new test to be added to database.  Adding " \
-                            + test + " to Database")'''
-                '''print("Adding record to DB.         | PKG: " + Pacakge.ljust(20) + " | CLS: " \
-                        + newClass.ljust(30) + " | MTD: " + test.ljust(40))'''
-                try:
-                    cur.execute("INSERT INTO testMethodUID(testMethodUID, testClassUID, \
-                                    testMethodName) VALUES (NULL, %s, %s)", (classUID, test))
-                except e:
-                    #debug
-                    #print(e[0] + "|" + e[1])
-                    # TODO: email when failure happens.
-                    connection.rollback()
-            else:
-                pass
-                #debug
-                '''print("Record already exists in DB. | PKG: " + Pacakge.ljust(20) + " | CLS: " \
-                        + newClass.ljust(30) + " | MTD: " + test.ljust(40))'''
+            MySQL_Func.getTestMethodUID(IP=IP, user=user, pw=pw, DB=DB, className=newClass,
+                                        package=package, method=test)
 
 
 testsFile.close()

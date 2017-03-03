@@ -36,7 +36,7 @@ root = pmd.documentElement
 # Set up to read XML
 
 # Setting up the DB connection
-# TODO: CHANGE THESE IN PRODUCTION
+# FIXME: Change these to whatever your production DB is at.
 IP = "152.46.20.243"
 user = "root"
 pw = ""

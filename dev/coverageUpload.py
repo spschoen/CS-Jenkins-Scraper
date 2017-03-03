@@ -20,7 +20,7 @@ if len(sys.argv) != 4:
     print("Did not get expected args.")
     sys.exit()
 
-# TODO: CHANGE THESE IN PRODUCTION
+# FIXME: Change these to whatever your production DB is at.
 IP = "152.46.20.243"
 user = "root"
 pw = ""
@@ -41,7 +41,6 @@ hash = sys.argv[3]
 
 commitUID = MySQL_Func.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
 
-# TODO: take argument
 csvfile = open('site/jacoco/report.csv', newline='')
 report = csv.DictReader(csvfile, delimiter=',')
 for row in report:

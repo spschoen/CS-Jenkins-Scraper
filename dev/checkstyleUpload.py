@@ -18,7 +18,6 @@ for arg in sys.argv[1].split("/"):
 try:
     checkstalio = xml.dom.minidom.parse(FILE_DIR + '/checkstyle.xml')
 except:
-    #TODO: error email
     print("ERROR: Could not interact with file", FILE_DIR + '/checkstyle.xml')
     print("Script exiting.")
     sys.exit()
@@ -29,7 +28,7 @@ root = checkstalio.documentElement
 # Set up to read XML
 
 # Setting up the DB connection
-# TODO: CHANGE THESE IN PRODUCTION
+# FIXME: Change these to whatever your production DB is at.
 IP = "152.46.20.243"
 user = "root"
 pw = ""

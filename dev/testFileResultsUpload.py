@@ -1,5 +1,3 @@
-# TODO: WRITE LIBRARY FUNCTIONS TO MAKE THIS TINY.
-
 # @authors Renata Ann Zeitler and Samuel Schoeneberger 02/2017
 
 # Execution: python3 testFileResultsUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT
@@ -34,7 +32,7 @@ hash = sys.argv[3]
 # Setting up the DB connection
 # Future people: change this to your master IP
 # Or wherever your DB is.
-# TODO: CHANGE THESE IN PRODUCTION
+# FIXME: Change these to whatever your production DB is at.
 IP = "152.46.20.243"
 user = "root"
 pw = ""

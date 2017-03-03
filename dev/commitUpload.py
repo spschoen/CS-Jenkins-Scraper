@@ -16,7 +16,7 @@ import subprocess
 from git import *
 import MySQL_Func
 
-# TODO: CHANGE THESE IN PRODUCTION
+# FIXME: Change these to whatever your production DB is at.
 IP = "152.46.20.243"
 user = "root"
 pw = ""
@@ -42,11 +42,7 @@ try:
     repo = Repo(path=FILE_DIR)
     tree = repo.tree()
 except:
-    # debug
-    for error in sys.exc_info():
-        print("Unexpected error:", error + "")
-    sys.exit()
-    # TODO: email when failure happens.
+    #FIXME: wtf do we do if this happens????
 
 last_commit = list(repo.iter_commits(paths=FILE_DIR))[0]
 second_to_last_commit = list(repo.iter_commits(paths=FILE_DIR))[1]
@@ -110,9 +106,9 @@ cur.execute( commitFind, (CUID, Time) )
 
 if cur.rowcount == 0:
     insert = "INSERT INTO commits (CommitUID, Build_Num, Author, Time, Duration, Message, "
-    insert += "LOC, LOC_DIFF) VALUES (Null, %s, %s, %s, %s, %s, %s, %s)"
+    insert += "LOC, LOC_DIFF) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
     try:
-        cur.execute(insert, (Build_Num, Author, Time, Duration, Message[:50], LOC, LOC_DIFF))
+        cur.execute(insert, (CUID, Build_Num, Author, Time, Duration, Message[:50], LOC, LOC_DIFF))
     except:
         connection.rollback()
         ErrorString = sys.exc_info()[0] + "\n----------\n"

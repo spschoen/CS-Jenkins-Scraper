@@ -11,7 +11,7 @@ import MySQL_Func
 # Setting up the DB connection
 # Future people: change this to your master IP
 # Or wherever your DB is.
-# TODO: CHANGE THESE IN PRODUCTION
+# FIXME: Change these to whatever your production DB is at.
 IP = "152.46.20.243"
 user = "root"
 pw = ""
