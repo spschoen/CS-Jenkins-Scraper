@@ -55,7 +55,7 @@ for line in allMethods:
 
             #Check the ClassUID table for all records that match the package and class
             testClassUID = testClassUID = MySQL_Func.getTestClassUID(IP=IP, user=user, pw=pw,
-                                                                        DB=DB, package=package,
+                                                                        DB=DB, package=Package,
                                                                         className=newClass)
 
         elif "enum" not in line: #for example: public String getNote () {

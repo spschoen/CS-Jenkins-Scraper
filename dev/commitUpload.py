@@ -47,7 +47,7 @@ except:
 
 last_commit = list(repo.iter_commits(paths=FILE_DIR))[0]
 second_to_last_commit = list(repo.iter_commits(paths=FILE_DIR))[1]
-Author = last_commit.author.name
+Author = last_commit.author.name[:8]
 Message = last_commit.summary
 Time = last_commit.committed_date
 
