@@ -40,9 +40,6 @@ root = findbuggies.documentElement
 # Set up to read XML
 
 # Setting up the DB connection
-# TODO: Change this to either enter or the master IP.
-# Future people: change this to your master IP
-# Or wherever your DB is.
 # TODO: CHANGE THESE IN PRODUCTION
 IP = "152.46.20.243"
 user = "root"

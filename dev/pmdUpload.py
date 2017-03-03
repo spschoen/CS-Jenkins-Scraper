@@ -36,7 +36,6 @@ root = pmd.documentElement
 # Set up to read XML
 
 # Setting up the DB connection
-# TODO: Change this to either enter or the master IP.
 # TODO: CHANGE THESE IN PRODUCTION
 IP = "152.46.20.243"
 user = "root"
