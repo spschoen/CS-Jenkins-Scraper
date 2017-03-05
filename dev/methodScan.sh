@@ -4,7 +4,7 @@ function dirScan {
     cd "$1"
     #echo "Dir: $1"
     for D in *; do
-        if [ -d "${D}" ] && [[ "${D}" != "gui" ]] && [[ "${D}" != "test"* ]]; then
+        if [ -d "${D}" ] && [[ "${D}" != "gui" ]] && [[ "${D}" != "test"* ]] && [[ "${D}" != "ts"* ]]; then
             echo "dir ${D}"
             dirScan "${D}"
         else

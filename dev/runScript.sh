@@ -4,8 +4,9 @@
 echo ""
 
 # Removing these from the directory; hiding them from students.
-rm -rf $WORKDIR/ts_test
-rm -rf $WORKDIR/ts_bin
+# Commented out because it can be done in ANT GUYS C'MON
+#rm -rf $WORKDIR/ts_test
+#rm -rf $WORKDIR/ts_bin
 
 echo "Data Miner:"
 
