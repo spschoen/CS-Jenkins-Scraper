@@ -16,4 +16,4 @@ pip3 install PyMySQL
 pip3 install GitPython
 
 #Making sure GitPython will eventually work.
-echo "PATH=$PATH:/usr/local/git/bin/"
+export "PATH=$PATH:/usr/local/git/bin/"

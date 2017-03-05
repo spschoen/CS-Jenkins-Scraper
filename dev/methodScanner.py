@@ -9,13 +9,24 @@ import MySQL_Func
 '''
 
 # Setting up the DB connection
-# Future people: change this to your master IP
-# Or wherever your DB is.
-# FIXME: Change these to whatever your production DB is at.
-IP = "152.46.20.243"
-user = "root"
-pw = ""
-DB = "repoinfo"
+# Now, we begin reading the config file.
+if not os.path.exists('config.txt'):
+    # config.txt doesn't exist.  Don't run.
+    print("Could not access config.txt, exiting.")
+    sys.exit()
+
+configFile = open("config.txt", "r")
+lines = list(configFile)
+if len(lines) != 4:
+    # incorrect config file
+    # print("config.txt contains incorrect number of records.")
+    sys.exit()
+
+# Setting up the DB connection
+IP = lines[0].replace("\n","")
+user = lines[1].replace("\n","")
+pw = lines[2].replace("\n","")
+DB = lines[3].replace("\n","")
 
 connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()

@@ -315,23 +315,23 @@ def getCommitUID(IP, user, pw, DB, hash, repoID):
 
 def sendFailEmail(subject, failure_message, command, variable_list, trace, *variables):
     """
-    Emails information provided to alert system.
+    Emails information provided to alert system.  Uh, I have *no* idea why removing the second
+    quotation from "INSERT INTO" below makes formatting work, but if you keep it,
+    then the rest of the class looks like one single comment.  ???
 
     @author Samuel Schoeneberger
-    @version 1.0
+    @version 1.1
 
     @param subject         - the subject of the email to send
                              "Failure to [do a thing]"
     @param failure_message - the first line of the email.
                              "The following [command] failed:"
     @param command         - the command that failed to insert.
-                             "INSERT INTO ..."
+                             "INSERT INTO ...
     @param variable_list   - the line containing the descriptions of the variables.
                              "With the following variables ([variable 1] | [variable 2] | ...):"
     @param trace           - the trace, should be created by concatenating the traceback.
     @param variables       - the list of variables that are related to the variable list.
-
-    @return methodUID, the UID of the method in the methodUID table.
     """
     fromMail = "spschoen.alerts@gmail.com"
     to = "spschoen.alerts@gmail.com"

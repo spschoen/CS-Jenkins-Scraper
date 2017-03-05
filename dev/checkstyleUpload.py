@@ -1,11 +1,23 @@
 #Building custom Checkstyle parser since none exist. RIP @me
 # @authors Renata Ann Zeitler and Samuel Schoeneberger 02/2017
 
+"""
+Reads checkstyle.xml and uploads the contents to a MySQL Table.
+Requirements:
+ - checkstyle.xml must exist in a readable directory.  If not, this script won't read it.
+ - MySQL_Func.py for interacting with MySQL.
+ - config.txt to read in variables for IP, DB, etc.
+"""
+
 import xml.dom.minidom
 import sys
 import os
 import pymysql
 import MySQL_Func
+
+if len(sys.argv) != 4:
+    print("Incorrect number of arguments.  Exiting.")
+    sys.exit()
 
 # Setting up the XML to read
 FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))
@@ -15,24 +27,48 @@ for arg in sys.argv[1].split("/"):
     FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
     # print(FILE_DIR)
 
+if not os.path.exists(FILE_DIR + '/checkstyle.xml'):
+    # checkstyle.xml doesn't exist.  Don't run.
+    # print("Could not access checkstyle.xml, exiting.")
+    sys.exit()
+
 try:
     checkstalio = xml.dom.minidom.parse(FILE_DIR + '/checkstyle.xml')
 except:
-    print("ERROR: Could not interact with file", FILE_DIR + '/checkstyle.xml')
-    print("Script exiting.")
     sys.exit()
+    # This is commented out, because checkstyle XML can be not created for a lot of reasons.
+    # TODO: Make ant only run the Data Miner if compilation succeeds.
+    '''ErrorString = sys.exc_info()[0] + "\n----------\n"
+    ErrorString += sys.exc_info()[1] + "\n----------\n"
+    ErrorString += sys.exc_info()[2]
+    MySQL_Func.sendFailEmail("Failed to read checkstyle.xml", "The following command failed:",
+                                "checkstalio = xml.dom.minidom.parse(FILE_DIR + '/checkstyle.xml')",
+                                "With the following variables (FILE_DIR)",
+                                ErrorString, FILE_DIR)'''
 
 #root is the first <> element in the XML file.
 root = checkstalio.documentElement
 
-# Set up to read XML
+# We're now set up to read XML
+
+# Now, we begin reading the config file.
+if not os.path.exists('config.txt'):
+    # config.txt doesn't exist.  Don't run.
+    print("Could not access config.txt, exiting.")
+    sys.exit()
+
+configFile = open("config.txt", "r")
+lines = list(configFile)
+if len(lines) != 4:
+    # incorrect config file
+    # print("config.txt contains incorrect number of records.")
+    sys.exit()
 
 # Setting up the DB connection
-# FIXME: Change these to whatever your production DB is at.
-IP = "152.46.20.243"
-user = "root"
-pw = ""
-DB = "repoinfo"
+IP = lines[0].replace("\n","")
+user = lines[1].replace("\n","")
+pw = lines[2].replace("\n","")
+DB = lines[3].replace("\n","")
 
 connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
