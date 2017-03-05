@@ -1,11 +1,22 @@
-# @authors Renata Ann Zeitler and Samuel Schoeneberger 02/2017
+"""
+Reads local git directory and uploads important info to table
+Requirements:
+ - .git/ must exist.  If not, this script won't read it.
+ - MySQL_Func.py for interacting with MySQL.
+ - config.txt to read in variables for IP, DB, etc.
 
-# Execution: python3 commitUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT $BUILD_NUM
-# 0. commitUpload.py
-# 1. WORKSPACE  : /path/to/.git (ABSOLUTE: As given by $WORKSPACE) DO NOT ADD .git
-# 2. PROJECT_ID : PW-XYZ
-# 3. GIT_COMMIT : [40 char commit hash]
-# 4. BUILD_NUM  : integer
+Execution:
+ - python3 commitUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT $BUILD_NUM
+   - Arguments:
+     - 0. commitUpload.py
+     - 1. WORKSPACE  : /path/to/checkstyle.xml (ABSOLUTE: As given by $WORKSPACE) DO NOT ADD file
+     - 2. PROJECT_ID : PW-XYZ
+     - 3. GIT_COMMIT : [40 char commit hash]
+     - 4. BUILD_NUM  : integer
+
+@author Renata Ann Zeitler
+@author Samuel Schoeneberger
+"""
 
 import sys
 import os
@@ -30,10 +41,10 @@ if len(lines) != 4:
     sys.exit()
 
 # Setting up the DB connection
-IP = lines[0].replace("\n","")
-user = lines[1].replace("\n","")
-pw = lines[2].replace("\n","")
-DB = lines[3].replace("\n","")
+IP = lines[0].replace("\n", "")
+user = lines[1].replace("\n", "")
+pw = lines[2].replace("\n", "")
+DB = lines[3].replace("\n", "")
 
 connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
@@ -48,7 +59,8 @@ for arg in sys.argv[1].split("/"):
 
 repoID = sys.argv[2]
 hash = sys.argv[3]
-CUID = MySQL_Func.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
+CUID = MySQL_Func.getCommitUID(
+    IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
 Build_Num = sys.argv[4]
 
 try:
@@ -56,7 +68,7 @@ try:
     tree = repo.tree()
 except:
     pass
-    #FIXME: wtf do we do if this happens????
+    # FIXME: wtf do we do if this happens????
 
 last_commit = list(repo.iter_commits(paths=FILE_DIR))[0]
 second_to_last_commit = list(repo.iter_commits(paths=FILE_DIR))[1]
@@ -67,22 +79,22 @@ Time = last_commit.committed_date
 # CLOC and parsing.
 
 LOC = 0
-#Verifying the CLOC is installed
-#Commented out because doesn't work on Windows.
+# Verifying the CLOC is installed
+# Commented out because doesn't work on Windows.
 if shutil.which("cloc") == None:
     print("ERROR: CLOC utility is required to be installed.")
     print("Script exiting.")
     sys.exit()
 
-#Sending cloc output to /dev/null
+# Sending cloc output to /dev/null
 DEVNULL = open(os.devnull, 'wb')
 
-#Commented out because doesn't work on Windows.
-subprocess.call(["cloc", FILE_DIR, "--by-file-by-lang", \
- "--exclude-ext=xml", "--exclude-dir=gui,reference,output", \
- "--xml", "--out=cloc.xml"], stdout=DEVNULL)
+# Commented out because doesn't work on Windows.
+subprocess.call(["cloc", FILE_DIR, "--by-file-by-lang",
+                 "--exclude-ext=xml", "--exclude-dir=gui,reference,output",
+                 "--xml", "--out=cloc.xml"], stdout=DEVNULL)
 
-#Get the parser, set it up to parse cloc.xml
+# Get the parser, set it up to parse cloc.xml
 try:
     DOMTree = xml.dom.minidom.parse('cloc.xml')
 except:
@@ -91,7 +103,7 @@ except:
 root = DOMTree.documentElement.getElementsByTagName('languages')[0]
 for node in root.childNodes:
     if node.nodeType == node.TEXT_NODE:
-        continue;
+        continue
     if node.hasAttribute("name") and "Java" in node.getAttribute("name"):
         if node.hasAttribute("code") and not node.getAttribute("code") == "":
             LOC = node.getAttribute("code")
@@ -116,13 +128,14 @@ Duration = Time - second_to_last_commit.committed_date
 # find the others - also, they can be different (like build number)
 commitFind = "SELECT * FROM commits WHERE CommitUID = %s and Time = %s"
 
-cur.execute( commitFind, (CUID, Time) )
+cur.execute(commitFind, (CUID, Time))
 
 if cur.rowcount == 0:
     insert = "INSERT INTO commits (CommitUID, Build_Num, Author, Time, Duration, Message, "
     insert += "LOC, LOC_DIFF) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
     try:
-        cur.execute(insert, (CUID, Build_Num, Author, Time, Duration, Message[:50], LOC, LOC_DIFF))
+        cur.execute(insert, (CUID, Build_Num, Author, Time,
+                             Duration, Message[:50], LOC, LOC_DIFF))
     except:
         connection.rollback()
         ErrorString = sys.exc_info()[0] + "\n----------\n"
@@ -132,11 +145,11 @@ if cur.rowcount == 0:
         v_list = "(CommitUID, Build_Num, Author, Time, Duration, Message, LOC, LOC_DIFF)"
 
         MySQL_Func.sendFailEmail("Failed to insert into checkstyle table!",
-                                    "The following insert failed:",
-                                    insert,
-                                    v_list,
-                                    ErrorString,
-                                    CUID, Build_Num, Author, Time, Duration,
-                                    Message[:50], LOC, LOC_DIFF)
+                                 "The following insert failed:",
+                                 insert,
+                                 v_list,
+                                 ErrorString,
+                                 CUID, Build_Num, Author, Time, Duration,
+                                 Message[:50], LOC, LOC_DIFF)
 
 connection.close()

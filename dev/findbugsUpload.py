@@ -1,12 +1,19 @@
 """
 Custom find bugs xml parser
-@authors Renata Ann Zeitler and Samuel Schoeneberger 02/2017
+Requirements:
+ - findbugs.xml must exist.  If not, this script won't read it.
+ - MySQL_Func.py for interacting with MySQL.
+ - config.txt to read in variables for IP, DB, etc.
 
-Execution: python3 findbugsUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT $BUILD_NUM
-0. findbugsUpload.py
-1. WORKSPACE  : /path/to/working/directory
-2. PROJECT_ID : PW-XYZ
-3. GIT_COMMIT : [40 char commit hash]
+Execution:
+ - python3 findbugsUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT
+   - Arguments:
+     - 0. findbugsUpload.py
+     - 1. WORKSPACE  : /path/to/findbugs.xml (DO NOT INCLUDE findbugs.xml)
+     - 2. PROJECT_ID : PW-XYZ
+     - 3. GIT_COMMIT : [40 char commit hash]
+
+@author Renata Ann Zeitler
 """
 
 import xml.dom.minidom
@@ -21,7 +28,7 @@ for arg in sys.argv[1].split("/"):
     if arg == "":
         continue
     FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
-    #print(FILE_DIR)
+    # print(FILE_DIR)
 
 try:
     findbuggies = xml.dom.minidom.parse(FILE_DIR + "/findbugs.xml")
@@ -34,7 +41,7 @@ except:
 repoID = sys.argv[2]
 hash = sys.argv[3]
 
-#root is the first <> element in the XML file.
+# root is the first <> element in the XML file.
 root = findbuggies.documentElement
 
 # Set up to read XML
@@ -54,16 +61,17 @@ if len(lines) != 4:
     sys.exit()
 
 # Setting up the DB connection
-IP = lines[0].replace("\n","")
-user = lines[1].replace("\n","")
-pw = lines[2].replace("\n","")
-DB = lines[3].replace("\n","")
+IP = lines[0].replace("\n", "")
+user = lines[1].replace("\n", "")
+pw = lines[2].replace("\n", "")
+DB = lines[3].replace("\n", "")
 
 connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
 
-#CommitUID getting
-CUID = MySQL_Func.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
+# CommitUID getting
+CUID = MySQL_Func.getCommitUID(
+    IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
 
 if root.hasAttribute("version"):
     pass
@@ -99,14 +107,15 @@ for node in root.childNodes:
                     if classNode.hasAttribute("start"):
                         line = int(classNode.getAttribute("start"))
 
-        #Grab methodUID for below. By now, it should definitely exist
+        # Grab methodUID for below. By now, it should definitely exist
         methodUID = MySQL_Func.getMethodUID(IP=IP, user=user, pw=pw, DB=DB,
                                             className=className, package=package,
                                             method=method)
         search = "SELECT * FROM findBugs WHERE CommitUID = %s AND MethodUID = %s AND "
         search += "BugType = %s AND Priority = %s AND Rank = %s and Category = %s AND Line = %s"
 
-        cur.execute(search, (CUID, methodUID, bugType, priority, rank, cat, line))
+        cur.execute(search, (CUID, methodUID, bugType,
+                             priority, rank, cat, line))
         if cur.rowcount != 0:
             continue
 
@@ -114,7 +123,8 @@ for node in root.childNodes:
         add_findbugs += "Rank, Category, Line) VALUES (%s, %s, %s, %s, %s, %s, %s)"
         # This one goes to findbugs
         try:
-            cur.execute(add_findbugs, (CUID, methodUID, bugType, priority, rank, cat, line))
+            cur.execute(add_findbugs, (CUID, methodUID,
+                                       bugType, priority, rank, cat, line))
         except:
             connection.rollback()
             ErrorString = sys.exc_info()[0] + "\n----------\n"
@@ -123,11 +133,11 @@ for node in root.childNodes:
 
             v_list = "(CommitUID, MethodUID, BugType, Priority, Rank, Category, Line)"
             MySQL_Func.sendFailEmail("Failed to insert into findBugs table!",
-                                        "The following insert failed:",
-                                        add_findbugs,
-                                        v_list,
-                                        ErrorString,
-                                        CUID, methodUID, bugType, priority, rank, cat, line)
+                                     "The following insert failed:",
+                                     add_findbugs,
+                                     v_list,
+                                     ErrorString,
+                                     CUID, methodUID, bugType, priority, rank, cat, line)
 
 # Closing connection
 connection.close()

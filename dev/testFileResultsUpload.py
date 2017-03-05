@@ -1,10 +1,20 @@
-# @authors Renata Ann Zeitler and Samuel Schoeneberger 02/2017
+"""
+Reads test reports and uploads
+Requirements:
+ - test[blaaaaah].xml must exist.  If not, this script won't read it.
+ - MySQL_Func.py for interacting with MySQL.
+ - config.txt to read in variables for IP, DB, etc.
 
-# Execution: python3 testFileResultsUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT
-# 0. testFileResultsUpload.py
-# 1. WORKSPACE  : /path/to/test-reports/
-# 2. PROJECT_ID : PW-XYZ
-# 3. GIT_COMMIT : [40 char commit hash]
+Execution:
+ - python3 testFileResultsUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT
+   - Arguments:
+     - 0. testFileResultsUpload.py
+     - 1. WORKSPACE  : /path/to/test-reports/*.xml (DO NOT INCLUDE *.xml)
+     - 2. PROJECT_ID : PW-XYZ
+     - 3. GIT_COMMIT : [40 char commit hash]
+
+@author Renata Ann Zeitler
+"""
 
 import xml.dom.minidom
 import sys
@@ -17,11 +27,11 @@ FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))
 for arg in sys.argv[1].split("/"):
     if arg != "":
         FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
-    #print(FILE_DIR)
+    # print(FILE_DIR)
 
-#Getting to the right directory
+# Getting to the right directory
 if "test-reports" not in FILE_DIR:
-    filesListed = os.listdir(FILE_DIR + '/test-reports/');
+    filesListed = os.listdir(FILE_DIR + '/test-reports/')
 
 # Directory to XML set up.
 
@@ -46,20 +56,21 @@ if len(lines) != 4:
     sys.exit()
 
 # Setting up the DB connection
-IP = lines[0].replace("\n","")
-user = lines[1].replace("\n","")
-pw = lines[2].replace("\n","")
-DB = lines[3].replace("\n","")
+IP = lines[0].replace("\n", "")
+user = lines[1].replace("\n", "")
+pw = lines[2].replace("\n", "")
+DB = lines[3].replace("\n", "")
 
 connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
 
-#CommitUID getting
-CUID = MySQL_Func.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
+# CommitUID getting
+CUID = MySQL_Func.getCommitUID(
+    IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
 
 count = 0
 
-#Initialize variables
+# Initialize variables
 package = ""
 method = ""
 className = ""
@@ -69,13 +80,15 @@ passing = ""
 while (count < len(filesListed)):
     if (filesListed[count] != '.DS_Store'):
         try:
-            DOMTree = xml.dom.minidom.parse(FILE_DIR + '/test-reports/' + filesListed[count])
+            DOMTree = xml.dom.minidom.parse(
+                FILE_DIR + '/test-reports/' + filesListed[count])
         except:
-            print("ERROR: Could not interact with file", FILE_DIR + '/' + filesListed[count] + '.xml')
+            print("ERROR: Could not interact with file",
+                  FILE_DIR + '/' + filesListed[count] + '.xml')
             print("Script exiting.")
             sys.exit()
 
-        #root is the first <> element in the XML file.
+        # root is the first <> element in the XML file.
         root = DOMTree.documentElement
 
         if root.hasAttribute("name"):
@@ -101,13 +114,14 @@ while (count < len(filesListed)):
                     find = "SELECT * FROM testTable WHERE CommitUID = %s AND testMethodUID = %s "
                     find += "AND Passing = %s"
 
-                    cur.execute(find, (CUID, testMethodUID, passing) )
+                    cur.execute(find, (CUID, testMethodUID, passing))
 
                     if cur.rowcount == 0:
                         testInsert = "INSERT INTO testTable(CommitUID, testMethodUID, Passing) "
                         testInsert += "VALUES (%s, %s, %s)"
                         try:
-                            cur.execute(testInsert, (CUID, testMethodUID, passing) )
+                            cur.execute(
+                                testInsert, (CUID, testMethodUID, passing))
                         except:
                             connection.rollback()
                             ErrorString = sys.exc_info()[0] + "\n----------\n"
@@ -116,12 +130,13 @@ while (count < len(filesListed)):
 
                             v_list = "(CommitUID, testMethodUID, Passing)"
                             MySQL_Func.sendFailEmail("Failed to insert into test Results table!",
-                                                        "The following insert failed:",
-                                                        insertPMD,
-                                                        v_list,
-                                                        ErrorString,
-                                                        str(CUID), str(methodUID), str(ruleset),
-                                                        str(rule), str(line))
+                                                     "The following insert failed:",
+                                                     insertPMD,
+                                                     v_list,
+                                                     ErrorString,
+                                                     str(CUID), str(
+                                                         methodUID), str(ruleset),
+                                                     str(rule), str(line))
     count += 1
 
 # Closing connection
