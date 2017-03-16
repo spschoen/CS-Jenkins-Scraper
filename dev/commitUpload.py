@@ -5,6 +5,8 @@ Requirements:
  - MySQL_Func.py for interacting with MySQL.
  - config.txt to read in variables for IP, DB, etc.
 
+UPDATE: this is hardcoded to match Jenkins' set paths. 
+
 Execution:
  - python3 commitUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT $BUILD_NUM
    - Arguments:
@@ -69,22 +71,30 @@ try:
 except:
     print("damn")
     sys.exit()
-    # FIXME: wtf do we do if this happens????
+    # couldn't locate the repo
 
 last_commit = list(repo.iter_commits(paths=FILE_DIR))[0]
 second_to_last_commit = list(repo.iter_commits(paths=FILE_DIR))[1]
 Author = last_commit.author.name[:8]
 Message = last_commit.summary
 Time = last_commit.committed_date
-doc = "N"
+Doc = "N"
+CStud = "N"
+CTS = "N"
+
+#from args given from ant, use true false values to determine compile_stud status
+#if studArg true,
+#    CStud = "Y"
+#    if tsArg = true
+#        CTS = "Y"
 
 #if file doc was edited, then either bbt or html pages were probably generated
 #docChange = repo.diff('HEAD~1..HEAD', name_only=True)
 #if docChange = "doc":
 #   if docChange does not end with .doc or .docx:
-#      doc = "Y"
+#      Doc = "Y"
 #print(docChange) 
-#print(doc)
+#print(Doc)
 
 # CLOC and parsing.
 
@@ -99,7 +109,6 @@ if shutil.which("cloc") == None:
 # Sending cloc output to /dev/null
 DEVNULL = open(os.devnull, 'wb')
 
-# Commented out because doesn't work on Windows.
 subprocess.call(["cloc", FILE_DIR, "--by-file-by-lang",
                  "--exclude-ext=xml", "--exclude-dir=gui,reference,output",
                  "--xml", "--out=cloc.xml"], stdout=DEVNULL)
@@ -141,25 +150,25 @@ commitFind = "SELECT * FROM commits WHERE CommitUID = %s and Time = %s"
 cur.execute(commitFind, (CUID, Time))
 
 if cur.rowcount == 0:
-    insert = "INSERT INTO commits (CommitUID, Build_Num, Author, Time, Duration, Message, "
-    insert += "LOC, LOC_DIFF) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+    insert = "INSERT INTO commits (CommitUID, Build_Num, Compile_Stud, Compile_TS, Author, Time, Duration, Message, "
+    insert += "LOC, LOC_DIFF, Gen_Javadoc) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     try:
-        cur.execute(insert, (CUID, Build_Num, Author, Time,
-                             Duration, Message[:50], LOC, LOC_DIFF))
+        cur.execute(insert, (CUID, Build_Num, CStud, CTS, Author, Time,
+                             Duration, Message[:50], LOC, LOC_DIFF, Doc))
     except:
         connection.rollback()
         ErrorString = sys.exc_info()[0] + "\n----------\n"
         ErrorString += sys.exc_info()[1] + "\n----------\n"
         ErrorString += sys.exc_info()[2]
 
-        v_list = "(CommitUID, Build_Num, Author, Time, Duration, Message, LOC, LOC_DIFF)"
+        v_list = "(CommitUID, Build_Num, Compile_Stud, Compile_TS, Author, Time, Duration, Message, LOC, LOC_DIFF, Gen_Javadoc)"
 
         MySQL_Func.sendFailEmail("Failed to insert into checkstyle table!",
                                  "The following insert failed:",
                                  insert,
                                  v_list,
                                  ErrorString,
-                                 CUID, Build_Num, Author, Time, Duration,
-                                 Message[:50], LOC, LOC_DIFF)
+                                 CUID, Build_Num, Compile_Stud, Compile_TS, Author, Time, Duration,
+                                 Message[:50], LOC, LOC_DIFF, Doc)
 
 connection.close()
