@@ -67,7 +67,8 @@ try:
     repo = Repo(path=FILE_DIR)
     tree = repo.tree()
 except:
-    pass
+    print("damn")
+    sys.exit()
     # FIXME: wtf do we do if this happens????
 
 last_commit = list(repo.iter_commits(paths=FILE_DIR))[0]
@@ -75,14 +76,15 @@ second_to_last_commit = list(repo.iter_commits(paths=FILE_DIR))[1]
 Author = last_commit.author.name[:8]
 Message = last_commit.summary
 Time = last_commit.committed_date
-change = "N"
+doc = "N"
 
-#if file ending with .doc or .docx was added, it was bbt
-#else, most likely javadoc/html, which is what we're tracking.
-docChange = repo.diff('HEAD~1..HEAD', name_only=True)
-if docChange = '.doc' || '.docx'
-    change = "Y";
-print(docChange) 
+#if file doc was edited, then either bbt or html pages were probably generated
+#docChange = repo.diff('HEAD~1..HEAD', name_only=True)
+#if docChange = "doc":
+#   if docChange does not end with .doc or .docx:
+#      doc = "Y"
+#print(docChange) 
+#print(doc)
 
 # CLOC and parsing.
 
