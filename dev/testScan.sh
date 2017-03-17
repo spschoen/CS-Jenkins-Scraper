@@ -4,7 +4,7 @@ function dirScan {
     cd "$1"
     #echo "Dir: $1"
     for D in *; do
-        if [ -d "${D}" ] && [[ "${D}" == "test" ]]; then
+        if [ -d "${D}" ]; then
             echo "dir ${D}"
             dirScan "${D}"
         else
@@ -37,4 +37,10 @@ fi
 #Saving directory.
 DIRECTORY="$1"
 
-dirScan $DIRECTORY
+#dirScan $DIRECTORY
+for D in $DIRECTORY/*; disown
+    if [ -d "${D}" ] && [[ "${D}" == "test" ]]; then
+        echo "dir ${D}"
+        dirScan "${D}"
+    fi
+done
