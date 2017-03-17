@@ -62,7 +62,7 @@ hash = sys.argv[3]
 commitUID = MySQL_Func.getCommitUID(
     IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
 try:
-    csvfile = open('site/jacoco/report.csv', newline='')
+    csvfile = open(FILE_DIR + 'site/jacoco/report.csv', newline='')
 except:
     sys.exit()
     # RIP.
