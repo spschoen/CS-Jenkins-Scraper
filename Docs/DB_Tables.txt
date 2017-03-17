@@ -11,12 +11,15 @@ MethodUID
 Commits
     CommitUID (Primary Key)
     Build_Num
+	Compile_Status_Student
+	Compile_Status_TS_Test
     Author
     Time
     Duration (Between last commit)
     Message
     LOC
     LOC_DIFF
+	Last_Javadoc_Generation
 
 Checkstyle
     CommitUID
