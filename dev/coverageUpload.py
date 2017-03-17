@@ -61,8 +61,13 @@ hash = sys.argv[3]
 
 commitUID = MySQL_Func.getCommitUID(
     IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
+try:
+    csvfile = open('site/jacoco/report.csv', newline='')
+except:
+    sys.exit()
+    # RIP.
 
-csvfile = open('site/jacoco/report.csv', newline='')
+
 report = csv.DictReader(csvfile, delimiter=',')
 for row in report:
     if "gui" not in row['PACKAGE'].lower() and row['CLASS'][-4:].lower() != "test":
