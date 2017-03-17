@@ -32,9 +32,16 @@ for arg in sys.argv[1].split("/"):
 try:
     pmd = xml.dom.minidom.parse(FILE_DIR + '/pmd.xml')
 except:
-    print("ERROR: Could not interact with file", FILE_DIR + '/pmd.xml')
-    print("Script exiting.")
     sys.exit()
+    # This is commented out, because pmd XML can be not created for a lot of reasons.
+    # TODO: Make ant only run the Data Miner if compilation succeeds.
+    '''ErrorString = sys.exc_info()[0] + "\n----------\n"
+    ErrorString += sys.exc_info()[1] + "\n----------\n"
+    ErrorString += sys.exc_info()[2]
+    MySQL_Func.sendFailEmail("Failed to read pmd.xml", "The following command failed:",
+                                "pmd = xml.dom.minidom.parse(FILE_DIR + '/pmd.xml')",
+                                "With the following variables (FILE_DIR)",
+                                ErrorString, FILE_DIR)'''
 
 # Getting commitUID info
 repoID = sys.argv[2]

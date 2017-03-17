@@ -18,6 +18,7 @@ Execution:
 import sys
 import pymysql
 import MySQL_Func
+import os
 
 # Setting up the DB connection
 # Future people: change this to your master IP
@@ -25,7 +26,7 @@ import MySQL_Func
 # Now, we begin reading the config file.
 if not os.path.exists('config.txt'):
     # config.txt doesn't exist.  Don't run.
-    print("Could not access config.txt, exiting.")
+    # print("Could not access config.txt, exiting.")
     sys.exit()
 
 configFile = open("config.txt", "r")

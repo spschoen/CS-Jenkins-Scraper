@@ -65,7 +65,7 @@ root = checkstalio.documentElement
 # Now, we begin reading the config file.
 if not os.path.exists('config.txt'):
     # config.txt doesn't exist.  Don't run.
-    print("Could not access config.txt, exiting.")
+    # print("Could not access config.txt, exiting.")
     sys.exit()
 
 configFile = open("config.txt", "r")

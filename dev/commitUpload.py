@@ -1,11 +1,11 @@
 """
 Reads local git directory and uploads important info to table
 Requirements:
- - .git/ must exist.  If not, this script won't read it.
+ - .git/ must exist.  If not, this script will not read it.
  - MySQL_Func.py for interacting with MySQL.
  - config.txt to read in variables for IP, DB, etc.
 
-UPDATE: this is hardcoded to match Jenkins' set paths. 
+UPDATE: this is hardcoded to match Jenkins set paths.
 
 Execution:
  - python3 commitUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT $BUILD_NUM
@@ -93,7 +93,7 @@ CTS = "N"
 #if docChange = "doc":
 #   if docChange does not end with .doc or .docx:
 #      Doc = "Y"
-#print(docChange) 
+#print(docChange)
 #print(Doc)
 
 # CLOC and parsing.
