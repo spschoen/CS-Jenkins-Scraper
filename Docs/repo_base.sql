@@ -76,8 +76,8 @@ DROP TABLE IF EXISTS `classUID`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `classUID` (
   `classUID` int(11) NOT NULL AUTO_INCREMENT,
-  `Package` varchar(20) DEFAULT NULL,
-  `Class` varchar(20) DEFAULT NULL,
+  `Package` varchar(50) DEFAULT NULL,
+  `Class` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`classUID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -125,12 +125,15 @@ DROP TABLE IF EXISTS `commits`;
 CREATE TABLE `commits` (
   `CommitUID` int(11) NOT NULL,
   `Build_Num` int(11) DEFAULT NULL,
+  `Compile_Stud` varchar(1) DEFAULT NULL,
+  `Compile_TS` varchar(1) DEFAULT NULL,
   `Author` varchar(8) DEFAULT NULL,
   `Time` int(11) DEFAULT NULL,
   `Duration` int(11) DEFAULT NULL,
   `Message` varchar(50) DEFAULT NULL,
   `LOC` int(11) DEFAULT NULL,
   `LOC_DIFF` int(11) DEFAULT NULL,
+  `Gen_Javadoc` int(11) DEFAULT NULL,
   PRIMARY KEY (`CommitUID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -175,7 +178,7 @@ DROP TABLE IF EXISTS `findBugs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `findBugs` (
-  `CommitUID` int(11) NOT NULL,
+  `CommitUID` int(11) DEFAULT NULL,
   `MethodUID` int(11) DEFAULT NULL,
   `BugType` varchar(100) DEFAULT NULL,
   `Priority` varchar(20) DEFAULT NULL,
@@ -275,8 +278,7 @@ DROP TABLE IF EXISTS `testTable`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `testTable` (
   `CommitUID` int(11) NOT NULL DEFAULT '0',
-  `testClassUID` varchar(50) DEFAULT NULL,
-  `Name` varchar(50) DEFAULT NULL,
+  `testMethodUID` int(11) DEFAULT NULL,
   `Passing` varchar(1) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -299,4 +301,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-02-27 12:40:20
+-- Dump completed on 2017-03-17 12:59:31
