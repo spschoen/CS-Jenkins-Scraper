@@ -8,7 +8,7 @@ function dirScan {
             echo "dir ${D}"
             dirScan "${D}"
         else
-            if [[ "${D}" == *.java ]]; then
+            if [[ "${D}" == *.java ]] && [[ "${D}" != *"JunitCheck"* ]]; then
                 less "${D}" | egrep -o '(publ|priv|prot).*' | egrep -v "\*|;|interface"
                 echo ""
             fi
