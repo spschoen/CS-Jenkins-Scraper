@@ -52,7 +52,8 @@ connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
 
 # Getting path to .git directory.
-FILE_DIR = "/"
+#FILE_DIR = "/"
+FILE_DIR = os.getcwd()
 # Iterate through the path to git to set up the directory.
 for arg in sys.argv[1].split("/"):
     if arg != "":
@@ -79,22 +80,20 @@ Author = last_commit.author.name[:8]
 Message = last_commit.summary
 Time = last_commit.committed_date
 Doc = "N"
-CStud = "N"
-CTS = "N"
+CStud = sys.argv[4]
+CTS = sys.argv[5]
 
-#from args given from ant, use true false values to determine compile_stud status
-#if studArg true,
-#    CStud = "Y"
-#    if tsArg = true
-#        CTS = "Y"
+print(CStud)
+print(CTS)
 
+#TODO: finish this
 #if file doc was edited, then either bbt or html pages were probably generated
-#docChange = repo.diff('HEAD~1..HEAD', name_only=True)
-#if docChange = "doc":
+docChange = repo.git.diff('HEAD~1..HEAD', name_only=True)
+if docChange == "doc":
 #   if docChange does not end with .doc or .docx:
-#      Doc = "Y"
-#print(docChange) 
-#print(Doc)
+      Doc = "Y"
+print(docChange) 
+print(Doc)
 
 # CLOC and parsing.
 
