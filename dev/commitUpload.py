@@ -28,6 +28,7 @@ import shutil
 import subprocess
 from git import *
 import MySQL_Func
+import time
 
 # Now, we begin reading the config file.
 if not os.path.exists('config.txt'):
@@ -70,7 +71,6 @@ try:
     repo = Repo(path=FILE_DIR)
     tree = repo.tree()
 except:
-    print("damn")
     sys.exit()
     # couldn't locate the repo
 
@@ -80,20 +80,34 @@ Author = last_commit.author.name[:8]
 Message = last_commit.summary
 Time = last_commit.committed_date
 Doc = "N"
-CStud = sys.argv[4]
-CTS = sys.argv[5]
 
-print(CStud)
-print(CTS)
+try:
+    compileFile = open("config.txt", "r")
+    compileLines = list(compileFile)
+    studComp = compileLines[0].replace("\n", "")
+    TSComp = compileLines[1].replace("\n", "")
+except:
+    # Compilation successful.
+    studComp = "Y"
+    TSComp = "Y"
 
-#TODO: finish this
-#if file doc was edited, then either bbt or html pages were probably generated
-docChange = repo.git.diff('HEAD~1..HEAD', name_only=True)
-if docChange == "doc":
-#   if docChange does not end with .doc or .docx:
-      Doc = "Y"
-print(docChange) 
-print(Doc)
+statinfo = os.stat(os.getcwd() + '/doc')
+last_mod = statinfo.st_mtime
+
+def getDirComp(directory, length):
+    global last_mod
+    for item in os.listdir(directory):
+        if os.path.isdir(directory + "/" + item):
+            # print(" " * length + item + "/")
+            getDirComp(directory + "/" + item, length + 4)
+        elif "html" in item:
+            pass
+            statinfo = os.stat(directory + "/" + item)
+            if statinfo.st_mtime > last_mod:
+                last_mod = statinfo.st_mtime
+            # print(" " * length + item)
+
+getDirComp(os.getcwd() + '/doc', 0)
 
 # CLOC and parsing.
 
@@ -149,18 +163,20 @@ commitFind = "SELECT * FROM commits WHERE CommitUID = %s and Time = %s"
 cur.execute(commitFind, (CUID, Time))
 
 if cur.rowcount == 0:
-    insert = "INSERT INTO commits (CommitUID, Build_Num, Compile_Stud, Compile_TS, Author, Time, Duration, Message, "
-    insert += "LOC, LOC_DIFF, Gen_Javadoc) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    insert = "INSERT INTO commits (CommitUID, Build_Num, Compile_Stud, Compile_TS, Author, "
+    insert += "Time, Duration, Message, LOC, LOC_DIFF, Gen_Javadoc) VALUES (%s, %s, %s, %s, "
+    insert += "%s, %s, %s, %s, %s, %s, %s)"
     try:
-        cur.execute(insert, (CUID, Build_Num, CStud, CTS, Author, Time,
-                             Duration, Message[:50], LOC, LOC_DIFF, Doc))
+        cur.execute(insert, (CUID, Build_Num, studComp, TSComp, Author, Time,
+                             Duration, Message[:50], LOC, LOC_DIFF, last_mod))
     except:
         connection.rollback()
         ErrorString = sys.exc_info()[0] + "\n----------\n"
         ErrorString += sys.exc_info()[1] + "\n----------\n"
         ErrorString += sys.exc_info()[2]
 
-        v_list = "(CommitUID, Build_Num, Compile_Stud, Compile_TS, Author, Time, Duration, Message, LOC, LOC_DIFF, Gen_Javadoc)"
+        v_list = "(CommitUID, Build_Num, Compile_Stud, Compile_TS, Author, "
+        v_list += "Time, Duration, Message, LOC, LOC_DIFF, Gen_Javadoc)"
 
         MySQL_Func.sendFailEmail("Failed to insert into checkstyle table!",
                                  "The following insert failed:",
