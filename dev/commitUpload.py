@@ -82,7 +82,7 @@ Time = last_commit.committed_date
 Doc = "N"
 
 try:
-    compileFile = open("config.txt", "r")
+    compileFile = open("compLog.txt", "r")
     compileLines = list(compileFile)
     studComp = compileLines[0].replace("\n", "")
     TSComp = compileLines[1].replace("\n", "")
