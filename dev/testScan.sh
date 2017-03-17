@@ -38,7 +38,7 @@ fi
 DIRECTORY="$1"
 
 #dirScan $DIRECTORY
-for D in $DIRECTORY/*; disown
+for D in $DIRECTORY/*; do
     if [ -d "${D}" ] && [[ "${D}" == "test" ]]; then
         echo "dir ${D}"
         dirScan "${D}"
