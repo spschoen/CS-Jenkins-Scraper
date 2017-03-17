@@ -42,11 +42,10 @@ TL;DR These are a bunch of scripts which, when run, will scrape data from all th
 ## Post Installation Instructions
 
 1. Setup MySQL Server on your Master (I shouldn't have to explain this)
-2. **Change IP, user, pw, and Database in each file** (Change DB w/ Project)
-3. Add runscript.sh to your post-build action in Jenkins (cp it to the Workspace/ProjectName dir, run)
-4. Ensure ant builds include JaCoCo coverage report output.
-5. Edit config.txt to contain your DB info (IP, user, pw, DB)
-6. Copy config.txt to somewhere that ant can access it, then edit build.xml to copy it to the local directory.
+2. Add runscript.sh to your post-build action in Jenkins (cp it to the Workspace/ProjectName dir, run)
+3. Ensure ant builds include JaCoCo coverage report output.
+4. Edit config.txt to contain your DB info (IP, user, pw, DB)
+5. Copy config.txt to somewhere that ant can access it, then edit build.xml to copy it to the local directory.
 
 
 ## Database Setup
