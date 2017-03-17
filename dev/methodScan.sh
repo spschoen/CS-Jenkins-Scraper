@@ -37,10 +37,4 @@ fi
 #Saving directory.
 DIRECTORY="$1"
 
-#dirScan $DIRECTORY
-for D in $DIRECTORY/*; do
-    if [ -d "${D}" ] && [[ "${D}" == "src" ]]; then
-        echo "dir ${D}"
-        dirScan "${D}"
-    fi
-done
+dirScan $DIRECTORY
