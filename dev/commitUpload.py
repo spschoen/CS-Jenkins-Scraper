@@ -53,8 +53,8 @@ connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
 
 # Getting path to .git directory.
-#FILE_DIR = "/"
-FILE_DIR = os.getcwd()
+FILE_DIR = "/"
+#FILE_DIR = os.getcwd()
 # Iterate through the path to git to set up the directory.
 for arg in sys.argv[1].split("/"):
     if arg != "":
