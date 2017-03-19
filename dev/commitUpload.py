@@ -107,7 +107,10 @@ def getDirComp(directory, length):
                 last_mod = statinfo.st_mtime
             # print(" " * length + item)
 
-getDirComp(os.getcwd() + '/doc', 0)
+try:
+    getDirComp(os.getcwd() + '/doc', 0)
+except:
+    last_mod = -1
 
 # CLOC and parsing.
 
@@ -184,6 +187,6 @@ if cur.rowcount == 0:
                                  v_list,
                                  ErrorString,
                                  CUID, Build_Num, Compile_Stud, Compile_TS, Author, Time, Duration,
-                                 Message[:50], LOC, LOC_DIFF, Doc)
+                                 Message[:50], LOC, LOC_DIFF, last_mod)
 
 connection.close()
