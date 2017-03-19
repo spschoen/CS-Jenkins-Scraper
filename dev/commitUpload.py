@@ -91,8 +91,12 @@ except:
     studComp = "Y"
     TSComp = "Y"
 
-statinfo = os.stat(os.getcwd() + '/doc')
-last_mod = statinfo.st_mtime
+    
+try:
+    statinfo = os.stat(os.getcwd() + '/doc')
+    last_mod = statinfo.st_mtime
+except:
+    last_mod = -1
 
 def getDirComp(directory, length):
     global last_mod
