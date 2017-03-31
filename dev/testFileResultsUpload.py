@@ -12,6 +12,7 @@ Execution:
      - 1. WORKSPACE  : /path/to/test-reports/*.xml (DO NOT INCLUDE *.xml)
      - 2. PROJECT_ID : PW-XYZ
      - 3. GIT_COMMIT : [40 char commit hash]
+     - 4. DIRECTORY  : Directory of tests to read.
 
 @author Renata Ann Zeitler
 """
@@ -29,9 +30,11 @@ for arg in sys.argv[1].split("/"):
         FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
     # print(FILE_DIR)
 
+test_dir = sys.argv[4]
+
 # Getting to the right directory
-if "test-reports" not in FILE_DIR:
-    filesListed = os.listdir(FILE_DIR + '/test-reports/')
+if test_dir not in FILE_DIR:
+    filesListed = os.listdir(FILE_DIR + '/' + test_dir + '/')
 
 # Directory to XML set up.
 
