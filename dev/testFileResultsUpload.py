@@ -41,7 +41,7 @@ test_dir = sys.argv[4]
 if test_dir not in FILE_DIR:
     FILE_DIR += '/' + test_dir
 
-print(FILE_DIR)
+# print(FILE_DIR)
 
 # Directory to XML set up.
 
@@ -90,9 +90,9 @@ passing = ""
 for file in os.listdir(FILE_DIR):
     if file != '.DS_Store':
         try:
-            DOMTree = xml.dom.minidom.parse(FILE_DIR + test_dir + file)
+            DOMTree = xml.dom.minidom.parse(FILE_DIR + file)
         except:
-            print("ERROR: Could not interact with file " + FILE_DIR + test_dir + file)
+            print("ERROR: Could not interact with file " + FILE_DIR + file)
             sys.exit()
         root = DOMTree.documentElement
 
