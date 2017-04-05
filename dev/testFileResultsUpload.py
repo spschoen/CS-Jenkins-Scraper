@@ -87,7 +87,7 @@ while (count < len(filesListed)):
                 FILE_DIR + test_dir + filesListed[count])
         except:
             print("ERROR: Could not interact with file",
-                  FILE_DIR + '/' + test_dir + filesListed[count] + '.xml')
+                  FILE_DIR + '/' + test_dir + '/' + filesListed[count] + '.xml')
             print("Script exiting.")
             sys.exit()
 
