@@ -111,7 +111,6 @@ cp /home/jenkins/scripts/dev/testFileResultsUpload.py $WORKSPACE/$PROJECT_NAME/t
 
 # echo "    [Data Miner] Executing Test Results uploader"
 python3 testFileResultsUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT
-python3 TStestFileResultsUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT
 
 ##################################
 # TS Test Results uploading.     #

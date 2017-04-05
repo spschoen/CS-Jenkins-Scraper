@@ -34,8 +34,6 @@ for arg in sys.argv[1].split("/"):
         FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
     # print(FILE_DIR)
 
-test_dir = sys.argv[4]
-
 # Getting to the right directory
 if '/test-reports/' not in FILE_DIR:
     FILE_DIR += '/test-reports/'
