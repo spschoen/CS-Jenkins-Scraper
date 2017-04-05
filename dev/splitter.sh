@@ -12,10 +12,15 @@ loc=${1##*/}
 
 # git@github.ncsu.edu:spschoen/csc216-002-P2-096.git > csc216-002-P2-096.git
 
-# Get the 6 chars at offset 11.
-loc=${loc:11:6}
+loc=${loc%.*}
 
-# csc216-002-|P2-096|.git
+# csc216-002-P2-096.git > csc216-002-P2-096
+
+loc=${loc#*-}
+loc=${loc#*-}
+
+# csc216-002-P2-096 > 002-P2-096
+# 002-P2-096 > P2-096
 
 # echo the final string to stdout, to be captured in runScript.
 echo $loc
