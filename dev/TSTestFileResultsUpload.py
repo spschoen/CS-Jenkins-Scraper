@@ -12,7 +12,6 @@ Execution:
      - 1. WORKSPACE  : /path/to/test-reports/*.xml (DO NOT INCLUDE *.xml)
      - 2. PROJECT_ID : PW-XYZ
      - 3. GIT_COMMIT : [40 char commit hash]
-     - 4. DIRECTORY  : Directory of tests to read.
 
 @author Renata Ann Zeitler
 """
@@ -23,9 +22,9 @@ import os
 import pymysql
 import MySQL_Func
 
-if len(sys.argv) != 5:
+if len(sys.argv) != 4:
     print("Did not get expected arguments.")
-    print("$WORKSPACE $PROJECT_ID $GIT_COMMIT $DIRECTORY")
+    print("$WORKSPACE $PROJECT_ID $GIT_COMMIT")
     sys.exit()
 
 # Setting up the XML to read
