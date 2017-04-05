@@ -35,11 +35,9 @@ for arg in sys.argv[1].split("/"):
         FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
     # print(FILE_DIR)
 
-test_dir = sys.argv[4]
-
 # Getting to the right directory
-if '/test-reports/' not in FILE_DIR:
-    FILE_DIR += '/test-reports/'
+if '/ts-test-reports/' not in FILE_DIR:
+    FILE_DIR += '/ts-test-reports/'
 
 # print(FILE_DIR)
 
@@ -116,13 +114,13 @@ for file in os.listdir(FILE_DIR):
                                                                 DB=DB, className=className,
                                                                 package=package, method=testName)
 
-                    find = "SELECT * FROM testTable WHERE CommitUID = %s AND testMethodUID = %s "
+                    find = "SELECT * FROM TS_testTable WHERE CommitUID = %s AND testMethodUID = %s "
                     find += "AND Passing = %s"
 
                     cur.execute(find, (CUID, testMethodUID, passing))
 
                     if cur.rowcount == 0:
-                        testInsert = "INSERT INTO testTable(CommitUID, testMethodUID, Passing) "
+                        testInsert = "INSERT INTO TS_testTable(CommitUID, testMethodUID, Passing) "
                         testInsert += "VALUES (%s, %s, %s)"
                         try:
                             cur.execute(
