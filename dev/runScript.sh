@@ -110,8 +110,18 @@ python3 pmdUpload.py ./ $PROJECT_ID $GIT_COMMIT
 cp /home/jenkins/scripts/dev/testFileResultsUpload.py $WORKSPACE/$PROJECT_NAME/testFileResultsUpload.py
 
 # echo "    [Data Miner] Executing Test Results uploader"
-python3 testFileResultsUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT "test-reports/"
-python3 testFileResultsUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT "ts-test-reports/"
+python3 testFileResultsUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT
+python3 TStestFileResultsUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT
+
+##################################
+# TS Test Results uploading.     #
+##################################
+
+# echo "    [Data Miner] Acquiring TS Test Results uploader"
+cp /home/jenkins/scripts/dev/TStestFileResultsUpload.py $WORKSPACE/$PROJECT_NAME/TStestFileResultsUpload.py
+
+# echo "    [Data Miner] Executing TS Test Results uploader"
+python3 TStestFileResultsUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT
 
 ##################################
 # Coverage uploading.            #
