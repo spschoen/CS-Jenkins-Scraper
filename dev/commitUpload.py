@@ -28,7 +28,10 @@ import shutil
 import subprocess
 from git import *
 import MySQL_Func
-import time
+
+if len(sys.argv) != 5:
+    print("Invalid number of arguments.")
+    sys.exit()
 
 # Now, we begin reading the config file.
 if not os.path.exists('config.txt'):
@@ -54,17 +57,17 @@ cur = connection.cursor()
 
 # Getting path to .git directory.
 FILE_DIR = "/"
-#FILE_DIR = os.getcwd()
+# FILE_DIR = os.getcwd()
 # Iterate through the path to git to set up the directory.
 for arg in sys.argv[1].split("/"):
     if arg != "":
         FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
-    #print(arg.ljust(20) + " | " + FILE_DIR)
+    # print(arg.ljust(20) + " | " + FILE_DIR)
 
 repoID = sys.argv[2]
-hash = sys.argv[3]
+commitHash = sys.argv[3]
 CUID = MySQL_Func.getCommitUID(
-    IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
+    IP=IP, user=user, pw=pw, DB=DB, hash=commitHash, repoID=repoID)
 Build_Num = sys.argv[4]
 
 try:
@@ -98,21 +101,23 @@ try:
 except:
     last_mod = -1
 
-def getDirComp(directory, length):
+
+def get_dir_comp(directory, length):
     global last_mod
-    for item in os.listdir(directory):
-        if os.path.isdir(directory + "/" + item):
-            # print(" " * length + item + "/")
-            getDirComp(directory + "/" + item, length + 4)
-        elif "html" in item:
+    for file in os.listdir(directory):
+        if os.path.isdir(directory + "/" + file):
+            # print(" " * length + file + "/")
+            get_dir_comp(directory + "/" + file, length + 4)
+        elif "html" in file:
             pass
-            statinfo = os.stat(directory + "/" + item)
+            statinfo = os.stat(directory + "/" + file)
             if statinfo.st_mtime > last_mod:
                 last_mod = statinfo.st_mtime
             # print(" " * length + item)
 
+
 try:
-    getDirComp(os.getcwd() + '/doc', 0)
+    get_dir_comp(os.getcwd() + '/doc', 0)
 except:
     last_mod = -1
 
@@ -121,7 +126,7 @@ except:
 LOC = 0
 # Verifying the CLOC is installed
 # Commented out because doesn't work on Windows.
-if shutil.which("cloc") == None:
+if shutil.which("cloc") is None:
     print("ERROR: CLOC utility is required to be installed.")
     print("Script exiting.")
     sys.exit()

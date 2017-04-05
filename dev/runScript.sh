@@ -3,17 +3,12 @@
 
 echo ""
 
-# Removing these from the directory; hiding them from students.
-# Commented out because it can be done in ANT GUYS C'MON
-#rm -rf $WORKSPACE/$PROJECT_NAME/ts_test
-#rm -rf $WORKSPACE/$PROJECT_NAME/ts_bin
-
 echo "Data Miner:"
 
 # TODO: Make this work without logging in.  Probably easier than I think.
-#cd /home/jenkins/scripts/
-#git pull
-#cd $WORKSPACE/$PROJECT_NAME
+cd /home/jenkins/scripts/
+git pull
+cd $WORKSPACE/$PROJECT_NAME
 
 echo "    [Data Miner] Beginning mining."
 cd $WORKSPACE/$PROJECT_NAME

@@ -5,9 +5,10 @@ import traceback
 import email.utils
 from email.mime.text import MIMEText
 
-def getMethodUID(IP, user, pw, DB, method, className, package):
+
+def get_method_UID(IP, user, pw, DB, method, className, package):
     """
-    getMethodUID will take args to connect to a Database, as well as
+    get_method_UID will take args to connect to a Database, as well as
     the names of the method, class, and package to be identified.
     It will check the database records for the method UID (and,
     implicity, the class UID) and if it does not exist, it will
@@ -138,7 +139,7 @@ def getTestMethodUID(IP, user, pw, DB, method, className, package):
     create it, then check for the new method UID.  Finally,
     it will return the newly found method UID.
 
-    Literally it just does getMethodUID but for tests specifically.
+    Literally it just does get_method_UID but for tests specifically.
 
     @author Samuel Schoeneberger
     @version 1.0
@@ -290,7 +291,7 @@ def getCommitUID(IP, user, pw, DB, hash, repoID):
     cur.execute(commitUIDSelect, (hash, repoID))
     if cur.rowcount == 0:  # UID doesn't exist
         try:
-            insert = "INSERT INTO commitUID(commitUID, Hexsha, Repo) VALUES  (NULL, %s, %s)"
+            insert = "INSERT INTO commitUID(commitUID, Hexsha, Repo) VALUES (NULL, %s, %s)"
             cur.execute(insert, (hash, repoID))
             cur.execute(commitUIDSelect, (hash, repoID))
             CUID = str(cur.fetchone()[0])
