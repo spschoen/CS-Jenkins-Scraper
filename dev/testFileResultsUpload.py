@@ -23,8 +23,13 @@ import os
 import pymysql
 import MySQL_Func
 
+if len(sys.argv) != 5:
+    print("Did not get expected arguments.")
+    print("$WORKSPACE $PROJECT_ID $GIT_COMMIT $DIRECTORY")
+    sys.exit()
+
 # Setting up the XML to read
-FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))
+FILE_DIR = '/'
 for arg in sys.argv[1].split("/"):
     if arg != "":
         FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
@@ -34,7 +39,9 @@ test_dir = sys.argv[4]
 
 # Getting to the right directory
 if test_dir not in FILE_DIR:
-    filesListed = os.listdir(FILE_DIR + '/' + test_dir + '/')
+    FILE_DIR += '/' + test_dir
+
+print(FILE_DIR)
 
 # Directory to XML set up.
 
@@ -80,18 +87,13 @@ className = ""
 testName = ""
 passing = ""
 
-while (count < len(filesListed)):
-    if (filesListed[count] != '.DS_Store'):
+for file in os.listdir(FILE_DIR):
+    if file != '.DS_Store':
         try:
-            DOMTree = xml.dom.minidom.parse(
-                FILE_DIR + test_dir + filesListed[count])
+            DOMTree = xml.dom.minidom.parse(FILE_DIR + test_dir + file)
         except:
-            print("ERROR: Could not interact with file",
-                  FILE_DIR + '/' + test_dir + '/' + filesListed[count] + '.xml')
-            print("Script exiting.")
+            print("ERROR: Could not interact with file " + FILE_DIR + test_dir + file)
             sys.exit()
-
-        # root is the first <> element in the XML file.
         root = DOMTree.documentElement
 
         if root.hasAttribute("name"):
@@ -140,7 +142,5 @@ while (count < len(filesListed)):
                                                      str(CUID), str(
                                                          methodUID), str(ruleset),
                                                      str(rule), str(line))
-    count += 1
 
-# Closing connection
 connection.close()
