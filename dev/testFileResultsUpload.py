@@ -84,10 +84,10 @@ while (count < len(filesListed)):
     if (filesListed[count] != '.DS_Store'):
         try:
             DOMTree = xml.dom.minidom.parse(
-                FILE_DIR + '/test-reports/' + filesListed[count])
+                FILE_DIR + test_dir + filesListed[count])
         except:
             print("ERROR: Could not interact with file",
-                  FILE_DIR + '/' + filesListed[count] + '.xml')
+                  FILE_DIR + '/' + test_dir + filesListed[count] + '.xml')
             print("Script exiting.")
             sys.exit()
 
