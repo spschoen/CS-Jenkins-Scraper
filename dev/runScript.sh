@@ -118,10 +118,10 @@ python3 TStestFileResultsUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COM
 ##################################
 
 # echo "    [Data Miner] Acquiring TS Test Results uploader"
-cp /home/jenkins/scripts/dev/TStestFileResultsUpload.py $WORKSPACE/$PROJECT_NAME/TStestFileResultsUpload.py
+cp /home/jenkins/scripts/dev/TSTestFileResultsUpload.py $WORKSPACE/$PROJECT_NAME/TSTestFileResultsUpload.py
 
 # echo "    [Data Miner] Executing TS Test Results uploader"
-python3 TStestFileResultsUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT
+python3 TSTestFileResultsUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT
 
 ##################################
 # Coverage uploading.            #
