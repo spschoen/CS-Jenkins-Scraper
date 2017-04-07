@@ -114,7 +114,7 @@ for file in root.childNodes:
         continue
 
     # Class UID
-    methodUID = MySQL_Func.getMethodUID(IP=IP, user=user, pw=pw, DB=DB, className=className,
+    methodUID = MySQL_Func.get_method_UID(IP=IP, user=user, pw=pw, DB=DB, className=className,
                                         package=package, method=method)
 
     search = "SELECT * FROM PMD WHERE CommitUID = %s AND MethodUID = %s AND Ruleset = %s AND "

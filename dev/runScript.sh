@@ -5,7 +5,7 @@ echo ""
 
 echo "Data Miner:"
 
-if [ $? -ne 1 ] || [ ! -d "$1" ]; then
+if [ $# -ne 1 ] || [ ! -d "$1" ]; then
     echo "ERROR: ARGUMENT IS NOT DIRECTORY/DOES NOT EXIST.  EXITING"
     exit 5
 fi
