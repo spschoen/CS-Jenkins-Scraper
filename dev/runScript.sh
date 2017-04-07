@@ -6,9 +6,9 @@ echo ""
 echo "Data Miner:"
 
 # TODO: Make this work without logging in.  Probably easier than I think.
-cd /home/jenkins/scripts/
-git pull
-cd $WORKSPACE/$PROJECT_NAME
+# cd /home/jenkins/scripts/
+# git pull
+# cd $WORKSPACE/$PROJECT_NAME
 
 echo "    [Data Miner] Beginning mining."
 cd $WORKSPACE/$PROJECT_NAME
