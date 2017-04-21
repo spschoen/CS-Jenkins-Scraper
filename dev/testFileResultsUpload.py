@@ -97,33 +97,36 @@ for file in os.listdir(FILE_DIR):
             temp = root.getAttribute("name")
             className = temp.split(".")[-1]
             package = temp.split(".")[-2]
+            testMethodUID = MySQL_Func.getTestMethodUID(IP=IP, user=user, pw=pw,
+                                                        DB=DB, className=className,
+                                                        package=package, method=testName)
+
             for node in root.childNodes:
+                message = ""
                 if node.nodeName == "testcase":
                     if node.hasAttribute("name"):
                         testName = node.getAttribute("name")
                     if len(node.childNodes) != 0:
                         passing = "F"
+                        for test_case_child in node.childNodes:
+                            if test_case_child.nodeType != test_case_child.TEXT_NODE:
+                                message = test_case_child.getAttribute("message")
                     else:
                         passing = "P"
 
                     # If we get any records returned, then it's already in the table.
                     # Otherwise, if there are no returned records, then we need to insert
                     # them into the table.
-                    testMethodUID = MySQL_Func.getTestMethodUID(IP=IP, user=user, pw=pw,
-                                                                DB=DB, className=className,
-                                                                package=package, method=testName)
-
                     find = "SELECT * FROM testTable WHERE CommitUID = %s AND testMethodUID = %s "
                     find += "AND Passing = %s"
 
                     cur.execute(find, (CUID, testMethodUID, passing))
 
                     if cur.rowcount == 0:
-                        testInsert = "INSERT INTO testTable(CommitUID, testMethodUID, Passing) "
-                        testInsert += "VALUES (%s, %s, %s)"
+                        testInsert = "INSERT INTO testTable(CommitUID, testMethodUID, Passing, Message) "
+                        testInsert += "VALUES (%s, %s, %s, %s)"
                         try:
-                            cur.execute(
-                                testInsert, (CUID, testMethodUID, passing))
+                            cur.execute(testInsert, (CUID, testMethodUID, passing, message))
                         except:
                             connection.rollback()
                             ErrorString = sys.exc_info()[0] + "\n----------\n"
