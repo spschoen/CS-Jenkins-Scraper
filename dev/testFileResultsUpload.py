@@ -1,19 +1,22 @@
 """
-Reads test reports and uploads
+Reads student test reports and uploads them to the given Database.
+
 Requirements:
- - test[blaaaaah].xml must exist.  If not, this script won't read it.
- - MySQL_Func.py for interacting with MySQL.
- - config.txt to read in variables for IP, DB, etc.
+    MySQL_Func.py - library for interaction with databases must be available in the same directory as this file.
+    config.txt    - file specifying database information.
 
-Execution:
- - python3 testFileResultsUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT
-   - Arguments:
-     - 0. testFileResultsUpload.py
-     - 1. WORKSPACE  : /path/to/test-reports/*.xml (DO NOT INCLUDE *.xml)
-     - 2. PROJECT_ID : PW-XYZ
-     - 3. GIT_COMMIT : [40 char commit hash]
+Args:
+    1. WORKSPACE  - Absolute path to the location of test-reports/, which contains the test XML files.
+    2. PROJECT_ID - 17 char string representing class, section, project, and unique ID of the current project.
+                    For example: csc216-002-P2-096
+    3. GIT_COMMIT - 40 Character commit hash.
 
-@author Renata Ann Zeitler
+Returns:
+    N/A
+
+Authors:
+    Renata Ann Zeitler
+    Samuel Schoeneberger
 """
 
 import xml.dom.minidom
@@ -44,7 +47,7 @@ if '/test-reports/' not in FILE_DIR:
 
 # Getting commitUID info
 repoID = sys.argv[2]
-hash = sys.argv[3]
+commit_hash = sys.argv[3]
 
 # Setting up the DB connection
 # Future people: change this to your master IP
@@ -59,7 +62,7 @@ configFile = open("config.txt", "r")
 lines = list(configFile)
 if len(lines) != 4:
     # incorrect config file
-    # print("config.txt contains incorrect number of records.")
+    print("config.txt contains incorrect number of records.")
     sys.exit()
 
 # Setting up the DB connection
@@ -72,10 +75,7 @@ connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
 
 # CommitUID getting
-CUID = MySQL_Func.getCommitUID(
-    IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
-
-count = 0
+commit_uid = MySQL_Func.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=commit_hash, repoID=repoID)
 
 # Initialize variables
 package = ""
@@ -85,62 +85,59 @@ testName = ""
 passing = ""
 
 for file in os.listdir(FILE_DIR):
-    if file != '.DS_Store':
-        try:
-            DOMTree = xml.dom.minidom.parse(FILE_DIR + file)
-        except:
-            print("ERROR: Could not interact with file " + FILE_DIR + file)
-            sys.exit()
-        root = DOMTree.documentElement
+    if !str(file).endswith(".xml"):
+        continue
+    try:
+        DOMTree = xml.dom.minidom.parse(FILE_DIR + file)
+    except:
+        print("ERROR: Could not interact with file " + FILE_DIR + file)
+        sys.exit()
+    root = DOMTree.documentElement
 
-        if root.hasAttribute("name"):
-            temp = root.getAttribute("name")
-            className = temp.split(".")[-1]
-            package = temp.split(".")[-2]
-            testMethodUID = MySQL_Func.getTestMethodUID(IP=IP, user=user, pw=pw,
-                                                        DB=DB, className=className,
-                                                        package=package, method=testName)
+    if root.hasAttribute("name"):
+        temp = root.getAttribute("name")
+        className = temp.split(".")[-1]
+        package = temp.split(".")[-2]
+        testMethodUID = MySQL_Func.getTestMethodUID(IP=IP, user=user, pw=pw,
+                                                    DB=DB, className=className,
+                                                    package=package, method=testName)
 
-            for node in root.childNodes:
-                message = ""
-                if node.nodeName == "testcase":
-                    if node.hasAttribute("name"):
-                        testName = node.getAttribute("name")
-                    if len(node.childNodes) != 0:
-                        passing = "F"
-                        for test_case_child in node.childNodes:
-                            if test_case_child.nodeType != test_case_child.TEXT_NODE:
-                                message = test_case_child.getAttribute("message")
-                    else:
-                        passing = "P"
+        for node in root.childNodes:
+            message = ""
+            if node.nodeName == "testcase":
+                if node.hasAttribute("name"):
+                    testName = node.getAttribute("name")
+                if len(node.childNodes) != 0:
+                    passing = "F"
+                    for test_case_child in node.childNodes:
+                        if test_case_child.nodeType != test_case_child.TEXT_NODE:
+                            message = test_case_child.getAttribute("message")
+                else:
+                    passing = "P"
 
-                    # If we get any records returned, then it's already in the table.
-                    # Otherwise, if there are no returned records, then we need to insert
-                    # them into the table.
-                    find = "SELECT * FROM testTable WHERE CommitUID = %s AND testMethodUID = %s "
-                    find += "AND Passing = %s"
+                # If we get any records returned, then it's already in the table.
+                # Otherwise, if there are no returned records, then we need to insert
+                # them into the table.
+                find = "SELECT * FROM testTable WHERE CommitUID = %s AND testMethodUID = %s "
+                find += "AND Passing = %s"
 
-                    cur.execute(find, (CUID, testMethodUID, passing))
+                cur.execute(find, (commit_uid, testMethodUID, passing))
 
-                    if cur.rowcount == 0:
-                        testInsert = "INSERT INTO testTable(CommitUID, testMethodUID, Passing, Message) "
-                        testInsert += "VALUES (%s, %s, %s, %s)"
-                        try:
-                            cur.execute(testInsert, (CUID, testMethodUID, passing, message))
-                        except:
-                            connection.rollback()
-                            ErrorString = sys.exc_info()[0] + "\n----------\n"
-                            ErrorString += sys.exc_info()[1] + "\n----------\n"
-                            ErrorString += sys.exc_info()[2]
+                if cur.rowcount == 0:
+                    testInsert = "INSERT INTO testTable(CommitUID, testMethodUID, Passing, Message) \
+                                  VALUES (%s, %s, %s, %s)"
+                    try:
+                        cur.execute(testInsert, (commit_uid, testMethodUID, passing, message))
+                    except:
+                        connection.rollback()
+                        ErrorString = sys.exc_info()[0] + "\n----------\n"
+                        ErrorString += sys.exc_info()[1] + "\n----------\n"
+                        ErrorString += sys.exc_info()[2]
 
-                            v_list = "(CommitUID, testMethodUID, Passing)"
-                            MySQL_Func.sendFailEmail("Failed to insert into test Results table!",
-                                                     "The following insert failed:",
-                                                     insertPMD,
-                                                     v_list,
-                                                     ErrorString,
-                                                     str(CUID), str(
-                                                         methodUID), str(ruleset),
-                                                     str(rule), str(line))
+                        v_list = "(CommitUID, testMethodUID, Passing, Message)"
+                        MySQL_Func.sendFailEmail("Failed to insert into test Results table!",
+                                                 "The following insert failed:",
+                                                 testInsert, v_list, ErrorString,
+                                                 str(commit_uid), str(testMethodUID), str(passing), str(message))
 
 connection.close()

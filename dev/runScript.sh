@@ -21,7 +21,7 @@ echo "    [Data Miner] Beginning mining."
 cd $WORKSPACE/$PROJECT_NAME
 
 ##################################
-# Getting Project ID for CUID    #
+# Getting Project ID for commit_uid    #
 ##################################
 
 # echo "    [Data Miner] Acquiring ProjectID scanner"

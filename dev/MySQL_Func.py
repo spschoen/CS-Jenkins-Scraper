@@ -262,7 +262,7 @@ def getTestClassUID(IP, user, pw, DB, className, package):
 def getCommitUID(IP, user, pw, DB, hash, repoID):
     """
     getCommitUID will take args to connect to a Database, as well as
-    the Project ID and commit hash, to get the correct commitUID.
+    the Project ID and commit commit_hash, to get the correct commitUID.
     Will create a commitUID if it doesn't exist.
 
     @author Samuel Schoeneberger
@@ -272,7 +272,7 @@ def getCommitUID(IP, user, pw, DB, hash, repoID):
     @param user   - the username to log into the DB.  Probably root.
     @param pw     - the password of the above username.  c'mon man.
     @param DB     - the specific database to connect to in MySQL.
-    @param hash   - the commit hash of a git commit. 40 hex chars
+    @param hash   - the commit commit_hash of a git commit. 40 hex chars
     @param repoID - the repo to look up in the commitUID table.  PW-XYZ
 
     @return methodUID, the UID of the method in the methodUID table.

@@ -14,7 +14,7 @@ Execution:
      - 0. checkstyleUpload.py
      - 1. WORKSPACE  : /path/to/checkstyle.xml (ABSOLUTE: As given by $WORKSPACE) DO NOT ADD file
      - 2. PROJECT_ID : PW-XYZ
-     - 3. GIT_COMMIT : [40 char commit hash]
+     - 3. GIT_COMMIT : [40 char commit commit_hash]
 
 @author Renata Ann Zeitler
 @author Samuel Schoeneberger
