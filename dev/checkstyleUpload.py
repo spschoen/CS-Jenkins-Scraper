@@ -1,23 +1,22 @@
-# Building custom Checkstyle parser since none exist. RIP @me
-# @authors Renata Ann Zeitler and Samuel Schoeneberger 02/2017
-
 """
-Reads checkstyle.xml and uploads the contents to a MySQL Table.
+Reads checkstyle error file (checkstyle.xml) and uploads any records to the given Database.
+
 Requirements:
- - checkstyle.xml must exist in a readable directory.  If not, this script won't read it.
- - MySQL_Func.py for interacting with MySQL.
- - config.txt to read in variables for IP, DB, etc.
+    MySQL_Func.py - library for interaction with databases must be available in the same directory as this file.
+    config.txt    - file specifying database information.
 
-Execution:
- - python3 checkstyleUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT
-   - Arguments:
-     - 0. checkstyleUpload.py
-     - 1. WORKSPACE  : /path/to/checkstyle.xml (ABSOLUTE: As given by $WORKSPACE) DO NOT ADD file
-     - 2. PROJECT_ID : PW-XYZ
-     - 3. GIT_COMMIT : [40 char commit commit_hash]
+Args:
+    1. WORKSPACE  - Absolute path to the location of test-reports/, which contains the test XML files.
+    2. PROJECT_ID - 17 char string representing class, section, project, and unique ID of the current project.
+                    For example: csc216-002-P2-096
+    3. GIT_COMMIT - 40 Character commit hash.
 
-@author Renata Ann Zeitler
-@author Samuel Schoeneberger
+Returns:
+    N/A
+
+Authors:
+    Renata Ann Zeitler
+    Samuel Schoeneberger
 """
 
 import xml.dom.minidom
@@ -46,9 +45,7 @@ if not os.path.exists(FILE_DIR + '/checkstyle.xml'):
 try:
     checkstalio = xml.dom.minidom.parse(FILE_DIR + '/checkstyle.xml')
 except:
-    sys.exit()
     # This is commented out, because checkstyle XML can be not created for a lot of reasons.
-    # TODO: Make ant only run the Data Miner if compilation succeeds.
     '''ErrorString = sys.exc_info()[0] + "\n----------\n"
     ErrorString += sys.exc_info()[1] + "\n----------\n"
     ErrorString += sys.exc_info()[2]
@@ -56,6 +53,7 @@ except:
                                 "checkstalio = xml.dom.minidom.parse(FILE_DIR + '/checkstyle.xml')",
                                 "With the following variables (FILE_DIR)",
                                 ErrorString, FILE_DIR)'''
+    sys.exit()
 
 # root is the first <> element in the XML file.
 root = checkstalio.documentElement
@@ -93,8 +91,8 @@ CUID = MySQL_Func.getCommitUID(
     IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
 
 # A basic for loop, to look at all the nodes (<> elements) inside the file node
-#(which is now the root node) and print out their information to the DB.
-#.childNodes is a list of nodes that the root has as children.
+# (which is now the root node) and print out their information to the DB.
+# .childNodes is a list of nodes that the root has as children.
 package = ""
 className = ""
 line = 0
@@ -105,7 +103,6 @@ source = ""
 
 for first in root.childNodes:
     if first.nodeType != first.TEXT_NODE:
-        # Ignore messages about tabs
         if first.hasAttribute("name"):
             package = first.getAttribute("name")
             className = package.split('/')[-1]
@@ -115,7 +112,7 @@ for first in root.childNodes:
             # Some errors do not have a column number, so they will print as a
             # -1
             col = -1
-            # Ignoes TEXT_NODES because they cause problems
+            # Ignores TEXT_NODES because they cause problems
             if node.nodeType != node.TEXT_NODE:
                 if node.hasAttribute("line"):
                     line = int(node.getAttribute("line"))

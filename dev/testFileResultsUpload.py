@@ -85,7 +85,7 @@ testName = ""
 passing = ""
 
 for file in os.listdir(FILE_DIR):
-    if !str(file).endswith(".xml"):
+    if not (str(file).endswith(".xml")):
         continue
     try:
         DOMTree = xml.dom.minidom.parse(FILE_DIR + file)

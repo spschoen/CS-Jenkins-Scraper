@@ -1,18 +1,21 @@
 """
-methodScanner.py is a python file that will read methods.txt for all methods and classes in a
-student's directory, then upload the unique ones.
+Interpreter for methodScan.sh output file.  Uploads all methods to database, giving them unique identifiers used
+throughout these scraper programs.
 
 Requirements:
- - methods.txt must exist.  If not, this script won't read it.
- - MySQL_Func.py for interacting with MySQL.
- - config.txt to read in variables for IP, DB, etc.
+    MySQL_Func.py - library for interaction with databases must be available in the same directory as this file.
+    config.txt    - file specifying database information.
+    methods.txt   - output from methodScan.sh script.
 
-Execution:
- - python3 methodScanner.py
-   - Arguments:
-     - 0. methodScanner.py
+Args:
+    N/A
 
-@author Samuel Schoeneberger
+Returns:
+    N/A
+
+Authors:
+    Renata Ann Zeitler
+    Samuel Schoeneberger
 """
 
 import sys
@@ -49,6 +52,7 @@ except:
     for error in sys.exc_info():
         print(error + "")
     sys.exit()
+
 allMethods = list(methodsFile)
 
 className = ""
@@ -56,15 +60,18 @@ package = ""
 classUID = -1
 for line in allMethods:
     # New lines are added by the scanner, don't need 'em.
-    if line == "\n" or "enum" in line:  # Ignore enums and blank lines
+    if line == "\n" or "enum" in line:
+        # Ignore enums and blank lines
         continue
     else:
-        if "dir" in line:  # for example: dir bug_tracker
+        if "dir" in line:
+            # for example: dir bug_tracker
             package = line.split(" ")[1].replace("\n", "")
             # Split the string on spaces, then take the second value
             # which is the directory/package, then remove the new line
 
-        elif "class" in line:  # for example: public class TrackedBug {
+        elif "class" in line:
+            # for example: public class TrackedBug {
             className = line.replace("\n", "").split(" ")
             # Remove new line, split on space.
 
@@ -82,7 +89,8 @@ for line in allMethods:
             classUID = MySQL_Func.getClassUID(IP=IP, user=user, pw=pw, DB=DB,
                                               className=className, package=package)
 
-        elif "enum" not in line:  # for example: public String getNote () {
+        elif "enum" not in line:
+            # for example: public String getNote () {
             # split on the parenthesis, grab the first element. since that's gonna include the
             # method name, and split that on spaces
             part = line.split("(")[0].split(" ")
@@ -106,8 +114,7 @@ for line in allMethods:
             # We're discarding the return value from the function since it does the inserting
             # as well as returning.
             methodUID = MySQL_Func.get_method_UID(IP=IP, user=user, pw=pw, DB=DB,
-                                                    className=className, package=package,
-                                                    method=methodName)
+                                                  className=className, package=package, method=methodName)
 
 
 methodsFile.close()

@@ -1,25 +1,28 @@
 """
-Reads local report.csv to find individual class coverage and upload to a table.
+Reads report.csv file from jacoco and uploads coverage information to given database.
+
 Requirements:
- - .git/ must exist.  If not, this script won't read it.
- - MySQL_Func.py for interacting with MySQL.
- - config.txt to read in variables for IP, DB, etc.
+    MySQL_Func.py - library for interaction with databases must be available in the same directory as this file.
+    config.txt    - file specifying database information.
 
-Execution:
- - python3 coverageUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT
-   - Arguments:
-     - 0. coverageUpload.py
-     - 1. WORKSPACE  : /path/to/report.csv (DO NOT INCLUDE report.csv)
-                ^ This isn't implemented yet, just because I haven't gotten the chance.  - Sam
-     - 2. PROJECT_ID : PW-XYZ
-     - 3. GIT_COMMIT : [40 char commit hash]
+Args:
+    1. WORKSPACE  - Absolute path to the location of report.csv
+    2. PROJECT_ID - 17 char string representing class, section, project, and unique ID of the current project.
+                    For example: csc216-002-P2-096
+    3. GIT_COMMIT - 40 Character commit hash.
 
-@author Samuel Schoeneberger
+Returns:
+    N/A
+
+Authors:
+    Renata Ann Zeitler
+    Samuel Schoeneberger
 """
 
 import csv
 import sys
 import os
+import platform
 import pymysql
 import MySQL_Func
 
@@ -49,21 +52,26 @@ DB = lines[3].replace("\n", "")
 connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
 
-# Getting path to report.csv
-FILE_DIR = "/"
-# Iterate through $WORKSPACE to set up the directory.
+if platform.system() is "Windows":
+    FILE_DIR = "C:\\"
+else:
+    FILE_DIR = "/"
+
+# Iterate through the path to git to set up the directory.
 for arg in sys.argv[1].split("/"):
-    if arg != "":
-        FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
+    if ":" in arg:
+        FILE_DIR = os.path.join(FILE_DIR, arg + "\\")
+    elif arg != "":
+        FILE_DIR = os.path.join(FILE_DIR, arg)
+    # print(arg.ljust(25) + " | " + FILE_DIR)
 
 repoID = sys.argv[2]
-hash = sys.argv[3]
+commit_hash = sys.argv[3]
 
-commitUID = MySQL_Func.getCommitUID(
-    IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
+commitUID = MySQL_Func.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=commit_hash, repoID=repoID)
 
 try:
-    csvfile = open(FILE_DIR + '/site/jacoco/report.csv', newline='')
+    csvfile = open(FILE_DIR + "/report.csv", newline='')
 except:
     print("Failed to open report.csv file; please contact a TA.")
     sys.exit()
@@ -72,13 +80,9 @@ except:
 report = csv.DictReader(csvfile, delimiter=',')
 for row in report:
     if "gui" not in row['PACKAGE'].lower() and row['CLASS'][-4:].lower() != "test":
-        classUID = MySQL_Func.getClassUID(
-            IP=IP,
-            user=user,
-            pw=pw,
-            DB=DB,
-            className=row['CLASS'].split(".")[-1],
-            package=row['PACKAGE'].split(".")[-1])
+        classUID = MySQL_Func.getClassUID(IP=IP, user=user, pw=pw, DB=DB,
+                                          className=row['CLASS'].split(".")[-1],
+                                          package=row['PACKAGE'].split(".")[-1])
         coverage = int(row['LINE_COVERED']) / \
             (int(row['LINE_MISSED']) + int(row['LINE_COVERED']))
         coverage = str(round(coverage * 100))

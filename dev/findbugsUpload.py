@@ -1,19 +1,22 @@
 """
-Custom find bugs xml parser
+Reads findbugs xml file uploads any records into given database.
+
 Requirements:
- - findbugs.xml must exist.  If not, this script won't read it.
- - MySQL_Func.py for interacting with MySQL.
- - config.txt to read in variables for IP, DB, etc.
+    MySQL_Func.py - library for interaction with databases must be available in the same directory as this file.
+    config.txt    - file specifying database information.
 
-Execution:
- - python3 findbugsUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT
-   - Arguments:
-     - 0. findbugsUpload.py
-     - 1. WORKSPACE  : /path/to/findbugs.xml (DO NOT INCLUDE findbugs.xml)
-     - 2. PROJECT_ID : PW-XYZ
-     - 3. GIT_COMMIT : [40 char commit hash]
+Args:
+    1. WORKSPACE  - Absolute path to the location of the findbugs.xml file
+    2. PROJECT_ID - 17 char string representing class, section, project, and unique ID of the current project.
+                    For example: csc216-002-P2-096
+    3. GIT_COMMIT - 40 Character commit hash.
 
-@author Renata Ann Zeitler
+Returns:
+    N/A
+
+Authors:
+    Renata Ann Zeitler
+    Samuel Schoeneberger
 """
 
 import xml.dom.minidom
@@ -21,21 +24,30 @@ import sys
 import os
 import pymysql
 import MySQL_Func
+import platform
 
 # Setting up the XML to read
-FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))
+if platform.system() is "Windows":
+    FILE_DIR = "C:\\"
+else:
+    FILE_DIR = "/"
+
+# Iterate through the path to git to set up the directory.
 for arg in sys.argv[1].split("/"):
-    if arg == "":
-        continue
-    FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
-    # print(FILE_DIR)
+    if ":" in arg:
+        FILE_DIR = os.path.join(FILE_DIR, arg + "\\")
+    elif arg != "":
+        FILE_DIR = os.path.join(FILE_DIR, arg)
+    # print(arg.ljust(25) + " | " + FILE_DIR)
+
+if not (os.path.isfile(FILE_DIR + "/findbugs.xml")):
+    print("Findbugs.xml file does not exist.  Exiting.")
+    sys.exit()
 
 try:
     findbuggies = xml.dom.minidom.parse(FILE_DIR + "/findbugs.xml")
 except:
-    sys.exit()
     # This is commented out, because findbugs XML can be not created for a lot of reasons.
-    # TODO: Make ant only run the Data Miner if compilation succeeds.
     '''ErrorString = sys.exc_info()[0] + "\n----------\n"
     ErrorString += sys.exc_info()[1] + "\n----------\n"
     ErrorString += sys.exc_info()[2]
@@ -43,10 +55,11 @@ except:
                                 "findbuggies = xml.dom.minidom.parse(FILE_DIR + "/findbugs.xml")",
                                 "With the following variables (FILE_DIR)",
                                 ErrorString, FILE_DIR)'''
+    sys.exit()
 
 # Getting commitUID info
 repoID = sys.argv[2]
-hash = sys.argv[3]
+commit_hash = sys.argv[3]
 
 # root is the first <> element in the XML file.
 root = findbuggies.documentElement
@@ -77,12 +90,11 @@ connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
 
 # CommitUID getting
-CUID = MySQL_Func.getCommitUID(
-    IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
+CUID = MySQL_Func.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=commit_hash, repoID=repoID)
 
 if root.hasAttribute("version"):
     pass
-    #print("FindBugs Version : %s" % root.getAttribute("version"))
+    # print("FindBugs Version : %s" % root.getAttribute("version"))
 
 package = ""
 className = ""
@@ -116,13 +128,11 @@ for node in root.childNodes:
 
         # Grab methodUID for below. By now, it should definitely exist
         methodUID = MySQL_Func.get_method_UID(IP=IP, user=user, pw=pw, DB=DB,
-                                            className=className, package=package,
-                                            method=method)
+                                              className=className, package=package, method=method)
         search = "SELECT * FROM findBugs WHERE CommitUID = %s AND MethodUID = %s AND "
         search += "BugType = %s AND Priority = %s AND Rank = %s and Category = %s AND Line = %s"
 
-        cur.execute(search, (CUID, methodUID, bugType,
-                             priority, rank, cat, line))
+        cur.execute(search, (CUID, methodUID, bugType, priority, rank, cat, line))
         if cur.rowcount != 0:
             continue
 
@@ -130,8 +140,7 @@ for node in root.childNodes:
         add_findbugs += "Rank, Category, Line) VALUES (%s, %s, %s, %s, %s, %s, %s)"
         # This one goes to findbugs
         try:
-            cur.execute(add_findbugs, (CUID, methodUID,
-                                       bugType, priority, rank, cat, line))
+            cur.execute(add_findbugs, (CUID, methodUID, bugType, priority, rank, cat, line))
         except:
             connection.rollback()
             ErrorString = sys.exc_info()[0] + "\n----------\n"
@@ -139,11 +148,8 @@ for node in root.childNodes:
             ErrorString += sys.exc_info()[2]
 
             v_list = "(CommitUID, MethodUID, BugType, Priority, Rank, Category, Line)"
-            MySQL_Func.sendFailEmail("Failed to insert into findBugs table!",
-                                     "The following insert failed:",
-                                     add_findbugs,
-                                     v_list,
-                                     ErrorString,
+            MySQL_Func.sendFailEmail("Failed to insert into findBugs table!", "The following insert failed:",
+                                     add_findbugs, v_list, ErrorString,
                                      CUID, methodUID, bugType, priority, rank, cat, line)
 
 # Closing connection
