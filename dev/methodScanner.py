@@ -68,8 +68,8 @@ for line in allMethods:
 
             # Check the ClassUID table for all records that match the package
             # and class
-            classUID = Scraper.get_class_uid(IP=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
-                                             DB=config_info['db'], className=className, package=package)
+            classUID = Scraper.get_class_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                                             db=config_info['db'], className=className, package=package)
 
         elif "enum" not in line:
             # for example: public String getNote () {

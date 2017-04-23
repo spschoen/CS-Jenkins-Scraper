@@ -28,7 +28,8 @@ import Scraper
 FILE_DIR = Scraper.get_file_dir()
 
 if not (os.path.isfile(FILE_DIR + "/findbugs.xml")):
-    print("Findbugs.xml file does not exist.  Exiting.")
+    print(FILE_DIR + "/findbugs.xml")
+    print("Could not access findbugs.xml. Exiting.")
     sys.exit()
 
 try:
@@ -42,6 +43,7 @@ except:
                                 "findbuggies = xml.dom.minidom.parse(FILE_DIR + "/findbugs.xml")",
                                 "With the following variables (FILE_DIR)",
                                 ErrorString, FILE_DIR)'''
+    print("Could not access findbugs xml file, but it exists.")
     sys.exit()
 
 # Getting commitUID info

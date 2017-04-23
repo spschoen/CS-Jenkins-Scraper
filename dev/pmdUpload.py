@@ -23,6 +23,11 @@ import Scraper
 
 FILE_DIR = Scraper.get_file_dir()
 
+if not (os.path.isfile(FILE_DIR + "/pmd.xml")):
+    print(FILE_DIR + "/pmd.xml")
+    print("Could not access pmd.xml. Exiting.")
+    sys.exit()
+
 try:
     pmd = xml.dom.minidom.parse(FILE_DIR + '/pmd.xml')
 except:
@@ -35,6 +40,7 @@ except:
                                 "pmd = xml.dom.minidom.parse(FILE_DIR + '/pmd.xml')",
                                 "With the following variables (FILE_DIR)",
                                 error_string, FILE_DIR)'''
+    print("Could not access pmd xml file, but it exists.")
     sys.exit()
 
 # Getting commitUID info

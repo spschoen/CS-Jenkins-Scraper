@@ -386,6 +386,7 @@ def get_file_dir():
             file_dir = os.path.join(file_dir, arg + "\\")
         elif arg != "":
             file_dir = os.path.join(file_dir, arg)
-            # print(arg.ljust(25) + " | " + file_dir)
+            # TODO: REMOVE FROM PROD
+            print(arg.ljust(25) + " | " + file_dir)
 
     return file_dir
