@@ -58,8 +58,8 @@ except:
 report = csv.DictReader(csvfile, delimiter=',')
 for row in report:
     if "gui" not in row['PACKAGE'].lower() and row['CLASS'][-4:].lower() != "test":
-        class_uid = Scraper.get_class_uid(IP=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
-                                          DB=config_info['db'], className=row['CLASS'].split(".")[-1],
+        class_uid = Scraper.get_class_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                                          db=config_info['db'], className=row['CLASS'].split(".")[-1],
                                           package=row['PACKAGE'].split(".")[-1])
 
         coverage = int(row['LINE_COVERED']) / (int(row['LINE_MISSED']) + int(row['LINE_COVERED']))
