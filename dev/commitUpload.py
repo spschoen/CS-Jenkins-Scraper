@@ -45,11 +45,11 @@ cur = connection.cursor()
 FILE_DIR = Scraper.get_file_dir()
 
 repo_id = sys.argv[2]
-commitHash = sys.argv[3]
+commit_hash = sys.argv[3]
 Build_Num = sys.argv[4]
 
-commit_uid = Scraper.getCommitUID(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
-                                  DB=config_info['db'], hash=commitHash, repo_id=repo_id)
+commit_uid = Scraper.get_commit_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                                    DB=config_info['db'], hash=commit_hash, repo_id=repo_id)
 
 try:
     repo = Repo(path=(FILE_DIR + "/.git/"))

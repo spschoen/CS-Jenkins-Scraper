@@ -21,29 +21,11 @@ Authors:
 import sys
 import pymysql
 import Scraper
-import os
 
-# Setting up the DB connection
-# Now, we begin reading the config file.
-if not os.path.exists('config.txt'):
-    # config.txt doesn't exist.  Don't run.
-    # print("Could not access config.txt, exiting.")
-    sys.exit()
-
-configFile = open("config.txt", "r")
-lines = list(configFile)
-if len(lines) != 4:
-    # incorrect config file
-    # print("config.txt contains incorrect number of records.")
-    sys.exit()
-
-# Setting up the DB connection
-IP = lines[0].replace("\n", "")
-user = lines[1].replace("\n", "")
-pw = lines[2].replace("\n", "")
-DB = lines[3].replace("\n", "")
-
-connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
+# Getting config options.
+config_info = Scraper.get_config_options()
+connection = pymysql.connect(host=config_info['ip'], user=config_info['user'],
+                             password=config_info['pass'], db=config_info['db'])
 cur = connection.cursor()
 # Connection setup
 try:
@@ -86,8 +68,8 @@ for line in allMethods:
 
             # Check the ClassUID table for all records that match the package
             # and class
-            classUID = Scraper.getClassUID(IP=IP, user=user, pw=pw, DB=DB,
-                                              className=className, package=package)
+            classUID = Scraper.get_class_uid(IP=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                                             DB=config_info['db'], className=className, package=package)
 
         elif "enum" not in line:
             # for example: public String getNote () {
@@ -95,7 +77,7 @@ for line in allMethods:
             # method name, and split that on spaces
             part = line.split("(")[0].split(" ")
 
-            # Iterate over the reversed list, for exmaple: ['','getNote','String','public']
+            # Iterate over the reversed list, for example: ['','getNote','String','public']
             # Ignore the '', since if there's a space between ( and the method name, it'll split
             # into an empty string.  Then, the next item immediately after the blank/parenthesis
             # is the method name!
@@ -113,8 +95,9 @@ for line in allMethods:
             # olol this was like 30 lines now it's 3.
             # We're discarding the return value from the function since it does the inserting
             # as well as returning.
-            methodUID = Scraper.get_method_UID(IP=IP, user=user, pw=pw, DB=DB,
-                                                  className=className, package=package, method=methodName)
+            methodUID = Scraper.get_method_UID(IP=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                                               DB=config_info['db'], package=package, class_name=className,
+                                               method=methodName)
 
 
 methodsFile.close()

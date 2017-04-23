@@ -30,18 +30,11 @@ if len(sys.argv) != 4:
     print("$WORKSPACE $PROJECT_ID $GIT_COMMIT")
     sys.exit()
 
-# Setting up the XML to read
-FILE_DIR = '/'
-for arg in sys.argv[1].split("/"):
-    if arg != "":
-        FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
-    # print(FILE_DIR)
+FILE_DIR = Scraper.get_file_dir()
 
 # Getting to the right directory
 if '/test-reports/' not in FILE_DIR:
     FILE_DIR += '/test-reports/'
-
-# print(FILE_DIR)
 
 # Directory to XML set up.
 
@@ -49,39 +42,21 @@ if '/test-reports/' not in FILE_DIR:
 repo_id = sys.argv[2]
 commit_hash = sys.argv[3]
 
-# Setting up the DB connection
-# Future people: change this to your master IP
-# Or wherever your DB is.
-# Now, we begin reading the config file.
-if not os.path.exists('config.txt'):
-    # config.txt doesn't exist.  Don't run.
-    print("Could not access config.txt, exiting.")
-    sys.exit()
-
-configFile = open("config.txt", "r")
-lines = list(configFile)
-if len(lines) != 4:
-    # incorrect config file
-    print("config.txt contains incorrect number of records.")
-    sys.exit()
-
-# Setting up the DB connection
-IP = lines[0].replace("\n", "")
-user = lines[1].replace("\n", "")
-pw = lines[2].replace("\n", "")
-DB = lines[3].replace("\n", "")
-
-connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
+# Getting config options.
+config_info = Scraper.get_config_options()
+connection = pymysql.connect(host=config_info['ip'], user=config_info['user'],
+                             password=config_info['pass'], db=config_info['db'])
 cur = connection.cursor()
 
 # CommitUID getting
-commit_uid = Scraper.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=commit_hash, repo_id=repo_id)
+commit_uid = Scraper.get_commit_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                                    DB=config_info['db'], hash=commit_hash, repo_id=repo_id)
 
 # Initialize variables
 package = ""
 method = ""
 className = ""
-testName = ""
+test_name = ""
 passing = ""
 
 for file in os.listdir(FILE_DIR):
@@ -92,21 +67,19 @@ for file in os.listdir(FILE_DIR):
     except:
         print("ERROR: Could not interact with file " + FILE_DIR + file)
         sys.exit()
+
     root = DOMTree.documentElement
 
     if root.hasAttribute("name"):
         temp = root.getAttribute("name")
-        className = temp.split(".")[-1]
+        class_name = temp.split(".")[-1]
         package = temp.split(".")[-2]
-        testMethodUID = Scraper.getTestMethodUID(IP=IP, user=user, pw=pw,
-                                                    DB=DB, className=className,
-                                                    package=package, method=testName)
 
         for node in root.childNodes:
             message = ""
             if node.nodeName == "testcase":
                 if node.hasAttribute("name"):
-                    testName = node.getAttribute("name")
+                    test_name = node.getAttribute("name")
                 if len(node.childNodes) != 0:
                     passing = "F"
                     for test_case_child in node.childNodes:
@@ -115,29 +88,30 @@ for file in os.listdir(FILE_DIR):
                 else:
                     passing = "P"
 
+                test_method_uid = Scraper.get_test_method_uid(ip=config_info['ip'], user=config_info['user'],
+                                                              pw=config_info['pass'], db=config_info['db'],
+                                                              method=test_name, class_name=class_name, package=package)
+
                 # If we get any records returned, then it's already in the table.
                 # Otherwise, if there are no returned records, then we need to insert
                 # them into the table.
-                find = "SELECT * FROM testTable WHERE CommitUID = %s AND testMethodUID = %s "
-                find += "AND Passing = %s"
-
-                cur.execute(find, (commit_uid, testMethodUID, passing))
+                find = "SELECT * FROM testTable WHERE CommitUID = %s AND testMethodUID = %s AND Passing = %s"
+                cur.execute(find, (commit_uid, test_method_uid, passing))
 
                 if cur.rowcount == 0:
-                    testInsert = "INSERT INTO testTable(CommitUID, testMethodUID, Passing, Message) \
-                                  VALUES (%s, %s, %s, %s)"
+                    testInsert = "INSERT INTO testTable(CommitUID, testMethodUID, Passing, Message)" \
+                                 "VALUES (%s, %s, %s, %s)"
                     try:
-                        cur.execute(testInsert, (commit_uid, testMethodUID, passing, message))
+                        cur.execute(testInsert, (commit_uid, test_method_uid, passing, message))
                     except:
                         connection.rollback()
                         ErrorString = sys.exc_info()[0] + "\n----------\n"
                         ErrorString += sys.exc_info()[1] + "\n----------\n"
                         ErrorString += sys.exc_info()[2]
 
-                        v_list = "(CommitUID, testMethodUID, Passing, Message)"
+                        v_list = "(CommitUID, test_method_uid, Passing, Message)"
                         Scraper.sendFailEmail("Failed to insert into test Results table!",
-                                                 "The following insert failed:",
-                                                 testInsert, v_list, ErrorString,
-                                                 str(commit_uid), str(testMethodUID), str(passing), str(message))
+                                              "The following insert failed:", testInsert, v_list, ErrorString,
+                                              str(commit_uid), str(test_method_uid), str(passing), str(message))
 
 connection.close()

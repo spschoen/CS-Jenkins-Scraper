@@ -29,13 +29,7 @@ if len(sys.argv) != 4:
     print("Incorrect number of arguments.  Exiting.")
     sys.exit()
 
-# Setting up the XML to read
-FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))
-for arg in sys.argv[1].split("/"):
-    if arg == "":
-        continue
-    FILE_DIR = os.path.abspath(os.path.join(FILE_DIR, arg))
-    # print(FILE_DIR)
+FILE_DIR = Scraper.get_file_dir()
 
 if not os.path.exists(FILE_DIR + '/checkstyle.xml'):
     # checkstyle.xml doesn't exist.  Don't run.
@@ -72,8 +66,8 @@ repo_id = sys.argv[2]
 commit_hash = sys.argv[3]
 
 # CommitUID getting
-commit_uid = Scraper.getCommitUID(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
-                                  db=config_info['db'], hash=commit_hash, repo_id=repo_id)
+commit_uid = Scraper.get_commit_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                                    db=config_info['db'], hash=commit_hash, repo_id=repo_id)
 
 # A basic for loop, to look at all the nodes (<> elements) inside the file node
 # (which is now the root node) and print out their information to the DB.

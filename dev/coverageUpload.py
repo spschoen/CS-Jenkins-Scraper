@@ -21,8 +21,6 @@ Authors:
 
 import csv
 import sys
-import os
-import platform
 import pymysql
 import Scraper
 
@@ -36,23 +34,13 @@ connection = pymysql.connect(host=config_info['ip'], user=config_info['user'],
                              password=config_info['pass'], db=config_info['db'])
 cur = connection.cursor()
 
-if platform.system() is "Windows":
-    FILE_DIR = "C:\\"
-else:
-    FILE_DIR = "/"
-
-# Iterate through the path to git to set up the directory.
-for arg in sys.argv[1].split("/"):
-    if ":" in arg:
-        FILE_DIR = os.path.join(FILE_DIR, arg + "\\")
-    elif arg != "":
-        FILE_DIR = os.path.join(FILE_DIR, arg)
-    # print(arg.ljust(25) + " | " + FILE_DIR)
+FILE_DIR = Scraper.get_file_dir()
 
 repo_id = sys.argv[2]
 commit_hash = sys.argv[3]
 
-commitUID = Scraper.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=commit_hash, repo_id=repo_id)
+commit_uid = Scraper.get_commit_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                                    DB=config_info['db'], hash=commit_hash, repo_id=repo_id)
 
 try:
     csvfile = open(FILE_DIR + "/report.csv", newline='')
@@ -64,31 +52,27 @@ except:
 report = csv.DictReader(csvfile, delimiter=',')
 for row in report:
     if "gui" not in row['PACKAGE'].lower() and row['CLASS'][-4:].lower() != "test":
-        classUID = Scraper.getClassUID(IP=IP, user=user, pw=pw, DB=DB,
-                                          className=row['CLASS'].split(".")[-1],
+        class_uid = Scraper.get_class_uid(IP=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                                          DB=config_info['db'], className=row['CLASS'].split(".")[-1],
                                           package=row['PACKAGE'].split(".")[-1])
-        coverage = int(row['LINE_COVERED']) / \
-            (int(row['LINE_MISSED']) + int(row['LINE_COVERED']))
+
+        coverage = int(row['LINE_COVERED']) / (int(row['LINE_MISSED']) + int(row['LINE_COVERED']))
         coverage = str(round(coverage * 100))
 
         search = "SELECT * FROM coverage WHERE CommitUID = %s AND ClassUID = %s AND Line = %s"
-        cur.execute(search, (commitUID, classUID, coverage))
+        cur.execute(search, (commit_uid, class_uid, coverage))
         if cur.rowcount != 0:
             continue
 
         insert = "INSERT INTO coverage(CommitUID, ClassUID, Line) VALUES (%s, %s, %s)"
         try:
-            cur.execute(insert, (commitUID, classUID, coverage))
+            cur.execute(insert, (commit_uid, class_uid, coverage))
         except:
             connection.rollback()
             ErrorString = sys.exc_info()[0] + "\n----------\n"
             ErrorString += sys.exc_info()[1] + "\n----------\n"
             ErrorString += sys.exc_info()[2]
-            Scraper.sendFailEmail("Failed to insert into Coverage table!",
-                                     "The following insert failed:",
-                                     insert,
-                                     "(CommitUID, ClassUID, Line)",
-                                     ErrorString,
-                                     commitUID, classUID, coverage)
+            Scraper.sendFailEmail("Failed to insert into Coverage table!", "The following insert failed:", insert,
+                                  "(CommitUID, ClassUID, Line)", ErrorString, commit_uid, class_uid, coverage)
 
 connection.close()

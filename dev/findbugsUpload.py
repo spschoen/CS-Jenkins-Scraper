@@ -24,21 +24,8 @@ import sys
 import os
 import pymysql
 import Scraper
-import platform
 
-# Setting up the XML to read
-if platform.system() is "Windows":
-    FILE_DIR = "C:\\"
-else:
-    FILE_DIR = "/"
-
-# Iterate through the path to git to set up the directory.
-for arg in sys.argv[1].split("/"):
-    if ":" in arg:
-        FILE_DIR = os.path.join(FILE_DIR, arg + "\\")
-    elif arg != "":
-        FILE_DIR = os.path.join(FILE_DIR, arg)
-    # print(arg.ljust(25) + " | " + FILE_DIR)
+FILE_DIR = Scraper.get_file_dir()
 
 if not (os.path.isfile(FILE_DIR + "/findbugs.xml")):
     print("Findbugs.xml file does not exist.  Exiting.")
@@ -90,7 +77,7 @@ connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
 
 # CommitUID getting
-CUID = Scraper.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=commit_hash, repo_id=repo_id)
+commit_uid = Scraper.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=commit_hash, repo_id=repo_id)
 
 if root.hasAttribute("version"):
     pass
@@ -132,7 +119,7 @@ for node in root.childNodes:
         search = "SELECT * FROM findBugs WHERE CommitUID = %s AND MethodUID = %s AND "
         search += "BugType = %s AND Priority = %s AND Rank = %s and Category = %s AND Line = %s"
 
-        cur.execute(search, (CUID, methodUID, bugType, priority, rank, cat, line))
+        cur.execute(search, (commit_uid, methodUID, bugType, priority, rank, cat, line))
         if cur.rowcount != 0:
             continue
 
@@ -140,7 +127,7 @@ for node in root.childNodes:
         add_findbugs += "Rank, Category, Line) VALUES (%s, %s, %s, %s, %s, %s, %s)"
         # This one goes to findbugs
         try:
-            cur.execute(add_findbugs, (CUID, methodUID, bugType, priority, rank, cat, line))
+            cur.execute(add_findbugs, (commit_uid, methodUID, bugType, priority, rank, cat, line))
         except:
             connection.rollback()
             ErrorString = sys.exc_info()[0] + "\n----------\n"
@@ -150,7 +137,7 @@ for node in root.childNodes:
             v_list = "(CommitUID, MethodUID, BugType, Priority, Rank, Category, Line)"
             Scraper.sendFailEmail("Failed to insert into findBugs table!", "The following insert failed:",
                                      add_findbugs, v_list, ErrorString,
-                                     CUID, methodUID, bugType, priority, rank, cat, line)
+                                     commit_uid, methodUID, bugType, priority, rank, cat, line)
 
 # Closing connection
 connection.close()

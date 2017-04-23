@@ -18,31 +18,11 @@ Execution:
 import sys
 import pymysql
 import Scraper
-import os
 
-# Setting up the DB connection
-# Future people: change this to your master IP
-# Or wherever your DB is.
-# Now, we begin reading the config file.
-if not os.path.exists('config.txt'):
-    # config.txt doesn't exist.  Don't run.
-    # print("Could not access config.txt, exiting.")
-    sys.exit()
-
-configFile = open("config.txt", "r")
-lines = list(configFile)
-if len(lines) != 4:
-    # incorrect config file
-    # print("config.txt contains incorrect number of records.")
-    sys.exit()
-
-# Setting up the DB connection
-IP = lines[0].replace("\n", "")
-user = lines[1].replace("\n", "")
-pw = lines[2].replace("\n", "")
-DB = lines[3].replace("\n", "")
-
-connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
+# Getting config options.
+config_info = Scraper.get_config_options()
+connection = pymysql.connect(host=config_info['ip'], user=config_info['user'],
+                             password=config_info['pass'], db=config_info['db'])
 cur = connection.cursor()
 # Connection setup
 
@@ -54,7 +34,7 @@ except:
     sys.exit()
 allMethods = list(testsFile)
 
-newClass = ""
+class_name = ""
 Package = ""
 classUID = -1
 for line in allMethods:
@@ -63,28 +43,28 @@ for line in allMethods:
         continue
     else:
         if "dir" in line:  # for example: dir bug_tracker
-            Package = line.split(" ")[1].replace("\n", "")
+            package = line.split(" ")[1].replace("\n", "")
             # Split the string on spaces, then take the second value
             # which is the directory/package, then remove the new line
 
         elif "class" in line:  # for example: public class TrackedBug {
-            newClass = line.replace("\n", "").split(" ")
+            class_name = line.replace("\n", "").split(" ")
             # Remove new line, split on space.
 
             # While we haven't hit class/interface, remove previous elements.
             # Since access can be optional (none is accepted), we have to iterate until we hit
             # class/interface.  Once we get it, we delete class/interface and the first element
             # is the class name.
-            while newClass[0] != "class" and newClass[0] != "interface":
-                del newClass[0]
-            del newClass[0]
-            newClass = newClass[0]
+            while class_name[0] != "class" and class_name[0] != "interface":
+                del class_name[0]
+            del class_name[0]
+            class_name = class_name[0]
 
             # Check the ClassUID table for all records that match the package
             # and class
-            testClassUID = testClassUID = Scraper.getTestClassUID(IP=IP, user=user, pw=pw,
-                                                                     DB=DB, package=Package,
-                                                                     className=newClass)
+            test_class_uid = Scraper.get_test_class_uid(IP=config_info['ip'], user=config_info['user'],
+                                                        pw=config_info['pass'], DB=config_info['db'],
+                                                        class_name=class_name, package=package)
 
         elif "enum" not in line:  # for example: public String getNote () {
 
@@ -109,8 +89,8 @@ for line in allMethods:
             # If we get any records returned, then obviously it's already in the table we don't
             # have to insert.  Otherwise, if there are no returned records, then we need to
             # insert them into the table.
-            Scraper.getTestMethodUID(IP=IP, user=user, pw=pw, DB=DB, className=newClass,
-                                        package=Package, method=test)
+            Scraper.get_test_method_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                                        db=config_info['db'], method=test, class_name=class_name,  package=package)
 
 
 testsFile.close()
