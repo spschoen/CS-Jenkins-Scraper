@@ -66,10 +66,9 @@ for line in allMethods:
             del class_name[0]
             class_name = class_name[0]
 
-            # Check the ClassUID table for all records that match the package
-            # and class
-            classUID = Scraper.get_class_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
-                                             db=config_info['db'], class_name=class_name, package=package)
+            # Check the ClassUID table for all records that match the package and class
+            Scraper.get_class_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                                  db=config_info['db'], class_name=class_name, package=package)
 
         elif "enum" not in line:
             # for example: public String getNote () {
@@ -85,11 +84,11 @@ for line in allMethods:
                 if item == "":
                     continue
                 else:
-                    methodName = item
+                    method_name = item
                     break
 
             # Ignore new lines, for safety.
-            if methodName == "\n":
+            if method_name == "\n":
                 continue
 
             # olol this was like 30 lines now it's 3.
@@ -97,7 +96,7 @@ for line in allMethods:
             # as well as returning.
             methodUID = Scraper.get_method_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
                                                db=config_info['db'], package=package, class_name=class_name,
-                                               method=methodName)
+                                               method=method_name)
 
 
 methodsFile.close()

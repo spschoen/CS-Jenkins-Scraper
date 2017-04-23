@@ -70,7 +70,7 @@ for file in root.childNodes:
     if file.nodeType != file.TEXT_NODE:
         for node in file.childNodes:
             package = ""
-            className = ""
+            class_name = ""
             method = ""
             line = 0
             rule = ""
@@ -85,20 +85,20 @@ for file in root.childNodes:
                 if node.hasAttribute("package"):
                     package = node.getAttribute("package").split('.')[-1]
                 if node.hasAttribute("class"):
-                    className = node.getAttribute("class")
+                    class_name = node.getAttribute("class")
                 if node.hasAttribute("method"):
                     method = node.getAttribute("method")
     else:
         continue
 
     # holy FRAK it fits on the 100 limit!
-    if package == "" or className == "" or method == "" or rule == "" or ruleset == "" or line == 0:
+    if package == "" or class_name == "" or method == "" or rule == "" or ruleset == "" or line == 0:
         # print("Could not find an attribute.  Rerun with print debugging.")
         continue
 
     # Class UID
     methodUID = Scraper.get_method_UID(IP=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
-                                       DB=config_info['db'], package=package, class_name=className, method=method)
+                                       DB=config_info['db'], package=package, class_name=class_name, method=method)
 
     search = "SELECT * FROM PMD WHERE CommitUID = %s AND MethodUID = %s AND Ruleset = %s AND Rule = %s AND Line = %s"
     cur.execute(search, (str(commit_uid), str(methodUID), str(ruleset), str(rule), str(line)))

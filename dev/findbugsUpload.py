@@ -70,7 +70,7 @@ if root.hasAttribute("version"):
     # print("FindBugs Version : %s" % root.getAttribute("version"))
 
 package = ""
-className = ""
+class_name = ""
 method = ""
 bugType = ""
 priority = 0
@@ -89,10 +89,10 @@ for node in root.childNodes:
             cat = node.getAttribute("category")
             for classNode in node.childNodes:
                 if classNode.nodeName == "Method" and not classNode.hasAttribute("role"):
-                    if classNode.hasAttribute("classname"):
-                        string = classNode.getAttribute("classname")
+                    if classNode.hasAttribute("class_name"):
+                        string = classNode.getAttribute("class_name")
                         package = string.split(".")[-1]
-                        className = string.split(".")[-2]
+                        class_name = string.split(".")[-2]
                     if classNode.hasAttribute("name"):
                         method = classNode.getAttribute("name")
                 if classNode.nodeName == "SourceLine":
@@ -100,20 +100,22 @@ for node in root.childNodes:
                         line = int(classNode.getAttribute("start"))
 
         # Grab methodUID for below. By now, it should definitely exist
-        methodUID = Scraper.get_method_UID(IP=IP, user=user, pw=pw, DB=DB,
-                                              className=className, package=package, method=method)
-        search = "SELECT * FROM findBugs WHERE CommitUID = %s AND MethodUID = %s AND "
-        search += "BugType = %s AND Priority = %s AND Rank = %s and Category = %s AND Line = %s"
 
-        cur.execute(search, (commit_uid, methodUID, bugType, priority, rank, cat, line))
+        method_uid = Scraper.get_method_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                                            db=config_info['db'], package=package, class_name=class_name,
+                                            method=method)
+        search = "SELECT * FROM findBugs WHERE CommitUID = %s AND MethodUID = %s AND BugType = %s AND Priority = %s " \
+                 "AND Rank = %s and Category = %s AND Line = %s"
+
+        cur.execute(search, (commit_uid, method_uid, bugType, priority, rank, cat, line))
         if cur.rowcount != 0:
             continue
 
-        add_findbugs = "INSERT INTO findBugs(CommitUID, MethodUID, BugType, Priority, "
-        add_findbugs += "Rank, Category, Line) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        add_findbugs = "INSERT INTO findBugs(CommitUID, MethodUID, BugType, Priority, Rank, Category, Line) VALUES " \
+                       "(%s, %s, %s, %s, %s, %s, %s)"
         # This one goes to findbugs
         try:
-            cur.execute(add_findbugs, (commit_uid, methodUID, bugType, priority, rank, cat, line))
+            cur.execute(add_findbugs, (commit_uid, method_uid, bugType, priority, rank, cat, line))
         except:
             connection.rollback()
             ErrorString = sys.exc_info()[0] + "\n----------\n"
@@ -122,8 +124,8 @@ for node in root.childNodes:
 
             v_list = "(CommitUID, MethodUID, BugType, Priority, Rank, Category, Line)"
             Scraper.sendFailEmail("Failed to insert into findBugs table!", "The following insert failed:",
-                                     add_findbugs, v_list, ErrorString,
-                                     commit_uid, methodUID, bugType, priority, rank, cat, line)
+                                  add_findbugs, v_list, ErrorString, commit_uid, method_uid, bugType, priority,
+                                  rank, cat, line)
 
 # Closing connection
 connection.close()
