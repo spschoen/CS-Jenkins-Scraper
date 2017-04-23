@@ -137,7 +137,7 @@ python3 TSTestFileResultsUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COM
 cp "$DIRECTORY"/coverageUpload.py $WORKSPACE/$PROJECT_NAME/coverageUpload.py
 
 # echo "    [Data Miner] Executing Coverage uploader"
-python3 coverageUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT
+python3 coverageUpload.py $WORKSPACE/$PROJECT_NAME/site/jacoco $PROJECT_ID $GIT_COMMIT
 
 ##################################
 # Cleaning up the local dir.     #

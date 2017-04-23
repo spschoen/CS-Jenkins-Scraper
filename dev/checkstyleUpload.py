@@ -67,7 +67,7 @@ commit_hash = sys.argv[3]
 
 # CommitUID getting
 commit_uid = Scraper.get_commit_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
-                                    db=config_info['db'], hash=commit_hash, repo_id=repo_id)
+                                    db=config_info['db'], commit_hash=commit_hash, repo_id=repo_id)
 
 # A basic for loop, to look at all the nodes (<> elements) inside the file node
 # (which is now the root node) and print out their information to the DB.

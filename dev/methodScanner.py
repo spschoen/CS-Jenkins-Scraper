@@ -95,7 +95,7 @@ for line in allMethods:
             # olol this was like 30 lines now it's 3.
             # We're discarding the return value from the function since it does the inserting
             # as well as returning.
-            methodUID = Scraper.get_method_UID(IP=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+            methodUID = Scraper.get_method_uid(IP=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
                                                DB=config_info['db'], package=package, class_name=class_name,
                                                method=methodName)
 

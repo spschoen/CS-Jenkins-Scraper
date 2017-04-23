@@ -55,31 +55,15 @@ root = findbuggies.documentElement
 
 # Set up to read XML
 
-# Setting up the DB connection
-# Now, we begin reading the config file.
-if not os.path.exists('config.txt'):
-    # config.txt doesn't exist.  Don't run.
-    # print("Could not access config.txt, exiting.")
-    sys.exit()
-
-configFile = open("config.txt", "r")
-lines = list(configFile)
-if len(lines) != 4:
-    # incorrect config file
-    # print("config.txt contains incorrect number of records.")
-    sys.exit()
-
-# Setting up the DB connection
-IP = lines[0].replace("\n", "")
-user = lines[1].replace("\n", "")
-pw = lines[2].replace("\n", "")
-DB = lines[3].replace("\n", "")
-
-connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
+# Getting config options.
+config_info = Scraper.get_config_options()
+connection = pymysql.connect(host=config_info['ip'], user=config_info['user'],
+                             password=config_info['pass'], db=config_info['db'])
 cur = connection.cursor()
 
 # CommitUID getting
-commit_uid = Scraper.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=commit_hash, repo_id=repo_id)
+commit_uid = Scraper.get_commit_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                                    db=config_info['db'], commit_hash=commit_hash, repo_id=repo_id)
 
 if root.hasAttribute("version"):
     pass

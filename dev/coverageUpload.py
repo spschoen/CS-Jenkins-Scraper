@@ -23,6 +23,7 @@ import csv
 import sys
 import pymysql
 import Scraper
+import os
 
 if len(sys.argv) != 4:
     print("Did not get expected args.")
@@ -41,6 +42,11 @@ commit_hash = sys.argv[3]
 
 commit_uid = Scraper.get_commit_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
                                     db=config_info['db'], commit_hash=commit_hash, repo_id=repo_id)
+
+if not os.path.exists(FILE_DIR + '/report.csv'):
+    print(FILE_DIR + "/report.csv")
+    print("Could not access report.csv. Exiting.")
+    sys.exit()
 
 try:
     csvfile = open(FILE_DIR + "/report.csv", newline='')
