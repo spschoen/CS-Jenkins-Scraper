@@ -3,7 +3,7 @@ Interpreter for methodScan.sh output file.  Uploads all methods to database, giv
 throughout these scraper programs.
 
 Requirements:
-    MySQL_Func.py - library for interaction with databases must be available in the same directory as this file.
+    Scraper.py - library for interaction with databases must be available in the same directory as this file.
     config.txt    - file specifying database information.
     methods.txt   - output from methodScan.sh script.
 
@@ -20,7 +20,7 @@ Authors:
 
 import sys
 import pymysql
-import MySQL_Func
+import Scraper
 import os
 
 # Setting up the DB connection
@@ -86,7 +86,7 @@ for line in allMethods:
 
             # Check the ClassUID table for all records that match the package
             # and class
-            classUID = MySQL_Func.getClassUID(IP=IP, user=user, pw=pw, DB=DB,
+            classUID = Scraper.getClassUID(IP=IP, user=user, pw=pw, DB=DB,
                                               className=className, package=package)
 
         elif "enum" not in line:
@@ -113,7 +113,7 @@ for line in allMethods:
             # olol this was like 30 lines now it's 3.
             # We're discarding the return value from the function since it does the inserting
             # as well as returning.
-            methodUID = MySQL_Func.get_method_UID(IP=IP, user=user, pw=pw, DB=DB,
+            methodUID = Scraper.get_method_UID(IP=IP, user=user, pw=pw, DB=DB,
                                                   className=className, package=package, method=methodName)
 
 

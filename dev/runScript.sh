@@ -35,7 +35,7 @@ PROJECT_ID=$(bash splitter.sh $GIT_URL)
 ##################################
 
 # echo "    [Data Miner] Pulling library functions."
-cp "$DIRECTORY"/MySQL_Func.py $WORKSPACE/$PROJECT_NAME/MySQL_Func.py
+cp "$DIRECTORY"/Scraper.py $WORKSPACE/$PROJECT_NAME/Scraper.py
 
 ##################################
 # Scanning for methods           #

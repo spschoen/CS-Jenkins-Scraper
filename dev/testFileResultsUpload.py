@@ -2,7 +2,7 @@
 Reads student test reports and uploads them to the given Database.
 
 Requirements:
-    MySQL_Func.py - library for interaction with databases must be available in the same directory as this file.
+    Scraper.py - library for interaction with databases must be available in the same directory as this file.
     config.txt    - file specifying database information.
 
 Args:
@@ -23,7 +23,7 @@ import xml.dom.minidom
 import sys
 import os
 import pymysql
-import MySQL_Func
+import Scraper
 
 if len(sys.argv) != 4:
     print("Did not get expected arguments.")
@@ -46,7 +46,7 @@ if '/test-reports/' not in FILE_DIR:
 # Directory to XML set up.
 
 # Getting commitUID info
-repoID = sys.argv[2]
+repo_id = sys.argv[2]
 commit_hash = sys.argv[3]
 
 # Setting up the DB connection
@@ -75,7 +75,7 @@ connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
 
 # CommitUID getting
-commit_uid = MySQL_Func.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=commit_hash, repoID=repoID)
+commit_uid = Scraper.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=commit_hash, repo_id=repo_id)
 
 # Initialize variables
 package = ""
@@ -98,7 +98,7 @@ for file in os.listdir(FILE_DIR):
         temp = root.getAttribute("name")
         className = temp.split(".")[-1]
         package = temp.split(".")[-2]
-        testMethodUID = MySQL_Func.getTestMethodUID(IP=IP, user=user, pw=pw,
+        testMethodUID = Scraper.getTestMethodUID(IP=IP, user=user, pw=pw,
                                                     DB=DB, className=className,
                                                     package=package, method=testName)
 
@@ -135,7 +135,7 @@ for file in os.listdir(FILE_DIR):
                         ErrorString += sys.exc_info()[2]
 
                         v_list = "(CommitUID, testMethodUID, Passing, Message)"
-                        MySQL_Func.sendFailEmail("Failed to insert into test Results table!",
+                        Scraper.sendFailEmail("Failed to insert into test Results table!",
                                                  "The following insert failed:",
                                                  testInsert, v_list, ErrorString,
                                                  str(commit_uid), str(testMethodUID), str(passing), str(message))

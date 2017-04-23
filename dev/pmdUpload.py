@@ -2,7 +2,7 @@
 Custom pmd xml parser
 Requirements:
  - pmd.xml must exist.  If not, this script won't read it.
- - MySQL_Func.py for interacting with MySQL.
+ - Scraper.py for interacting with MySQL.
  - config.txt to read in variables for IP, DB, etc.
 
 Execution:
@@ -20,7 +20,7 @@ import xml.dom.minidom
 import sys
 import os
 import pymysql
-import MySQL_Func
+import Scraper
 
 # Setting up the XML to read
 FILE_DIR = os.path.abspath(os.path.join(os.getcwd()))
@@ -38,13 +38,13 @@ except:
     '''ErrorString = sys.exc_info()[0] + "\n----------\n"
     ErrorString += sys.exc_info()[1] + "\n----------\n"
     ErrorString += sys.exc_info()[2]
-    MySQL_Func.sendFailEmail("Failed to read pmd.xml", "The following command failed:",
+    Scraper.sendFailEmail("Failed to read pmd.xml", "The following command failed:",
                                 "pmd = xml.dom.minidom.parse(FILE_DIR + '/pmd.xml')",
                                 "With the following variables (FILE_DIR)",
                                 ErrorString, FILE_DIR)'''
 
 # Getting commitUID info
-repoID = sys.argv[2]
+repo_id = sys.argv[2]
 hash = sys.argv[3]
 
 # root is the first <> element in the XML file.
@@ -76,8 +76,8 @@ connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
 
 # CommitUID getting
-CUID = MySQL_Func.getCommitUID(
-    IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
+CUID = Scraper.getCommitUID(
+    IP=IP, user=user, pw=pw, DB=DB, hash=hash, repo_id=repo_id)
 
 package = ""
 className = ""
@@ -114,7 +114,7 @@ for file in root.childNodes:
         continue
 
     # Class UID
-    methodUID = MySQL_Func.get_method_UID(IP=IP, user=user, pw=pw, DB=DB, className=className,
+    methodUID = Scraper.get_method_UID(IP=IP, user=user, pw=pw, DB=DB, className=className,
                                         package=package, method=method)
 
     search = "SELECT * FROM PMD WHERE CommitUID = %s AND MethodUID = %s AND Ruleset = %s AND "
@@ -138,7 +138,7 @@ for file in root.childNodes:
         ErrorString += sys.exc_info()[2]
 
         v_list = "(CommitUID, MethodUID, Ruleset, Rule, Line)"
-        MySQL_Func.sendFailEmail("Failed to insert into PMD table!",
+        Scraper.sendFailEmail("Failed to insert into PMD table!",
                                  "The following insert failed:",
                                  insertPMD,
                                  v_list,

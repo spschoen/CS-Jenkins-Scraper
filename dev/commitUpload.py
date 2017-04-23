@@ -2,7 +2,7 @@
 Reads local git directory, lines of code, and more, and uploads relevant information to given database.
 
 Requirements:
-    MySQL_Func.py - library for interaction with databases must be available in the same directory as this file.
+    Scraper.py - library for interaction with databases must be available in the same directory as this file.
     config.txt    - file specifying database information.
 
 Args:
@@ -26,57 +26,30 @@ import pymysql
 import xml.dom.minidom
 import shutil
 import subprocess
-import platform
 from git import *
-import MySQL_Func
+import Scraper
+
+# This is useless code - it tells Pycharm to shut up about unused import statements.
+__all__ = ['sys', 'os']
 
 if len(sys.argv) != 5:
     print("Invalid number of arguments.")
     sys.exit()
 
-# Now, we begin reading the config file.
-if not os.path.exists('config.txt'):
-    # config.txt doesn't exist.  Don't run.
-    print("Could not access config.txt, exiting.")
-    sys.exit()
-
-configFile = open("config.txt", "r")
-lines = list(configFile)
-if len(lines) != 4:
-    # incorrect config file
-    # print("config.txt contains incorrect number of records.")
-    sys.exit()
-
-# Setting up the DB connection
-IP = lines[0].replace("\n", "")
-user = lines[1].replace("\n", "")
-pw = lines[2].replace("\n", "")
-DB = lines[3].replace("\n", "")
-
-connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
+# Getting config options.
+config_info = Scraper.get_config_options()
+connection = pymysql.connect(host=config_info['ip'], user=config_info['user'],
+                             password=config_info['pass'], db=config_info['db'])
 cur = connection.cursor()
 
-# Getting path to .git directory.
-if platform.system() is "Windows":
-    FILE_DIR = ""
-else:
-    FILE_DIR = "/"
+FILE_DIR = Scraper.get_file_dir()
 
-# Iterate through the path to git to set up the directory.
-for arg in sys.argv[1].split("/"):
-    if ":" in arg:
-        FILE_DIR = os.path.join(FILE_DIR, arg + "\\")
-    elif arg != "":
-        FILE_DIR = os.path.join(FILE_DIR, arg)
-    # print(arg.ljust(25) + " | " + FILE_DIR)
-
-repoID = sys.argv[2]
+repo_id = sys.argv[2]
 commitHash = sys.argv[3]
 Build_Num = sys.argv[4]
 
-CUID = MySQL_Func.getCommitUID(IP=IP, user=user, pw=pw, DB=DB, hash=commitHash, repoID=repoID)
-
-# print(FILE_DIR)
+commit_uid = Scraper.getCommitUID(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                                  DB=config_info['db'], hash=commitHash, repo_id=repo_id)
 
 try:
     repo = Repo(path=(FILE_DIR + "/.git/"))
@@ -100,8 +73,8 @@ try:
     TSComp = compileLines[1].replace("\n", "")
 except:
     # Compilation successful.
-    studComp = "Y"
-    TSComp = "Y"
+    Compile_Stud = "Y"
+    Compile_TS = "Y"
 
 # So, because of how Jenkins works, the following code is irrelevant.
 # It was intended to calculate how long it's been since Javadoc was generated
@@ -141,7 +114,6 @@ except:
 
 LOC = 0
 # Verifying the CLOC is installed
-# Commented out because doesn't work on Windows.
 if shutil.which("cloc") is None:
     print("ERROR: CLOC utility is required to be installed.")
     # print("Script exiting.")
@@ -189,15 +161,14 @@ Duration = Time - second_to_last_commit.committed_date
 # find the others - also, they can be different (like build number)
 commitFind = "SELECT * FROM commits WHERE CommitUID = %s"
 
-cur.execute(commitFind, CUID)
+cur.execute(commitFind, commit_uid)
 
 if cur.rowcount == 0:
-    insert = "INSERT INTO commits (CommitUID, Build_Num, Compile_Stud, Compile_TS, Author, "
-    insert += "Time, Duration, Message, LOC, LOC_DIFF, Gen_Javadoc) VALUES (%s, %s, %s, %s, "
-    insert += "%s, %s, %s, %s, %s, %s, %s)"
+    insert = "INSERT INTO commits (CommitUID, Build_Num, Compile_Stud, Compile_TS, Author, Time, Duration, Message," \
+             "LOC, LOC_DIFF, Gen_Javadoc) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     try:
-        cur.execute(insert, (CUID, Build_Num, studComp, TSComp, Author, Time,
-                             Duration, Message[:50], LOC, LOC_DIFF, last_mod))
+        cur.execute(insert, (commit_uid, Build_Num, studComp, TSComp, Author, Time, Duration, Message[:50], LOC,
+                             LOC_DIFF, last_mod))
     except:
         connection.rollback()
         ErrorString = sys.exc_info()[0] + "\n----------\n"
@@ -207,12 +178,8 @@ if cur.rowcount == 0:
         v_list = "(CommitUID, Build_Num, Compile_Stud, Compile_TS, Author, "
         v_list += "Time, Duration, Message, LOC, LOC_DIFF, Gen_Javadoc)"
 
-        MySQL_Func.sendFailEmail("Failed to insert into checkstyle table!",
-                                 "The following insert failed:",
-                                 insert,
-                                 v_list,
-                                 ErrorString,
-                                 CUID, Build_Num, Compile_Stud, Compile_TS, Author, Time, Duration,
-                                 Message[:50], LOC, LOC_DIFF, last_mod)
+        Scraper.sendFailEmail("Failed to insert into checkstyle table!", "The following insert failed:", insert,
+                              v_list, ErrorString, commit_uid, Build_Num, Compile_Stud, Compile_TS, Author, Time,
+                              Duration, Message[:50], LOC, LOC_DIFF, last_mod)
 
 connection.close()

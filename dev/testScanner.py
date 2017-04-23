@@ -4,7 +4,7 @@ student's directory, then upload the unique ones.
 
 Requirements:
  - tests.txt must exist.  If not, this script won't read it.
- - MySQL_Func.py for interacting with MySQL.
+ - Scraper.py for interacting with MySQL.
  - config.txt to read in variables for IP, DB, etc.
 
 Execution:
@@ -17,7 +17,7 @@ Execution:
 
 import sys
 import pymysql
-import MySQL_Func
+import Scraper
 import os
 
 # Setting up the DB connection
@@ -82,7 +82,7 @@ for line in allMethods:
 
             # Check the ClassUID table for all records that match the package
             # and class
-            testClassUID = testClassUID = MySQL_Func.getTestClassUID(IP=IP, user=user, pw=pw,
+            testClassUID = testClassUID = Scraper.getTestClassUID(IP=IP, user=user, pw=pw,
                                                                      DB=DB, package=Package,
                                                                      className=newClass)
 
@@ -109,7 +109,7 @@ for line in allMethods:
             # If we get any records returned, then obviously it's already in the table we don't
             # have to insert.  Otherwise, if there are no returned records, then we need to
             # insert them into the table.
-            MySQL_Func.getTestMethodUID(IP=IP, user=user, pw=pw, DB=DB, className=newClass,
+            Scraper.getTestMethodUID(IP=IP, user=user, pw=pw, DB=DB, className=newClass,
                                         package=Package, method=test)
 
 

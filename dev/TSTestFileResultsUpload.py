@@ -2,7 +2,7 @@
 Reads test reports and uploads
 Requirements:
  - test[blaaaaah].xml must exist.  If not, this script won't read it.
- - MySQL_Func.py for interacting with MySQL.
+ - Scraper.py for interacting with MySQL.
  - config.txt to read in variables for IP, DB, etc.
 
 Execution:
@@ -20,7 +20,7 @@ import xml.dom.minidom
 import sys
 import os
 import pymysql
-import MySQL_Func
+import Scraper
 
 if len(sys.argv) != 4:
     print("Did not get expected arguments.")
@@ -43,7 +43,7 @@ if '/ts-test-reports/' not in FILE_DIR:
 # Directory to XML set up.
 
 # Getting commitUID info
-repoID = sys.argv[2]
+repo_id = sys.argv[2]
 hash = sys.argv[3]
 
 # Setting up the DB connection
@@ -72,8 +72,8 @@ connection = pymysql.connect(host=IP, user=user, password=pw, db=DB)
 cur = connection.cursor()
 
 # CommitUID getting
-CUID = MySQL_Func.getCommitUID(
-    IP=IP, user=user, pw=pw, DB=DB, hash=hash, repoID=repoID)
+CUID = Scraper.getCommitUID(
+    IP=IP, user=user, pw=pw, DB=DB, hash=hash, repo_id=repo_id)
 
 count = 0
 
@@ -109,7 +109,7 @@ for file in os.listdir(FILE_DIR):
                     # If we get any records returned, then it's already in the table.
                     # Otherwise, if there are no returned records, then we need to insert
                     # them into the table.
-                    testMethodUID = MySQL_Func.getTestMethodUID(IP=IP, user=user, pw=pw,
+                    testMethodUID = Scraper.getTestMethodUID(IP=IP, user=user, pw=pw,
                                                                 DB=DB, className=className,
                                                                 package=package, method=testName)
 
@@ -131,7 +131,7 @@ for file in os.listdir(FILE_DIR):
                             ErrorString += sys.exc_info()[2]
 
                             v_list = "(CommitUID, testMethodUID, Passing)"
-                            MySQL_Func.sendFailEmail("Failed to insert into test Results table!",
+                            Scraper.sendFailEmail("Failed to insert into test Results table!",
                                                      "The following insert failed:",
                                                      insertPMD,
                                                      v_list,
