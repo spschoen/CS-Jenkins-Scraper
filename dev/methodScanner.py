@@ -37,7 +37,7 @@ except:
 
 allMethods = list(methodsFile)
 
-className = ""
+class_name = ""
 package = ""
 classUID = -1
 for line in allMethods:
@@ -54,22 +54,22 @@ for line in allMethods:
 
         elif "class" in line:
             # for example: public class TrackedBug {
-            className = line.replace("\n", "").split(" ")
+            class_name = line.replace("\n", "").split(" ")
             # Remove new line, split on space.
 
             # While we haven't hit class/interface, remove previous elements.
             # Since access can be optional (none is accepted), we have to iterate until we hit
             # class/interface.  Once we get it, we delete class/interface and the first element
             # is the class name.
-            while className[0] != "class" and className[0] != "interface":
-                del className[0]
-            del className[0]
-            className = className[0]
+            while class_name[0] != "class" and class_name[0] != "interface":
+                del class_name[0]
+            del class_name[0]
+            class_name = class_name[0]
 
             # Check the ClassUID table for all records that match the package
             # and class
             classUID = Scraper.get_class_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
-                                             db=config_info['db'], className=className, package=package)
+                                             db=config_info['db'], class_name=class_name, package=package)
 
         elif "enum" not in line:
             # for example: public String getNote () {
@@ -96,7 +96,7 @@ for line in allMethods:
             # We're discarding the return value from the function since it does the inserting
             # as well as returning.
             methodUID = Scraper.get_method_UID(IP=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
-                                               DB=config_info['db'], package=package, class_name=className,
+                                               DB=config_info['db'], package=package, class_name=class_name,
                                                method=methodName)
 
 

@@ -20,6 +20,7 @@ import xml.dom.minidom
 import sys
 import pymysql
 import Scraper
+import os
 
 FILE_DIR = Scraper.get_file_dir()
 

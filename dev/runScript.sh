@@ -87,7 +87,7 @@ python3 commitUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT $BUILD_NUMBER
 cp "$DIRECTORY"/checkstyleUpload.py $WORKSPACE/$PROJECT_NAME/checkstyleUpload.py
 
 # echo "    [Data Miner] Executing checkstyle uploader"
-python3 checkstyleUpload.py ./ $PROJECT_ID $GIT_COMMIT
+python3 checkstyleUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT
 
 ##################################
 # FindBugs uploading.            #
@@ -97,7 +97,7 @@ python3 checkstyleUpload.py ./ $PROJECT_ID $GIT_COMMIT
 cp "$DIRECTORY"/findbugsUpload.py $WORKSPACE/$PROJECT_NAME/findbugsUpload.py
 
 # echo "    [Data Miner] Executing FindBugs uploader"
-python3 findbugsUpload.py ./ $PROJECT_ID $GIT_COMMIT
+python3 findbugsUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT
 
 ##################################
 # PMD uploading.                 #
@@ -107,7 +107,7 @@ python3 findbugsUpload.py ./ $PROJECT_ID $GIT_COMMIT
 cp "$DIRECTORY"/pmdUpload.py $WORKSPACE/$PROJECT_NAME/pmdUpload.py
 
 # echo "    [Data Miner] Executing PMD uploader"
-python3 pmdUpload.py ./ $PROJECT_ID $GIT_COMMIT
+python3 pmdUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT
 
 ##################################
 # Test Results uploading.        #

@@ -50,7 +50,7 @@ cur = connection.cursor()
 
 # CommitUID getting
 commit_uid = Scraper.get_commit_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
-                                    db=config_info['db'], hash=commit_hash, repo_id=repo_id)
+                                    db=config_info['db'], commit_hash=commit_hash, repo_id=repo_id)
 
 # Initialize variables
 package = ""
