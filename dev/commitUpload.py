@@ -167,7 +167,7 @@ if cur.rowcount == 0:
     insert = "INSERT INTO commits (CommitUID, Build_Num, Compile_Stud, Compile_TS, Author, Time, Duration, Message," \
              "LOC, LOC_DIFF, Gen_Javadoc) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     try:
-        cur.execute(insert, (commit_uid, Build_Num, studComp, TSComp, Author, Time, Duration, Message[:50], LOC,
+        cur.execute(insert, (commit_uid, Build_Num, Compile_Stud, Compile_TS, Author, Time, Duration, Message[:50], LOC,
                              LOC_DIFF, last_mod))
     except:
         connection.rollback()
