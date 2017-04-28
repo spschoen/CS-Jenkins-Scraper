@@ -352,6 +352,23 @@ def send_fail_email(subject, failure_message, command, variable_list, trace, *va
 
 
 def get_config_options():
+    """
+    Read the config file (config.txt, hardcoded) and return the values inside.
+
+    Args:
+        N/A
+
+    Returns:
+        Dictionary of Args:
+            ip   - ip address of server
+            user - username to log into server with
+            pass - password to log into server with
+            db   - database to connect to on server
+
+    Authors:
+        Renata Ann Zeitler
+        Samuel Schoeneberger
+    """
     # Now, we begin reading the config file.
     if not os.path.exists('config.txt'):
         print("Config.txt does not exist.  Exiting.")
@@ -374,6 +391,19 @@ def get_config_options():
 
 
 def get_file_dir():
+    """
+    Get the current file directory from an absolute address.
+
+    Args:
+        N/A
+
+    Returns:
+        absolute address of the supplied directory.
+
+    Authors:
+        Renata Ann Zeitler
+        Samuel Schoeneberger
+    """
     # Getting path to .git directory.
     if platform.system() is "Windows":
         file_dir = ""
