@@ -1,6 +1,7 @@
 ## Configuration for Jenkins
 
- * The option `Delete workspace before build starts` should be **unchecked**.  With it running, we are unable to get a reasonable time when Javadoc was last run.
+~~The option `Delete workspace before build starts` should be **unchecked**.  With it running, we are unable to get a reasonable time when Javadoc was last run.~~
+ * Determining JavaDoc generation is not being tracked at this time
  * There are three addition post-build tasks that need to be added (pictures below) and the normal post-build task will have to be recreated as the last task (since it must execute last).
 
 ----

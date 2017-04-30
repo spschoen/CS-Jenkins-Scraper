@@ -1,4 +1,4 @@
-152.46.20.243
-root
-
-repoinfo
+000.000.000.000
+username
+password
+database

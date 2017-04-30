@@ -41,6 +41,31 @@ LOCK TABLES `PMD` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `TS_testTable`
+--
+
+DROP TABLE IF EXISTS `TS_testTable`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `TS_testTable` (
+  `CommitUID` int(11) NOT NULL DEFAULT '0',
+  `testMethodUID` int(11) DEFAULT NULL,
+  `Passing` varchar(1) DEFAULT NULL,
+  `Message` varchar(200) DEFAULT NULL,
+  `Line` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `TS_testTable`
+--
+
+LOCK TABLES `TS_testTable` WRITE;
+/*!40000 ALTER TABLE `TS_testTable` DISABLE KEYS */;
+/*!40000 ALTER TABLE `TS_testTable` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `checkstyle`
 --
 
@@ -79,7 +104,7 @@ CREATE TABLE `classUID` (
   `Package` varchar(50) DEFAULT NULL,
   `Class` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`classUID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,9 +126,9 @@ DROP TABLE IF EXISTS `commitUID`;
 CREATE TABLE `commitUID` (
   `commitUID` int(11) NOT NULL AUTO_INCREMENT,
   `Hexsha` varchar(40) DEFAULT NULL,
-  `Repo` varchar(20) DEFAULT NULL,
+  `Repo` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`commitUID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -157,7 +182,7 @@ DROP TABLE IF EXISTS `coverage`;
 CREATE TABLE `coverage` (
   `CommitUID` int(11) NOT NULL,
   `ClassUID` int(11) DEFAULT NULL,
-  `Line` int(11) DEFAULT NULL
+  `Line_Coverage` int(11) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -209,7 +234,7 @@ CREATE TABLE `methodUID` (
   `ClassUID` int(11) DEFAULT NULL,
   `Method` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`methodUID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=60 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -233,7 +258,7 @@ CREATE TABLE `testClassUID` (
   `testClass` varchar(50) DEFAULT NULL,
   `testPackage` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`testClassUID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -257,7 +282,7 @@ CREATE TABLE `testMethodUID` (
   `testClassUID` int(11) NOT NULL,
   `testMethodName` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`testMethodUID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=85 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -279,7 +304,9 @@ DROP TABLE IF EXISTS `testTable`;
 CREATE TABLE `testTable` (
   `CommitUID` int(11) NOT NULL DEFAULT '0',
   `testMethodUID` int(11) DEFAULT NULL,
-  `Passing` varchar(1) DEFAULT NULL
+  `Passing` varchar(1) DEFAULT NULL,
+  `Message` varchar(200) DEFAULT NULL,
+  `Line` int(11) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -291,6 +318,30 @@ LOCK TABLES `testTable` WRITE;
 /*!40000 ALTER TABLE `testTable` DISABLE KEYS */;
 /*!40000 ALTER TABLE `testTable` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `unityID` varchar(8) DEFAULT NULL,
+  `ProjectID` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=308 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -301,4 +352,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-03-17 12:59:31
+-- Dump completed on 2017-04-30 16:24:19
