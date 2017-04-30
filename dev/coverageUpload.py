@@ -65,12 +65,12 @@ for row in report:
         coverage = int(row['LINE_COVERED']) / (int(row['LINE_MISSED']) + int(row['LINE_COVERED']))
         coverage = str(round(coverage * 100))
 
-        search = "SELECT * FROM coverage WHERE CommitUID = %s AND ClassUID = %s AND Line = %s"
+        search = "SELECT * FROM coverage WHERE CommitUID = %s AND ClassUID = %s AND Line_Coverage = %s"
         cur.execute(search, (commit_uid, class_uid, coverage))
         if cur.rowcount != 0:
             continue
 
-        insert = "INSERT INTO coverage(CommitUID, ClassUID, Line) VALUES (%s, %s, %s)"
+        insert = "INSERT INTO coverage(CommitUID, ClassUID, Line_Coverage) VALUES (%s, %s, %s)"
         try:
             cur.execute(insert, (commit_uid, class_uid, coverage))
         except:
