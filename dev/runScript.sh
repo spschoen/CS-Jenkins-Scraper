@@ -41,6 +41,7 @@ cp "$DIRECTORY"/splitter.sh "$WORKSPACE"/"$PROJECT_NAME"/splitter.sh
 
 if [[ "$DEBUG" == "y" ]]; then
     echo "    [Data Miner] Getting Project ID"
+fi
 PROJECT_ID=$(bash splitter.sh $GIT_URL)
 
 ##################################
