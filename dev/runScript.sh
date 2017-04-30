@@ -5,151 +5,210 @@ echo ""
 
 echo "Data Miner:"
 
-if [ $# -ne 1 ] || [ ! -d "$1" ]; then
-    echo "ERROR: ARGUMENT IS NOT DIRECTORY/DOES NOT EXIST.  EXITING"
-    exit 5
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        -p) DIRECTORY="$2"; shift 2;;
+        -d) DEBUG="y"; shift 1;;
+
+        --path) DIRECTORY="$2"; shift 2;;
+        --debug) DEBUG="y"; shift 1;;
+
+        -*) echo "unknown option: $1" >&2; exit 1;;
+        *) echo "unrecognized argument: $1"; exit 0
+    esac
+done
+
+if [[ "$DEBUG" == "y" ]]; then
+	echo "    [Data Miner] Debug output enabled."
 fi
 
-DIRECTORY="$1"
-
-# TODO: Make this work without logging in.  Probably easier than I think.
-# cd /home/jenkins/scripts/
-# git pull
-# cd $WORKSPACE/$PROJECT_NAME
+if [[ "$DIRECTORY" == "" ]]; then
+	echo "    [Data Miner] Did not specify directory for scripts; exiting."
+	exit 0
+fi
 
 echo "    [Data Miner] Beginning mining."
-cd $WORKSPACE/$PROJECT_NAME
+cd "$WORKSPACE"/"$PROJECT_NAME"
 
-##################################
-# Getting Project ID for commit_uid    #
-##################################
+#####################################
+# Getting Project ID for commit_uid #
+#####################################
 
-# echo "    [Data Miner] Acquiring ProjectID scanner"
-cp "$DIRECTORY"/splitter.sh $WORKSPACE/$PROJECT_NAME/splitter.sh
+if [[ "$DEBUG" == "y" ]]; then
+	echo "    [Data Miner] Acquiring ProjectID scanner"
+fi
+cp "$DIRECTORY"/splitter.sh "$WORKSPACE"/"$PROJECT_NAME"/splitter.sh
 
-# echo "    [Data Miner] Getting Project ID"
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Getting Project ID"
 PROJECT_ID=$(bash splitter.sh $GIT_URL)
 
 ##################################
 # Grabbing the library.          #
 ##################################
 
-# echo "    [Data Miner] Pulling library functions."
-cp "$DIRECTORY"/Scraper.py $WORKSPACE/$PROJECT_NAME/Scraper.py
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Pulling library functions."
+fi
+cp "$DIRECTORY"/Scraper.py "$WORKSPACE"/"$PROJECT_NAME"/Scraper.py
 
 ##################################
 # Scanning for methods           #
 ##################################
 
-# echo "    [Data Miner] Acquiring method scanner"
-cp "$DIRECTORY"/methodScan.sh $WORKSPACE/$PROJECT_NAME/methodScan.sh
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Acquiring method scanner"
+fi
+cp "$DIRECTORY"/methodScan.sh "$WORKSPACE"/"$PROJECT_NAME"/methodScan.sh
 
-# echo "    [Data Miner] Executing method scanner script"
-sh $WORKSPACE/$PROJECT_NAME/methodScan.sh $WORKSPACE/$PROJECT_NAME/ > $WORKSPACE/$PROJECT_NAME/methods.txt
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Executing method scanner script"
+fi
+sh "$WORKSPACE"/"$PROJECT_NAME"/methodScan.sh "$WORKSPACE"/"$PROJECT_NAME"/ > "$WORKSPACE"/"$PROJECT_NAME"/methods.txt
 
-# echo "    [Data Miner] Acquiring method uploader"
-cp "$DIRECTORY"/methodScanner.py $WORKSPACE/$PROJECT_NAME/methodScanner.py
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Acquiring method uploader"
+fi
+cp "$DIRECTORY"/methodScanner.py "$WORKSPACE"/"$PROJECT_NAME"/methodScanner.py
 
-# echo "    [Data Miner] Executing method uploader"
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Executing method uploader"
+fi
 python3 methodScanner.py
 
 ##################################
 # Scanning for tests             #
 ##################################
 
-# echo "    [Data Miner] Acquiring test scanner"
-cp "$DIRECTORY"/testScan.sh $WORKSPACE/$PROJECT_NAME/testScan.sh
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Acquiring test scanner"
+fi
+cp "$DIRECTORY"/testScan.sh "$WORKSPACE"/"$PROJECT_NAME"/testScan.sh
 
-# echo "    [Data Miner] Executing test scanner script"
-sh $WORKSPACE/$PROJECT_NAME/testScan.sh $WORKSPACE/$PROJECT_NAME/ > $WORKSPACE/$PROJECT_NAME/tests.txt
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Executing test scanner script"
+fi
+sh "$WORKSPACE"/"$PROJECT_NAME"/testScan.sh "$WORKSPACE"/"$PROJECT_NAME"/ > "$WORKSPACE"/"$PROJECT_NAME"/tests.txt
 
-# echo "    [Data Miner] Acquiring test uploader"
-cp "$DIRECTORY"/testScanner.py $WORKSPACE/$PROJECT_NAME/testScanner.py
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Acquiring test uploader"
+fi
+cp "$DIRECTORY"/testScanner.py "$WORKSPACE"/"$PROJECT_NAME"/testScanner.py
 
-# echo "    [Data Miner] Executing test uploader"
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Executing test uploader"
+fi
 python3 testScanner.py
 
 ##################################
 # Uploading Commit Information.  #
 ##################################
 
-# echo "    [Data Miner] Acquiring commit information uploader"
-cp "$DIRECTORY"/commitUpload.py $WORKSPACE/$PROJECT_NAME/commitUpload.py
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Acquiring commit information uploader"
+fi
+cp "$DIRECTORY"/commitUpload.py "$WORKSPACE"/"$PROJECT_NAME"/commitUpload.py
 
-# echo "    [Data Miner] Executing commit information uploader"
-python3 commitUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT $BUILD_NUMBER
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Executing commit information uploader"
+fi
+python3 commitUpload.py "$WORKSPACE" "$PROJECT_ID" "$GIT_COMMIT" "$BUILD_NUMBER"
 
 ##################################
 # Checkstyle uploading.          #
 ##################################
 
-# echo "    [Data Miner] Acquiring checkstyle uploader"
-cp "$DIRECTORY"/checkstyleUpload.py $WORKSPACE/$PROJECT_NAME/checkstyleUpload.py
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Acquiring checkstyle uploader"
+fi
+cp "$DIRECTORY"/checkstyleUpload.py "$WORKSPACE"/"$PROJECT_NAME"/checkstyleUpload.py
 
-# echo "    [Data Miner] Executing checkstyle uploader"
-python3 checkstyleUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Executing checkstyle uploader"
+fi
+python3 checkstyleUpload.py "$WORKSPACE"/"$PROJECT_NAME" "$PROJECT_ID" "$GIT_COMMIT"
 
 ##################################
 # FindBugs uploading.            #
 ##################################
 
-# echo "    [Data Miner] Acquiring FindBugs uploader"
-cp "$DIRECTORY"/findbugsUpload.py $WORKSPACE/$PROJECT_NAME/findbugsUpload.py
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Acquiring FindBugs uploader"
+fi
+cp "$DIRECTORY"/findbugsUpload.py "$WORKSPACE"/"$PROJECT_NAME"/findbugsUpload.py
 
-# echo "    [Data Miner] Executing FindBugs uploader"
-python3 findbugsUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Executing FindBugs uploader"
+fi
+python3 findbugsUpload.py "$WORKSPACE"/"$PROJECT_NAME" "$PROJECT_ID" "$GIT_COMMIT"
 
 ##################################
 # PMD uploading.                 #
 ##################################
 
-# echo "    [Data Miner] Acquiring PMD uploader"
-cp "$DIRECTORY"/pmdUpload.py $WORKSPACE/$PROJECT_NAME/pmdUpload.py
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Acquiring PMD uploader"
+fi
+cp "$DIRECTORY"/pmdUpload.py "$WORKSPACE"/"$PROJECT_NAME"/pmdUpload.py
 
-# echo "    [Data Miner] Executing PMD uploader"
-python3 pmdUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Executing PMD uploader"
+fi
+python3 pmdUpload.py "$WORKSPACE"/"$PROJECT_NAME" "$PROJECT_ID" "$GIT_COMMIT"
 
 ##################################
 # Test Results uploading.        #
 ##################################
 
-# echo "    [Data Miner] Acquiring Test Results uploader"
-cp "$DIRECTORY"/testFileResultsUpload.py $WORKSPACE/$PROJECT_NAME/testFileResultsUpload.py
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Acquiring Test Results uploader"
+fi
+cp "$DIRECTORY"/testFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME"/testFileResultsUpload.py
 
-# echo "    [Data Miner] Executing Test Results uploader"
-python3 testFileResultsUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Executing Test Results uploader"
+fi
+python3 testFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME" "$PROJECT_ID" "$GIT_COMMIT"
 
 ##################################
 # TS Test Results uploading.     #
 ##################################
 
-# echo "    [Data Miner] Acquiring TS Test Results uploader"
-cp "$DIRECTORY"/TSTestFileResultsUpload.py $WORKSPACE/$PROJECT_NAME/TSTestFileResultsUpload.py
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Acquiring TS Test Results uploader"
+fi
+cp "$DIRECTORY"/TSTestFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME"/TSTestFileResultsUpload.py
 
-# echo "    [Data Miner] Executing TS Test Results uploader"
-python3 TSTestFileResultsUpload.py $WORKSPACE/$PROJECT_NAME $PROJECT_ID $GIT_COMMIT
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Executing TS Test Results uploader"
+fi
+python3 TSTestFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME" "$PROJECT_ID" "$GIT_COMMIT"
 
 ##################################
 # Coverage uploading.            #
 ##################################
 
-# echo "    [Data Miner] Acquiring Coverage uploader"
-cp "$DIRECTORY"/coverageUpload.py $WORKSPACE/$PROJECT_NAME/coverageUpload.py
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Acquiring Coverage uploader"
+fi
+cp "$DIRECTORY"/coverageUpload.py "$WORKSPACE"/"$PROJECT_NAME"/coverageUpload.py
 
-# echo "    [Data Miner] Executing Coverage uploader"
-python3 coverageUpload.py $WORKSPACE/$PROJECT_NAME/site/jacoco $PROJECT_ID $GIT_COMMIT
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Executing Coverage uploader"
+fi
+python3 coverageUpload.py "$WORKSPACE"/"$PROJECT_NAME"/site/jacoco "$PROJECT_ID" "$GIT_COMMIT"
 
 ##################################
 # Cleaning up the local dir.     #
 ##################################
 
 echo "    [Data Miner] Cleaning up."
+if [[ "$DEBUG" == "y" ]]; then
+	echo "    [Data Miner] Removing *.sh, *.py, and *.txt"
+fi
 rm -f *.sh *.py *.txt
 
 echo "    [Data Miner] Mining complete."
 cd ..
 
 echo ""
-
-#echo $BUILD_NUMBER
-#this just works, fwiw
