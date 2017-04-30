@@ -9,7 +9,7 @@ function dirScan {
             dirScan "${D}"
         else
             
-            if [[ "${D}" == *.java ]]; then
+            if [[ "${D}" == *.java ]] && [[ "${D}" != *"JunitCheck"* ]]]; then
                 echo "    ${D}"
                 less "${D}" | egrep -o '(publ|priv|prot).*' | egrep "class|interface|implement"
             fi
