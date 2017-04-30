@@ -15,42 +15,48 @@ Alternatively, you can (manually) remove the Author column from the Commits tabl
 TL;DR These are a bunch of scripts which, when run, will scrape data from all the xml files produced by Jenkins, and feed that information into a Database, for future calculations.
 
 ## Pre-Setup
-#### (without setup.sh)
+#### Without `setup.sh`
 
-1. Update yum: ```sudo update yum```
+1. Update yum: ```sudo yum update```
 2. Install Python3 (because RHEL is sensitive about 2.6): ```sudo yum install python34.x86_64```
-3. Install cloc (Used by commitUpload.py): ```sudo yum install cloc```
-3. Install Modules
+3. Install cloc (Used by `commitUpload.py`): ```sudo yum install cloc```
+4. Install Modules ```sudo pip3 install PyMySQL && sudo pip3 install GitPython```
+5. Export git to path, just to be safe: ```sudo echo "PATH=$PATH:/usr/local/git/bin/"```
 
-```sudo pip3 install PyMySQL```    
-```sudo pip3 install GitPython```
+Alternatively, instead of using `pip` to install the modules, you can clone them from their repositories and make them:    
+```git clone https://github.com/PyMySQL/PyMySQL.git```    
+```git clone https://github.com/gitpython-developers/GitPython.git```    
+```cd   GitPython; sudo python3 setup.py install```    
+```cd ../PyMySQL/; sudo python3 setup.py install```
 
-4. Export git to path, just to be safe: ```sudo echo "PATH=$PATH:/usr/local/git/bin/"```
-5. ***RESTART THE EXECUTOR***
+___
 
-## Pre-Setup
-#### (with setup.sh)
+#### With `setup.sh`
 
-1. Execute ```sudo setup.sh```
-2. ***RESTART THE EXECUTOR***
+1. Execute ```sudo sh setup.sh```, it will execute all the above steps in a single script.
 
-## Installation Instructions
+___
 
-1. ```git clone https://github.ncsu.edu/spschoen/CSC216-Python-Analyzer.git```
+***RESTART THE EXECUTOR*** at this point.
+
+## Downloading Scrapers
+
+1. Clone repo: ```git clone https://github.ncsu.edu/spschoen/CSC216-Python-Analyzer.git```
+2. Move the scripts to your preferred location for use by `ant`.  Working location is `/home/jenkins/scripts`, however `runscript.sh` takes an argument of any directory containing the scripts, so any location is usable.
 
 
 ## Post Installation Instructions
 
-1. Setup MySQL Server on your Master (I shouldn't have to explain this)
-2. Add runscript.sh to your post-build action in Jenkins (cp it to the Workspace/ProjectName dir, run)
-3. Ensure ant builds include JaCoCo coverage report output.
-4. Edit config.txt to contain your DB info (IP, user, pw, DB)
-5. Copy config.txt to somewhere that ant can access it, then edit build.xml to copy it to the local directory.
+1. Setup MySQL Server on your Master server.
+2. Add `runscript.sh` to your post-build action in Jenkins - see the `README.md` file in `docs/` for more information.
+3. Ensure `ant` builds include JaCoCo coverage report output.
+4. Edit `config.txt` to contain your DB info (IP, user, pw, DB)
+5. Copy `config.txt` to somewhere that ant can access it, then edit `build.xml` to copy it to the local directory.
 
 
 ## Database Setup
 
-1. Download repo_base.sql
+1. Download `repo_base.sql`
 2. Enter mysql: ```mysql -u root -p```
 3. Create the DB: ```create database [DB NAME];```
 4. Switch to the new DB: ```use [DB NAME];```
@@ -59,12 +65,11 @@ TL;DR These are a bunch of scripts which, when run, will scrape data from all th
 ## File structure
 
 * dev/
-  * *Upload.py files read local files and upload data to your Database
-  * *Scanner files scan the project for certain things (method names, packages, etc.) for Uploaders.
-  * runScript.sh is the script which should be added to the post-build
+  * `*Upload.py` files read local files and upload data to your Database
+  * `*Scanner` files scan the project for certain things (method names, packages, etc.) for Uploaders.
+  * `runScript.sh` is the script which should be added to the post-build
 * Docs/
   * DB_Tables represents the structure of a database, a plain text and easy to read version of repo_base.sql
-  * Example_Database.txt is a text file output of a Database that has data from an example project.
-  * repo_base.sql is a dump file which can be imported into created databases to setup for the scripts.
+  * `repo_base.sql` is a dump file which can be imported into created databases to setup for the scripts.
 * old/
   * These scripts are example scripts/XML which were used to create dev/ scripts.  They can be safely ignored (and deleted, which we should probably do)
