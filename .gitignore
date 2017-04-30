@@ -102,4 +102,4 @@ config.txt
 .idea/
 test-reports/
 ts-test-reports/
-
+*.txt
