@@ -128,7 +128,7 @@ CREATE TABLE `commitUID` (
   `Hexsha` varchar(40) DEFAULT NULL,
   `Repo` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`commitUID`)
-) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -182,7 +182,11 @@ DROP TABLE IF EXISTS `coverage`;
 CREATE TABLE `coverage` (
   `CommitUID` int(11) NOT NULL,
   `ClassUID` int(11) DEFAULT NULL,
-  `Line_Coverage` int(11) DEFAULT NULL
+  `Line_Coverage` int(11) DEFAULT NULL,
+  `Instruction_Coverage` int(11) DEFAULT NULL,
+  `Branch_Coverage` int(11) DEFAULT NULL,
+  `Complexity_Coverage` int(11) DEFAULT NULL,
+  `Method_Coverage` int(11) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -352,4 +356,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-04-30 16:24:19
+-- Dump completed on 2017-05-02 14:08:21
