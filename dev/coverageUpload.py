@@ -65,32 +65,32 @@ for row in report:
                                       package=row['PACKAGE'].split(".")[-1])
 
     if int(row['LINE_MISSED']) + int(row['LINE_COVERED']) == 0:
-        coverage = 100
+        coverage = 0
     else:
         coverage = int(row['LINE_COVERED']) / (int(row['LINE_MISSED']) + int(row['LINE_COVERED']))
         coverage = str(round(coverage * 100))
 
     if int(row['INSTRUCTION_MISSED']) + int(row['INSTRUCTION_COVERED']) == 0:
-        instruction = 100
+        instruction = 0
     else:
         instruction = int(row['INSTRUCTION_MISSED']) + int(row['INSTRUCTION_COVERED'])
         instruction = int(row['INSTRUCTION_COVERED']) / instruction
         instruction = str(round(instruction * 100))
 
     if int(row['BRANCH_MISSED']) + int(row['BRANCH_COVERED']) == 0:
-        branch = 100
+        branch = 0
     else:
         branch = int(row['BRANCH_COVERED']) / (int(row['BRANCH_MISSED']) + int(row['BRANCH_COVERED']))
         branch = str(round(branch * 100))
 
     if int(row['COMPLEXITY_MISSED']) + int(row['COMPLEXITY_COVERED']) == 0:
-        complexity = 100
+        complexity = 0
     else:
         complexity = int(row['COMPLEXITY_COVERED']) / (int(row['COMPLEXITY_MISSED']) + int(row['COMPLEXITY_COVERED']))
         complexity = str(round(complexity * 100))
 
     if int(row['METHOD_MISSED']) + int(row['METHOD_COVERED']) == 0:
-        method = 100
+        method = 0
     else:
         method = int(row['METHOD_COVERED']) / (int(row['METHOD_MISSED']) + int(row['METHOD_COVERED']))
         method = str(round(method * 100))
@@ -98,7 +98,7 @@ for row in report:
     search = "SELECT * FROM coverage WHERE CommitUID = %s AND ClassUID = %s AND Line_Coverage = %s AND " \
              "Instruction_Coverage = %s AND Branch_Coverage = %s AND Complexity_Coverage = %s AND Method_Coverage = %s"
     cur.execute(search, (commit_uid, class_uid, coverage, instruction, branch, complexity, method))
-    
+
     if cur.rowcount != 0:
         continue
 
