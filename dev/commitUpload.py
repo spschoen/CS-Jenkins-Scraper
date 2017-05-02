@@ -69,8 +69,8 @@ Doc = "N"
 try:
     compileFile = open("compLog.txt", "r")
     compileLines = list(compileFile)
-    studComp = compileLines[0].replace("\n", "")
-    TSComp = compileLines[1].replace("\n", "")
+    Compile_Stud = compileLines[0].replace("\n", "")
+    Compile_TS = compileLines[1].replace("\n", "")
 except:
     # Compilation successful.
     Compile_Stud = "Y"
