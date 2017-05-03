@@ -48,7 +48,7 @@ for line in f:
     users = line.split(":")[1].split(" ")
     for user in users:
         try:
-            cur.execute(upload, (user, project_id))
+            cur.execute(upload, (user.replace("\n",""), project_id))
         except:
             connection.rollback()
             error_string = sys.exc_info()[0] + "\n----------\n"
