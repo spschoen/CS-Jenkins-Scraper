@@ -66,8 +66,8 @@ commit_uid = Scraper.get_commit_uid(ip=config_info['ip'], user=config_info['user
                                     db=config_info['db'], commit_hash=commit_hash, repo_id=repo_id)
 
 if root.hasAttribute("version"):
-    pass
     # print("FindBugs Version : %s" % root.getAttribute("version"))
+    pass
 
 package = ""
 class_name = ""
@@ -87,17 +87,19 @@ for node in root.childNodes:
             rank = int(node.getAttribute("rank"))
         if node.hasAttribute("category"):
             cat = node.getAttribute("category")
-            for classNode in node.childNodes:
-                if classNode.nodeName == "Method" and not classNode.hasAttribute("role"):
-                    if classNode.hasAttribute("class_name"):
-                        string = classNode.getAttribute("class_name")
-                        package = string.split(".")[-1]
-                        class_name = string.split(".")[-2]
-                    if classNode.hasAttribute("name"):
-                        method = classNode.getAttribute("name")
-                if classNode.nodeName == "SourceLine":
-                    if classNode.hasAttribute("start"):
-                        line = int(classNode.getAttribute("start"))
+        for classNode in node.childNodes:
+            if classNode.nodeType == classNode.TEXT_NODE:
+                continue
+            if classNode.nodeName == "Method" and not classNode.hasAttribute("role"):
+                if classNode.hasAttribute("classname"):
+                    string = classNode.getAttribute("classname")
+                    package = string.split(".")[-1]
+                    class_name = string.split(".")[-2]
+                if classNode.hasAttribute("name"):
+                    method = classNode.getAttribute("name")
+            if classNode.nodeName == "SourceLine":
+                if classNode.hasAttribute("start"):
+                    line = int(classNode.getAttribute("start"))
 
         # Grab methodUID for below. By now, it should definitely exist
 
