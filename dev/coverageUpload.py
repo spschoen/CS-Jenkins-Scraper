@@ -35,7 +35,7 @@ connection = pymysql.connect(host=config_info['ip'], user=config_info['user'],
                              password=config_info['pass'], db=config_info['db'])
 cur = connection.cursor()
 
-FILE_DIR = Scraper.get_file_dir()
+FILE_DIR = Scraper.get_file_dir(sys.argv[1])
 
 repo_id = sys.argv[2]
 commit_hash = sys.argv[3]

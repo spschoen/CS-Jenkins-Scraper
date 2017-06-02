@@ -22,7 +22,7 @@ import pymysql
 import Scraper
 import os
 
-FILE_DIR = Scraper.get_file_dir()
+FILE_DIR = Scraper.get_file_dir(sys.argv[1])
 
 if not (os.path.isfile(FILE_DIR + "/pmd.xml")):
     print(FILE_DIR + "/pmd.xml")

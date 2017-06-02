@@ -28,7 +28,7 @@ if len(sys.argv) != 4:
     sys.exit()
 
 # Setting up the XML to read
-FILE_DIR = Scraper.get_file_dir()
+FILE_DIR = Scraper.get_file_dir(sys.argv[1])
 
 # Getting to the right directory
 if '/ts-test-reports/' not in FILE_DIR:

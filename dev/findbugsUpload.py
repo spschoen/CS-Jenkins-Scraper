@@ -25,7 +25,7 @@ import os
 import pymysql
 import Scraper
 
-FILE_DIR = Scraper.get_file_dir()
+FILE_DIR = Scraper.get_file_dir(sys.argv[1])
 
 if not (os.path.isfile(FILE_DIR + "/findbugs.xml")):
     print(FILE_DIR + "/findbugs.xml")
@@ -33,14 +33,14 @@ if not (os.path.isfile(FILE_DIR + "/findbugs.xml")):
     sys.exit()
 
 try:
-    findbuggies = xml.dom.minidom.parse(FILE_DIR + "/findbugs.xml")
+    findbug_xml = xml.dom.minidom.parse(FILE_DIR + "/findbugs.xml")
 except:
     # This is commented out, because findbugs XML can be not created for a lot of reasons.
     '''ErrorString = sys.exc_info()[0] + "\n----------\n"
     ErrorString += sys.exc_info()[1] + "\n----------\n"
     ErrorString += sys.exc_info()[2]
     Scraper.sendFailEmail("Failed to read findbugs.xml", "The following command failed:",
-                                "findbuggies = xml.dom.minidom.parse(FILE_DIR + "/findbugs.xml")",
+                                "findbug_xml = xml.dom.minidom.parse(FILE_DIR + "/findbugs.xml")",
                                 "With the following variables (FILE_DIR)",
                                 ErrorString, FILE_DIR)'''
     print("Could not access findbugs xml file, but it exists.")
@@ -51,7 +51,7 @@ repo_id = sys.argv[2]
 commit_hash = sys.argv[3]
 
 # root is the first <> element in the XML file.
-root = findbuggies.documentElement
+root = findbug_xml.documentElement
 
 # Set up to read XML
 

@@ -29,7 +29,7 @@ if len(sys.argv) != 4:
     print("Incorrect number of arguments.  Exiting.")
     sys.exit()
 
-FILE_DIR = Scraper.get_file_dir()
+FILE_DIR = Scraper.get_file_dir(sys.argv[1])
 
 if not os.path.exists(FILE_DIR + '/checkstyle.xml'):
     print(FILE_DIR + "/checkstyle.xml")

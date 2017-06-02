@@ -30,7 +30,7 @@ if len(sys.argv) != 4:
     print("$WORKSPACE $PROJECT_ID $GIT_COMMIT")
     sys.exit()
 
-FILE_DIR = Scraper.get_file_dir()
+FILE_DIR = Scraper.get_file_dir(sys.argv[1])
 
 # Getting to the right directory
 if '/test-reports/' not in FILE_DIR:
