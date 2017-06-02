@@ -130,10 +130,10 @@ second_to_last_hash = previous_commit[3]
 
 if platform.system() is "Windows":
     doc_dir = project_name + "\\doc\\"
-    comp_doc_dir = project_name + "\\doc\\"
+    comp_doc_dir = "\\" + project_name + "\\doc\\"
 else:
     doc_dir = project_name + "/doc/"
-    comp_doc_dir = project_name + "/doc/"
+    comp_doc_dir = "/" + project_name + "/doc/"
 
 commits_since_doc_modified = -2
 
@@ -159,7 +159,8 @@ if os.path.isdir(FILE_DIR + comp_doc_dir):
     else:
         commits_since_doc_modified = int(len(commits_since_doc_change.split("\n")))
         pass
-
+else:
+    print("Failed to get doc dir, got: " + FILE_DIR + comp_doc_dir)
 # print(commits_since_doc_modified)
 
 ######################################################################
