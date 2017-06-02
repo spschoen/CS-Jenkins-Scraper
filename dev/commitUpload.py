@@ -230,9 +230,6 @@ insert = "INSERT INTO commits (CommitUID, Commit_Hash, Repo, Build_Num, Compile_
          "Duration, Message, Code_Lines, Comment_Lines, Commits_Since_Javadoc, Method_Count, Class_Count) " \
          "VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
-print(commit_hash, repo_id, build_num, Compile_ST, Compile_TS, author, time, duration, message, lines_of_code,
-      lines_of_comments, commits_since_doc_modified, methodCount, classes)
-
 try:
     cur.execute(insert, (commit_hash, repo_id, build_num, Compile_ST, Compile_TS, author, time, duration, message,
                          lines_of_code, lines_of_comments, commits_since_doc_modified, methodCount, classes))
