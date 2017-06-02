@@ -45,14 +45,14 @@ ___
 1. Clone repo: ```git clone https://github.ncsu.edu/spschoen/CSC216-Python-Analyzer.git```
 2. Move the scripts to your preferred location for use by `ant`.  Working location is `/home/jenkins/scripts`, however `runscript.sh` takes an argument of any directory containing the scripts, so any location is usable.
 
-
 ## Post Installation Instructions
 
 1. Setup MySQL Server on your Master server.
 2. Add `runscript.sh` to your post-build action in Jenkins - see the `README.md` file in `docs/` for more information.
 3. Ensure `ant` builds include JaCoCo coverage report output.
-4. Edit `config.txt` to contain your DB info (IP, user, pw, DB)
-5. Copy `config.txt` to somewhere that ant can access it, then edit `build.xml` to copy it to the local directory.
+4. Rename `example_config.json` to `config.json`
+5. Edit `config.json` to contain your DB info (IP, username, password, database name)
+6. Copy `config.json` to somewhere that ant can access it, then edit `build.xml` to copy it to the local directory.
 
 
 ## Database Setup

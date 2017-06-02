@@ -3,6 +3,7 @@ import smtplib
 import sys
 import os
 import platform
+import json
 
 
 def get_method_uid(ip, user, pw, db, method, class_name, package):
@@ -349,7 +350,7 @@ def send_fail_email(subject, failure_message, command, variable_list, trace, *va
 
 def get_config_options():
     """
-    Read the config file (config.txt, hardcoded) and return the values inside.
+    Read the config file (config.json, hardcoded) and return the values inside.
 
     Args:
         N/A
@@ -366,24 +367,14 @@ def get_config_options():
         Samuel Schoeneberger
     """
     # Now, we begin reading the config file.
-    if not os.path.exists('config.txt'):
-        print("Config.txt does not exist.  Exiting.")
+    if not os.path.exists('config.json'):
+        print("config.json does not exist.  Exiting.")
         sys.exit()
 
-    config_file = open("config.txt", "r")
-    lines = list(config_file)
-    if len(lines) != 4:
-        # incorrect config file
-        # print("config.txt contains incorrect number of records.")
-        sys.exit()
+    with open("config.json") as config_file:
+        data = json.load(config_file)
 
-    # Setting up the db connection
-    ip = lines[0].replace("\n", "")
-    user = lines[1].replace("\n", "")
-    pw = lines[2].replace("\n", "")
-    db = lines[3].replace("\n", "")
-
-    return {'ip': ip, 'user': user, 'pass': pw, 'db': db}
+    return {'ip': data["ip"], 'user': data["username"], 'pass': data["password"], 'db': data["database"]}
 
 
 def get_file_dir(filepath):
