@@ -178,7 +178,7 @@ if shutil.which("cloc") is not None:
     DEVNULL = open(os.devnull, 'wb')
 
     # NOTE: Maybe update this to only pull from src/ and not anything else?
-    subprocess.call(["CLOC", FILE_DIR, "--by-file-by-lang", "--exclude-ext=xml", "--exclude-dir=gui,reference,output",
+    subprocess.call(["cloc", FILE_DIR, "--by-file-by-lang", "--exclude-ext=xml", "--exclude-dir=gui,reference,output",
                      "--xml", "--out=CLOC.xml"], stdout=DEVNULL)
 
     # Get the parser, set it up to parse CLOC.xml
