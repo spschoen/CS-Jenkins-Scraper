@@ -128,8 +128,6 @@ second_to_last_hash = previous_commit[3]
 #    -1 indicates that the doc/ directory exists but could not be read/accessed, and is a generic "failure" value
 #    -2 indicates that the doc/ directory does not exist at the specific location
 
-commits_since_doc_modified = -1
-
 if platform.system() is "Windows":
     doc_dir = project_name + "\\doc\\"
     comp_doc_dir = project_name + "\\doc\\"
@@ -175,7 +173,7 @@ lines_of_comments = -1
 classes = -1
 
 # Verifying the CLOC is installed
-if shutil.which("CLOC") is not None:
+if shutil.which("cloc") is not None:
     # Sending CLOC output to /dev/null
     DEVNULL = open(os.devnull, 'wb')
 
