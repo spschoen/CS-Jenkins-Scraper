@@ -239,11 +239,12 @@ except:
     ErrorString += sys.exc_info()[1] + "\n----------\n"
     ErrorString += sys.exc_info()[2]
 
-    v_list = "(CommitUID, Build_Num, Compile_Stud, Compile_TS, Author, "
-    v_list += "Time, Duration, Message, lines_of_code, lines_of_code_DIFF, Gen_Javadoc)"
+    v_list = "(CommitUID, Commit_Hash, Repo, Build_Num, Compile_ST, Compile_TS, Author, Time, "
+    v_list += "Duration, Message, Code_Lines, Comment_Lines, Commits_Since_Javadoc, Method_Count, Class_Count)"
 
     Scraper.sendFailEmail("Failed to insert into checkstyle table!", "The following insert failed:", insert,
-                          v_list, ErrorString, commit_uid, Build_Num, Compile_Stud, Compile_TS, Author, Time,
-                          Duration, Message[:50], lines_of_code, lines_of_code_DIFF, last_mod)
+                          v_list, ErrorString, commit_hash, repo_id, build_num, Compile_ST, Compile_TS, author, time,
+                          duration, message, lines_of_code, lines_of_comments, commits_since_doc_modified, methodCount,
+                          classes)
 
 connection.close()
