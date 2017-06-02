@@ -103,3 +103,5 @@ config.txt
 test-reports/
 ts-test-reports/
 *.txt
+gitstats/
+cloc.xml

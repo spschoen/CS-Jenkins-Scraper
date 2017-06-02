@@ -11,6 +11,9 @@ yum install python34.x86_64
 #Install the "count lines of code" utility for analysis.
 yum install cloc
 
+#Install gitstats utility for additional metrics
+yum install gitstats
+
 #Install the two Python Modules we use.
 pip3 install PyMySQL
 pip3 install GitPython

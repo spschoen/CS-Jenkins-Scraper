@@ -8,7 +8,7 @@ import platform
 def get_method_uid(ip, user, pw, db, method, class_name, package):
     """
     get_method_uid will take args to connect to a Database, as well as the names of the method, class, and
-    package to be identified.  It will check the database records for the method UID (and, implicity, the class UID)
+    package to be identified.  It will check the database records for the method UID (and, implicitly, the class UID)
     and if it does not exist, it will create it, then check for the new method UID.
     Finally, it will return the newly found method UID.
 
@@ -32,10 +32,8 @@ def get_method_uid(ip, user, pw, db, method, class_name, package):
     try:
         connection = pymysql.connect(host=ip, user=user, password=pw, db=db)
     except:
-        error_string = sys.exc_info()[0] + "\n----------\n"
-        error_string += sys.exc_info()[1] + "\n----------\n"
-        error_string += sys.exc_info()[2]
-        print(error_string)
+        print(sys.exc_info())
+        sys.exit()
 
     cur = connection.cursor()
 
@@ -49,8 +47,8 @@ def get_method_uid(ip, user, pw, db, method, class_name, package):
     # print("Selected " + str(cur.rowcount) + " elements.")
 
     if cur.rowcount == 0:
+        insert = "INSERT INTO methodUID(methodUID, classUID, Method) VALUES (Null, %s, %s)"
         try:
-            insert = "INSERT INTO methodUID(methodUID, classUID, Method) VALUES (Null, %s, %s)"
             cur.execute(insert, (class_uid, method))
         except:
             connection.rollback()
@@ -92,10 +90,8 @@ def get_class_uid(ip, user, pw, db, class_name, package):
     try:
         connection = pymysql.connect(host=ip, user=user, password=pw, db=db)
     except:
-        error_string = sys.exc_info()[0] + "\n----------\n"
-        error_string += sys.exc_info()[1] + "\n----------\n"
-        error_string += sys.exc_info()[2]
-        print(error_string)
+        print(sys.exc_info())
+        sys.exit()
 
     cur = connection.cursor()
 
@@ -106,8 +102,8 @@ def get_class_uid(ip, user, pw, db, class_name, package):
     # print("Selected " + str(cur.rowcount) + " elements.")
 
     if cur.rowcount == 0:
+        insert = "INSERT INTO classUID(classUID, Package, Class) VALUES (Null, %s, %s)"
         try:
-            insert = "INSERT INTO classUID(classUID, Package, Class) VALUES (Null, %s, %s)"
             cur.execute(insert, (package, class_name))
         except:
             connection.rollback()
@@ -128,7 +124,7 @@ def get_test_method_uid(ip, user, pw, db, method, class_name, package):
     """
     getTestMethodUID will take args to connect to a Database, as well as the names of the tes method, class, and
     package to be identified.  It will check the database records for the test method UID
-    (and, implicity, the class UID) and if it does not exist, it will create it, then check for the new test method
+    (and, implicitly, the class UID) and if it does not exist, it will create it, then check for the new test method
     UID.  Finally, it will return the newly found method UID.
 
     Args:
@@ -151,10 +147,8 @@ def get_test_method_uid(ip, user, pw, db, method, class_name, package):
     try:
         connection = pymysql.connect(host=ip, user=user, password=pw, db=db)
     except:
-        error_string = sys.exc_info()[0] + "\n----------\n"
-        error_string += sys.exc_info()[1] + "\n----------\n"
-        error_string += sys.exc_info()[2]
-        print(error_string)
+        print(sys.exc_info())
+        sys.exit()
 
     cur = connection.cursor()
 
@@ -168,8 +162,8 @@ def get_test_method_uid(ip, user, pw, db, method, class_name, package):
     # print("Selected " + str(cur.rowcount) + " elements.")
 
     if cur.rowcount == 0:
+        insert = "INSERT INTO testMethodUID(testMethodUID, testClassUID, testMethodName) VALUES (Null, %s, %s)"
         try:
-            insert = "INSERT INTO testMethodUID(testMethodUID, testClassUID, testMethodName) VALUES (Null, %s, %s)"
             cur.execute(insert, (test_class_uid, method))
         except:
             connection.rollback()
@@ -211,10 +205,8 @@ def get_test_class_uid(ip, user, pw, db, class_name, package):
     try:
         connection = pymysql.connect(host=ip, user=user, password=pw, db=db)
     except:
-        error_string = sys.exc_info()[0] + "\n----------\n"
-        error_string += sys.exc_info()[1] + "\n----------\n"
-        error_string += sys.exc_info()[2]
-        print(error_string)
+        print(sys.exc_info())
+        sys.exit()
 
     cur = connection.cursor()
 
@@ -268,25 +260,29 @@ def get_commit_uid(ip, user, pw, db, commit_hash, repo_id):
     try:
         connection = pymysql.connect(host=ip, user=user, password=pw, db=db)
     except:
-        error_string = sys.exc_info()[0] + "\n----------\n"
-        error_string += sys.exc_info()[1] + "\n----------\n"
-        error_string += sys.exc_info()[2]
-        print(error_string)
+        print(sys.exc_info())
+        sys.exit()
+
     cur = connection.cursor()
 
-    select = "SELECT * FROM commitUID WHERE Hexsha = %s and Repo = %s"
-    cur.execute(select, (commit_hash, repo_id))
-    if cur.rowcount == 0:  # UID doesn't exist
-        try:
-            insert = "INSERT INTO commitUID(commitUID, Hexsha, Repo) VALUES (NULL, %s, %s)"
-            cur.execute(insert, (commit_hash, repo_id))
-        except:
-            connection.rollback()
-            error_string = sys.exc_info()[0] + "\n----------\n"
-            error_string += sys.exc_info()[1] + "\n----------\n"
-            error_string += sys.exc_info()[2]
-            send_fail_email("Failure to insert commitUID!", "The following insert failed: ", insert,
-                            "The variables were: ", error_string, commit_hash, repo_id)
+    select = "SELECT * FROM commits WHERE Commit_Hash = %s and Repo = %s"
+    # cur.execute(select, (commit_hash, repo_id))
+
+    # So since commitUID is gone now, I think this is basically dead.  If the commitUID doesn't exist, something
+    # went wrong and this single method won't fix it.
+
+    # UID doesn't exist
+    # if cur.rowcount == 0:
+    #     insert = "INSERT INTO commitUID(commitUID, commitUID, Repo) VALUES (NULL, %s, %s)"
+    #     try:
+    #         cur.execute(insert, (commit_hash, repo_id))
+    #     except:
+    #         connection.rollback()
+    #         error_string = sys.exc_info()[0] + "\n----------\n"
+    #         error_string += sys.exc_info()[1] + "\n----------\n"
+    #         error_string += sys.exc_info()[2]
+    #         send_fail_email("Failure to insert commitUID!", "The following insert failed: ", insert,
+    #                         "The variables were: ", error_string, commit_hash, repo_id)
 
     cur.execute(select, (commit_hash, repo_id))
     commit_uid = str(cur.fetchone()[0])
@@ -390,7 +386,7 @@ def get_config_options():
     return {'ip': ip, 'user': user, 'pass': pw, 'db': db}
 
 
-def get_file_dir():
+def get_file_dir(filepath):
     """
     Get the current file directory from an absolute address.
 
@@ -407,15 +403,18 @@ def get_file_dir():
     # Getting path to .git directory.
     if platform.system() is "Windows":
         file_dir = ""
+        path_list = filepath.split("\\")
     else:
         file_dir = "/"
+        path_list = filepath.split("/")
 
-    # Iterate through the path to git to set up the directory.
-    for arg in sys.argv[1].split("/"):
+    for arg in path_list:
         if ":" in arg:
             file_dir = os.path.join(file_dir, arg + "\\")
         elif arg != "":
             file_dir = os.path.join(file_dir, arg)
-            # print(arg.ljust(25) + " | " + file_dir)
+        # print(arg.ljust(25) + " | " + file_dir)
+
+    # Iterate through the path to git to set up the directory.
 
     return file_dir

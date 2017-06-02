@@ -20,6 +20,7 @@ TL;DR These are a bunch of scripts which, when run, will scrape data from all th
 1. Update yum: ```sudo yum update```
 2. Install Python3 (because RHEL is sensitive about 2.6): ```sudo yum install python34.x86_64```
 3. Install cloc (Used by `commitUpload.py`): ```sudo yum install cloc```
+3. Install gitstats (Used by `commitUpload.py`): ```sudo yum install gitstats```
 4. Install Modules ```sudo pip3 install PyMySQL && sudo pip3 install GitPython```
 5. Export git to path, just to be safe: ```sudo echo "PATH=$PATH:/usr/local/git/bin/"```
 
