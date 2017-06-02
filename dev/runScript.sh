@@ -113,7 +113,7 @@ cp "$DIRECTORY"/commitUpload.py "$WORKSPACE"/"$PROJECT_NAME"/commitUpload.py
 if [[ "$DEBUG" == "y" ]]; then
     echo "    [Data Miner] Executing commit information uploader"
 fi
-python3 commitUpload.py "$WORKSPACE" "$PROJECT_ID" "$GIT_COMMIT" "$BUILD_NUMBER"
+python3 commitUpload.py "$WORKSPACE" "$PROJECT_ID" "$GIT_COMMIT" "$BUILD_NUMBER" "$PROJECT_NAME"
 
 ##################################
 # Checkstyle uploading.          #
