@@ -40,6 +40,8 @@ if platform.system() is "Windows":
     FILE_DIR += "\\" + project_name + "\\"
 else:
     FILE_DIR += "/" + project_name + "/"
+    if "//" in FILE_DIR:
+        FILE_DIR = FILE_DIR.replace("//", "/")
 
 # Getting to the right directory
 
