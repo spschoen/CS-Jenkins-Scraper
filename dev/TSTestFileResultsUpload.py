@@ -1,19 +1,24 @@
 """
-Reads test reports and uploads
+Reads TS test reports and uploads them to the given Database.
+
 Requirements:
- - test[blaaaaah].xml must exist.  If not, this script won't read it.
- - Scraper.py for interacting with MySQL.
- - config.txt to read in variables for IP, DB, etc.
+    Scraper.py      - library for interaction with databases must be available in the same directory as this file.
+    config.txt      - file specifying database information.
+    ts-test-reports/ - directory of test report files to be scraped
 
-Execution:
- - python3 testFileResultsUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT
-   - Arguments:
-     - 0. testFileResultsUpload.py
-     - 1. WORKSPACE  : /path/to/test-reports/*.xml (DO NOT INCLUDE *.xml)
-     - 2. PROJECT_ID : PW-XYZ
-     - 3. GIT_COMMIT : [40 char commit commit_hash]
+Args:
+    1. WORKSPACE  - Absolute path to the location of test-reports/, which contains the test XML files.
+    2. PROJECT_ID - 17 char string representing class, section, project, and unique ID of the current project.
+                    For example: csc216-002-P2-096
+    3. GIT_COMMIT - 40 Character commit hash.
+    4. PROJECT_ID - Name of project.  Likely "Project1" or "Project2" ...
 
-@author Renata Ann Zeitler
+Returns:
+    N/A
+
+Authors:
+    Renata Ann Zeitler
+    Samuel Schoeneberger
 """
 
 import xml.dom.minidom
@@ -21,18 +26,28 @@ import sys
 import os
 import pymysql
 import Scraper
+import platform
 
-if len(sys.argv) != 4:
+if len(sys.argv) != 5:
     print("Did not get expected arguments.")
-    print("$WORKSPACE $PROJECT_ID $GIT_COMMIT")
     sys.exit()
 
 # Setting up the XML to read
 FILE_DIR = Scraper.get_file_dir(sys.argv[1])
 
+project_name = sys.argv[4]
+if platform.system() is "Windows":
+    FILE_DIR += "\\" + project_name + "\\"
+else:
+    FILE_DIR += "/" + project_name + "/"
+
 # Getting to the right directory
-if '/ts-test-reports/' not in FILE_DIR:
-    FILE_DIR += '/ts-test-reports/'
+
+if "test-reports" not in FILE_DIR:
+    if platform.system() is "Windows":
+        FILE_DIR += "\\test-reports\\"
+    else:
+        FILE_DIR += "/test-reports/"
 
 # Directory to XML set up.
 
@@ -58,15 +73,18 @@ method = ""
 class_name = ""
 test_name = ""
 passing = ""
+message = ""
+line = -1
 
 for file in os.listdir(FILE_DIR):
-    if file == '.DS_Store':
+    if not (str(file).endswith(".xml")):
         continue
 
     try:
         DOMTree = xml.dom.minidom.parse(FILE_DIR + file)
     except:
         print("ERROR: Could not interact with file " + FILE_DIR + file)
+        print(sys.exc_info())
         sys.exit()
     root = DOMTree.documentElement
 
@@ -80,6 +98,10 @@ for file in os.listdir(FILE_DIR):
                     test_name = node.getAttribute("name")
                 if len(node.childNodes) != 0:
                     passing = "F"
+                    for test_case_child in node.childNodes:
+                        if test_case_child.nodeType != test_case_child.TEXT_NODE:
+                            message = test_case_child.getAttribute("message")
+                            line = test_case_child.firstChild.nodeValue.split("\n")[1].split(".java:")[1].split(")")[0]
                 else:
                     passing = "P"
 
@@ -94,10 +116,10 @@ for file in os.listdir(FILE_DIR):
                 cur.execute(find, (commit_uid, test_method_uid, passing))
 
                 if cur.rowcount == 0:
-                    testInsert = "INSERT INTO TS_testTable(CommitUID, testMethodUID, Passing) VALUES (%s, %s, %s)"
+                    testInsert = "INSERT INTO TS_testTable(CommitUID, testMethodUID, Passing, Message, Line)" \
+                                 " VALUES (%s, %s, %s, %s, %s)"
                     try:
-                        cur.execute(
-                            testInsert, (commit_uid, test_method_uid, passing))
+                        cur.execute(testInsert, (commit_uid, test_method_uid, passing, message, line))
                     except:
                         connection.rollback()
                         ErrorString = sys.exc_info()[0] + "\n----------\n"

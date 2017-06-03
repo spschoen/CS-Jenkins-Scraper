@@ -169,7 +169,7 @@ cp "$DIRECTORY"/testFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME"/testFileRe
 if [[ "$DEBUG" == "y" ]]; then
     echo "    [Data Miner] Executing Test Results uploader"
 fi
-python3 testFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME" "$PROJECT_ID" "$GIT_COMMIT"
+python3 testFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME" "$PROJECT_ID" "$GIT_COMMIT" "$PROJECT_NAME"
 
 ##################################
 # TS Test Results uploading.     #
@@ -183,7 +183,7 @@ cp "$DIRECTORY"/TSTestFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME"/TSTestFi
 if [[ "$DEBUG" == "y" ]]; then
     echo "    [Data Miner] Executing TS Test Results uploader"
 fi
-python3 TSTestFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME" "$PROJECT_ID" "$GIT_COMMIT"
+python3 TSTestFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME" "$PROJECT_ID" "$GIT_COMMIT" "$PROJECT_NAME"
 
 ##################################
 # Coverage uploading.            #
