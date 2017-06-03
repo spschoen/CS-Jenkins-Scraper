@@ -165,42 +165,41 @@ else:
 
 ######################################################################
 
-# Code_lines
-# Comment_Lines
-# Class_Count
+# Src_Code_lines
+# Src_Comment_Lines
+# Src_Class_Count
 
-lines_of_code = -1
-lines_of_comments = -1
-classes = -1
+src_lines_of_code = -1
+src_lines_of_comments = -1
+src_classes = -1
 
 # Verifying the CLOC is installed
 if shutil.which("cloc") is not None:
     # Sending CLOC output to /dev/null
     DEVNULL = open(os.devnull, 'wb')
 
-    # NOTE: Maybe update this to only pull from src/ and not anything else?
-    subprocess.call(["cloc", FILE_DIR, "--by-file-by-lang", "--exclude-ext=xml", "--exclude-dir=gui,reference,output",
-                     "--xml", "--out=CLOC.xml"], stdout=DEVNULL)
+    subprocess.call(["cloc", FILE_DIR + project_name + "src/", "--by-file-by-lang", "--exclude-ext=xml,html,css",
+                     "--exclude-dir=gui,reference,output", "--xml", "--out=CLOC_src.xml"], stdout=DEVNULL)
 
-    # Get the parser, set it up to parse CLOC.xml
+    # Get the parser, set it up to parse CLOC_src.xml
     try:
-        DOMTree = xml.dom.minidom.parse("CLOC.xml")
+        DOMTree = xml.dom.minidom.parse("CLOC_src.xml")
         root = DOMTree.documentElement.getElementsByTagName('languages')[0]
         for node in root.childNodes:
             if node.nodeType == node.TEXT_NODE:
                 continue
             if node.hasAttribute("name") and "Java" == node.getAttribute("name"):
                 if node.hasAttribute("code") and not node.getAttribute("code") == "":
-                    lines_of_code = node.getAttribute("code")
+                    src_lines_of_code = node.getAttribute("code")
                 if node.hasAttribute("comment") and not node.getAttribute("comment") == "":
-                    lines_of_comments = node.getAttribute("comment")
+                    src_lines_of_comments = node.getAttribute("comment")
                 if node.hasAttribute("files_count") and not node.getAttribute("files_count") == "":
-                    classes = node.getAttribute("files_count")
+                    src_classes = node.getAttribute("files_count")
     except:
-        print("Could not parse CLOC.xml, setting outputs to -1")
-        lines_of_code = -1
-        lines_of_comments = -1
-        classes = -1
+        print("Could not parse CLOC_src.xml, setting outputs to -1")
+        src_lines_of_code = -1
+        src_lines_of_comments = -1
+        src_classes = -1
 else:
     print("ERROR: CLOC utility is required to be installed.")
     # print("Script exiting.")
@@ -209,29 +208,124 @@ else:
 
 ######################################################################
 
-# Method_Count
+# Src_Method_Count
 
-methodList = list(open("methods.txt", "r"))
-methodCount = 0
-for line in methodList:
-    if "dir" not in line and line != "\n":
-        # print(line.replace("\n", ""))
-        methodCount += 1
+src_methodCount = -1
+try:
+    src_methodList = list(open("methods.txt", "r"))
+    for line in src_methodList:
+        if "dir" not in line and line != "\n":
+            # print(line.replace("\n", ""))
+            src_methodCount += 1
+except:
+    print("Could not open tests.txt")
 
-# print(methodCount)
+# print(src_methodCount)
+
+######################################################################
+
+# Test_Code_lines
+# Test_Comment_Lines
+# Test_Class_Count
+
+test_lines_of_code = -1
+test_lines_of_comments = -1
+test_classes = -1
+
+# Verifying the CLOC is installed
+if shutil.which("cloc") is not None:
+    # Sending CLOC output to /dev/null
+    DEVNULL = open(os.devnull, 'wb')
+
+    subprocess.call(["cloc", FILE_DIR + project_name + "test/", "--by-file-by-lang", "--exclude-ext=xml,html,css",
+                     "--exclude-dir=gui,reference,output", "--xml", "--out=CLOC_test.xml"], stdout=DEVNULL)
+
+    # Get the parser, set it up to parse CLOC_test.xml
+    try:
+        DOMTree = xml.dom.minidom.parse("CLOC_test.xml")
+        root = DOMTree.documentElement.getElementsByTagName('languages')[0]
+        for node in root.childNodes:
+            if node.nodeType == node.TEXT_NODE:
+                continue
+            if node.hasAttribute("name") and "Java" == node.getAttribute("name"):
+                if node.hasAttribute("code") and not node.getAttribute("code") == "":
+                    test_lines_of_code = node.getAttribute("code")
+                if node.hasAttribute("comment") and not node.getAttribute("comment") == "":
+                    test_lines_of_comments = node.getAttribute("comment")
+                if node.hasAttribute("files_count") and not node.getAttribute("files_count") == "":
+                    test_classes = node.getAttribute("files_count")
+    except:
+        print("Could not parse CLOC_test.xml, setting outputs to -1")
+        test_lines_of_code = -1
+        test_lines_of_comments = -1
+        test_classes = -1
+else:
+    print("ERROR: CLOC utility is required to be installed.")
+    # print("Script exiting.")
+    # sys.exit()
+    pass
+
+######################################################################
+
+# Test_Method_Count
+
+test_methodCount = -1
+try:
+    test_methodList = list(open("tests.txt", "r"))
+    for line in test_methodList:
+        if "dir" not in line and line != "\n":
+            # print(line.replace("\n", ""))
+            test_methodCount += 1
+except:
+    print("Could not open tests.txt")
+
+# print(test_methodCount)
+
+######################################################################
+
+# Assert_Count
+
+test_dir = FILE_DIR
+assert_count = 0
+if platform.system() is "Windows":
+    test_dir += "\\" + project_name + "\\test\\"
+else:
+    test_dir += "/" + project_name + "/test/"
+
+for root, dirs, files in os.walk(test_dir):
+    for name in files:
+        # print(name)
+        with open(os.path.join(root, name)) as test_file:
+            in_block_comment = False
+            for line in test_file:
+                if "/*" in line:
+                    in_block_comment = True
+                if "*/" in line:
+                    in_block_comment = False
+                if not in_block_comment:
+                    if "assert" in line:
+                        if "//" in line:
+                            compare = line.split("//")[0]
+                            if "assert" in compare:
+                                assert_count += 1
+                        else:
+                            assert_count += 1
 
 ######################################################################
 
 # Removed checking if the record exists in the DB, because that happens at the start.
 # There should be no duplicate commit hashes in the database
 
-insert = "INSERT INTO commits (CommitUID, Commit_Hash, Repo, Build_Num, Compile_ST, Compile_TS, Author, Time," \
-         "Duration, Message, Code_Lines, Comment_Lines, Commits_Since_Javadoc, Method_Count, Class_Count) " \
-         "VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+insert = "INSERT INTO commits (CommitUID, Commit_Hash, Repo, Build_Num, Compile_ST, Compile_TS, Author, Time, " \
+         "Duration, Message, Src_Code_Lines, Src_Comment_Lines, Src_Class_Count, Src_Method_Count, Test_Code_Lines, " \
+         "Test_Comment_Lines, Test_Classes, Test_Method_Count, Assert_Count, Commits_Since_Javadoc) " \
+         "VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
 try:
     cur.execute(insert, (commit_hash, repo_id, build_num, Compile_ST, Compile_TS, author, time, duration, message,
-                         lines_of_code, lines_of_comments, commits_since_doc_modified, methodCount, classes))
+                         src_lines_of_code, src_lines_of_comments, src_classes, src_methodCount, test_lines_of_code,
+                         test_lines_of_comments, test_classes, test_methodCount, assert_count,
+                         commits_since_doc_modified))
 except:
     connection.rollback()
     ErrorString = sys.exc_info()[0] + "\n----------\n"
