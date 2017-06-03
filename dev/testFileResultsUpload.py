@@ -35,10 +35,11 @@ if len(sys.argv) != 5:
 FILE_DIR = Scraper.get_file_dir(sys.argv[1])
 
 project_name = sys.argv[4]
-if platform.system() is "Windows":
-    FILE_DIR += "\\" + project_name + "\\"
-else:
-    FILE_DIR += "/" + project_name + "/"
+if project_name not in FILE_DIR:
+    if platform.system() is "Windows":
+        FILE_DIR += "\\" + project_name + "\\"
+    else:
+        FILE_DIR += "/" + project_name + "/"
 
 # Getting to the right directory
 
