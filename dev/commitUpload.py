@@ -173,12 +173,18 @@ src_lines_of_code = -1
 src_lines_of_comments = -1
 src_classes = -1
 
+src_dir = FILE_DIR
+if platform.system() is "Windows":
+    src_dir += "\\" + project_name + "\\src\\"
+else:
+    src_dir += "/" + project_name + "/src/"
+
 # Verifying the CLOC is installed
 if shutil.which("cloc") is not None:
     # Sending CLOC output to /dev/null
     DEVNULL = open(os.devnull, 'wb')
 
-    subprocess.call(["cloc", FILE_DIR + project_name + "src/", "--by-file-by-lang", "--exclude-ext=xml,html,css",
+    subprocess.call(["cloc", src_dir, "--by-file-by-lang", "--exclude-ext=xml,html,css",
                      "--exclude-dir=gui,reference,output", "--xml", "--out=CLOC_src.xml"], stdout=DEVNULL)
 
     # Get the parser, set it up to parse CLOC_src.xml
@@ -232,12 +238,18 @@ test_lines_of_code = -1
 test_lines_of_comments = -1
 test_classes = -1
 
+test_dir = FILE_DIR
+if platform.system() is "Windows":
+    test_dir += "\\" + project_name + "\\test\\"
+else:
+    test_dir += "/" + project_name + "/test/"
+
 # Verifying the CLOC is installed
 if shutil.which("cloc") is not None:
     # Sending CLOC output to /dev/null
     DEVNULL = open(os.devnull, 'wb')
 
-    subprocess.call(["cloc", FILE_DIR + project_name + "test/", "--by-file-by-lang", "--exclude-ext=xml,html,css",
+    subprocess.call(["cloc", test_dir, "--by-file-by-lang", "--exclude-ext=xml,html,css",
                      "--exclude-dir=gui,reference,output", "--xml", "--out=CLOC_test.xml"], stdout=DEVNULL)
 
     # Get the parser, set it up to parse CLOC_test.xml
@@ -285,12 +297,7 @@ except:
 
 # Assert_Count
 
-test_dir = FILE_DIR
 assert_count = 0
-if platform.system() is "Windows":
-    test_dir += "\\" + project_name + "\\test\\"
-else:
-    test_dir += "/" + project_name + "/test/"
 
 for root, dirs, files in os.walk(test_dir):
     for name in files:
