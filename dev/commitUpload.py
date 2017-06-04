@@ -158,7 +158,6 @@ if os.path.isdir(FILE_DIR + comp_doc_dir):
         commits_since_doc_modified = -2
     else:
         commits_since_doc_modified = int(len(commits_since_doc_change.split("\n")))
-        pass
 else:
     print("Failed to get doc dir, got: " + FILE_DIR + comp_doc_dir)
 # print(commits_since_doc_modified)
@@ -194,13 +193,15 @@ if shutil.which("cloc") is not None:
         for node in root.childNodes:
             if node.nodeType == node.TEXT_NODE:
                 continue
-            if node.hasAttribute("name") and "Java" == node.getAttribute("name"):
-                if node.hasAttribute("code") and not node.getAttribute("code") == "":
-                    src_lines_of_code = node.getAttribute("code")
-                if node.hasAttribute("comment") and not node.getAttribute("comment") == "":
-                    src_lines_of_comments = node.getAttribute("comment")
-                if node.hasAttribute("files_count") and not node.getAttribute("files_count") == "":
-                    src_classes = node.getAttribute("files_count")
+            if not (node.hasAttribute("name") and "Java" == node.getAttribute("name")):
+                continue
+
+            if node.hasAttribute("code") and not node.getAttribute("code") == "":
+                src_lines_of_code = node.getAttribute("code")
+            if node.hasAttribute("comment") and not node.getAttribute("comment") == "":
+                src_lines_of_comments = node.getAttribute("comment")
+            if node.hasAttribute("files_count") and not node.getAttribute("files_count") == "":
+                src_classes = node.getAttribute("files_count")
     except:
         print("Could not parse CLOC_src.xml, setting outputs to -1")
         src_lines_of_code = -1
@@ -208,9 +209,6 @@ if shutil.which("cloc") is not None:
         src_classes = -1
 else:
     print("ERROR: CLOC utility is required to be installed.")
-    # print("Script exiting.")
-    # sys.exit()
-    pass
 
 ######################################################################
 
@@ -259,13 +257,15 @@ if shutil.which("cloc") is not None:
         for node in root.childNodes:
             if node.nodeType == node.TEXT_NODE:
                 continue
-            if node.hasAttribute("name") and "Java" == node.getAttribute("name"):
-                if node.hasAttribute("code") and not node.getAttribute("code") == "":
-                    test_lines_of_code = node.getAttribute("code")
-                if node.hasAttribute("comment") and not node.getAttribute("comment") == "":
-                    test_lines_of_comments = node.getAttribute("comment")
-                if node.hasAttribute("files_count") and not node.getAttribute("files_count") == "":
-                    test_classes = node.getAttribute("files_count")
+            if not (node.hasAttribute("name") and "Java" == node.getAttribute("name")):
+                continue
+
+            if node.hasAttribute("code") and not node.getAttribute("code") == "":
+                src_lines_of_code = node.getAttribute("code")
+            if node.hasAttribute("comment") and not node.getAttribute("comment") == "":
+                src_lines_of_comments = node.getAttribute("comment")
+            if node.hasAttribute("files_count") and not node.getAttribute("files_count") == "":
+                src_classes = node.getAttribute("files_count")
     except:
         print("Could not parse CLOC_test.xml, setting outputs to -1")
         test_lines_of_code = -1
@@ -273,9 +273,6 @@ if shutil.which("cloc") is not None:
         test_classes = -1
 else:
     print("ERROR: CLOC utility is required to be installed.")
-    # print("Script exiting.")
-    # sys.exit()
-    pass
 
 ######################################################################
 
@@ -302,21 +299,21 @@ assert_count = 0
 for root, dirs, files in os.walk(test_dir):
     for name in files:
         # print(name)
-        with open(os.path.join(root, name)) as test_file:
-            in_block_comment = False
-            for line in test_file:
-                if "/*" in line:
-                    in_block_comment = True
-                if "*/" in line:
-                    in_block_comment = False
-                if not in_block_comment:
-                    if "assert" in line:
-                        if "//" in line:
-                            compare = line.split("//")[0]
-                            if "assert" in compare:
-                                assert_count += 1
-                        else:
-                            assert_count += 1
+        test_file = open(os.path.join(root, name))
+        in_block_comment = False
+        for line in test_file:
+            if "/*" in line:
+                in_block_comment = True
+            if "*/" in line:
+                in_block_comment = False
+
+            if not in_block_comment and "assert" in line:
+                if "//" in line:
+                    compare = line.split("//")[0]
+                    if "assert" in compare:
+                        assert_count += 1
+                else:
+                    assert_count += 1
 
 ######################################################################
 

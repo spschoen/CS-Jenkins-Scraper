@@ -84,6 +84,7 @@ for file in os.listdir(FILE_DIR):
     if not (str(file).endswith(".xml")):
         continue
 
+    # Open parsing for test report
     try:
         DOMTree = xml.dom.minidom.parse(FILE_DIR + file)
     except:
@@ -92,47 +93,60 @@ for file in os.listdir(FILE_DIR):
         sys.exit()
     root = DOMTree.documentElement
 
-    if root.hasAttribute("name"):
-        temp = root.getAttribute("name")
-        class_name = temp.split(".")[-1]
-        package = temp.split(".")[-2]
-        for node in root.childNodes:
-            if node.nodeName == "testcase":
-                if node.hasAttribute("name"):
-                    test_name = node.getAttribute("name")
-                if len(node.childNodes) != 0:
-                    passing = "F"
-                    for test_case_child in node.childNodes:
-                        if test_case_child.nodeType != test_case_child.TEXT_NODE:
-                            message = test_case_child.getAttribute("message")
-                            line = test_case_child.firstChild.nodeValue.split("\n")[1].split(".java:")[1].split(")")[0]
-                else:
-                    passing = "P"
+    # If, for some reason, the root node lacks a name attribute, something horrible has happened we're skipping.
+    if not root.hasAttribute("name"):
+        continue
 
-                # If we get any records returned, then it's already in the table.
-                # Otherwise, if there are no returned records, then we need to insert
-                # them into the table.
-                test_method_uid = Scraper.get_test_method_uid(ip=config_info['ip'], user=config_info['user'],
-                                                              pw=config_info['pass'], db=config_info['db'],
-                                                              method=test_name, class_name=class_name, package=package)
+    temp = root.getAttribute("name")
+    class_name = temp.split(".")[-1]
+    package = temp.split(".")[-2]
 
-                find = "SELECT * FROM TS_testTable WHERE CommitUID = %s AND testMethodUID = %s AND Passing = %s"
-                cur.execute(find, (commit_uid, test_method_uid, passing))
+    # TODO: Replace this with searching only through <testcase>
+    for node in root.childNodes:
+        message = ""
+        # Skip the node if it's not a test case.
+        # Which means basically means just skip <properties>
+        if node.nodeName != "testcase" or node.nodeType == node.TEXT_NODE:
+            continue
 
-                if cur.rowcount == 0:
-                    testInsert = "INSERT INTO TS_testTable(CommitUID, testMethodUID, Passing, Message, Line)" \
-                                 " VALUES (%s, %s, %s, %s, %s)"
-                    try:
-                        cur.execute(testInsert, (commit_uid, test_method_uid, passing, message, line))
-                    except:
-                        connection.rollback()
-                        ErrorString = sys.exc_info()[0] + "\n----------\n"
-                        ErrorString += sys.exc_info()[1] + "\n----------\n"
-                        ErrorString += sys.exc_info()[2]
+        if node.hasAttribute("name"):
+            test_name = node.getAttribute("name")
 
-                        v_list = "(commit_uid, test_method_uid, passing)"
-                        Scraper.sendFailEmail("Failed to insert into TS Test Results table!",
-                                              "The following insert failed:", testInsert, v_list, ErrorString,
-                                              str(commit_uid), str(test_method_uid), passing)
+        if len(node.childNodes) != 0:
+            passing = "F"
+            for test_case_child in node.childNodes:
+                if test_case_child.nodeType == test_case_child.TEXT_NODE:
+                    continue
+
+                message = test_case_child.getAttribute("message")
+                line = test_case_child.firstChild.nodeValue.split("\n")[1].split(".java:")[1].split(")")[0]
+
+        else:
+            passing = "P"
+
+        # If we get any records returned, then it's already in the table.
+        # Otherwise, if there are no returned records, then we need to insert
+        # them into the table.
+        test_method_uid = Scraper.get_test_method_uid(ip=config_info['ip'], user=config_info['user'],
+                                                      pw=config_info['pass'], db=config_info['db'],
+                                                      method=test_name, class_name=class_name, package=package)
+
+        find = "SELECT * FROM TS_testTable WHERE CommitUID = %s AND testMethodUID = %s AND Passing = %s"
+        cur.execute(find, (commit_uid, test_method_uid, passing))
+
+        if cur.rowcount == 0:
+            testInsert = "INSERT INTO TS_testTable(CommitUID, testMethodUID, Passing, Message, Line)" \
+                         " VALUES (%s, %s, %s, %s, %s)"
+            try:
+                cur.execute(testInsert, (commit_uid, test_method_uid, passing, message, line))
+            except:
+                connection.rollback()
+                ErrorString = str(sys.exc_info()[0]) + "\n----------\n"
+                ErrorString += str(sys.exc_info()[1]) + "\n----------\n"
+                ErrorString += str(sys.exc_info()[2])
+
+                v_list = "(commit_uid, test_method_uid, passing)"
+                Scraper.sendFailEmail("Failed to insert into TS Test Results table!", "The following insert failed:",
+                                      testInsert, v_list, ErrorString, str(commit_uid), str(test_method_uid), passing)
 
 connection.close()

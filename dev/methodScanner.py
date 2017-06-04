@@ -43,60 +43,59 @@ classUID = -1
 for line in allMethods:
     # New lines are added by the scanner, don't need 'em.
     if line == "\n" or "enum" in line:
-        # Ignore enums and blank lines
         continue
-    else:
-        if "dir" in line:
-            # for example: dir bug_tracker
-            package = line.split(" ")[1].replace("\n", "")
-            # Split the string on spaces, then take the second value
-            # which is the directory/package, then remove the new line
 
-        elif "class" in line:
-            # for example: public class TrackedBug {
-            class_name = line.replace("\n", "").split(" ")
-            # Remove new line, split on space.
+    if "dir" in line:
+        # for example: dir bug_tracker
+        package = line.split(" ")[1].replace("\n", "")
+        # Split the string on spaces, then take the second value
+        # which is the directory/package, then remove the new line
 
-            # While we haven't hit class/interface, remove previous elements.
-            # Since access can be optional (none is accepted), we have to iterate until we hit
-            # class/interface.  Once we get it, we delete class/interface and the first element
-            # is the class name.
-            while class_name[0] != "class" and class_name[0] != "interface":
-                del class_name[0]
+    elif "class" in line:
+        # for example: public class TrackedBug {
+        class_name = line.replace("\n", "").split(" ")
+        # Remove new line, split on space.
+
+        # While we haven't hit class/interface, remove previous elements.
+        # Since access can be optional (none is accepted), we have to iterate until we hit
+        # class/interface.  Once we get it, we delete class/interface and the first element
+        # is the class name.
+        while class_name[0] != "class" and class_name[0] != "interface":
             del class_name[0]
-            class_name = class_name[0]
+        del class_name[0]
+        class_name = class_name[0]
 
-            # Check the ClassUID table for all records that match the package and class
-            Scraper.get_class_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
-                                  db=config_info['db'], class_name=class_name, package=package)
+        # Check the ClassUID table for all records that match the package and class
+        Scraper.get_class_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                              db=config_info['db'], class_name=class_name, package=package)
 
-        elif "enum" not in line:
-            # for example: public String getNote () {
-            # split on the parenthesis, grab the first element. since that's gonna include the
-            # method name, and split that on spaces
-            part = line.split("(")[0].split(" ")
+    elif "enum" not in line:
+        # for example: public String getNote () {
+        # split on the parenthesis, grab the first element. since that's gonna include the
+        # method name, and split that on spaces
+        part = line.split("(")[0].split(" ")
 
-            # Iterate over the reversed list, for example: ['','getNote','String','public']
-            # Ignore the '', since if there's a space between ( and the method name, it'll split
-            # into an empty string.  Then, the next item immediately after the blank/parenthesis
-            # is the method name!
-            for item in reversed(part):
-                if item == "":
-                    continue
-                else:
-                    method_name = item
-                    break
-
-            # Ignore new lines, for safety.
-            if method_name == "\n":
+        # Iterate over the reversed list, for example: ['','getNote','String','public']
+        # Ignore the '', since if there's a space between ( and the method name, it'll split
+        # into an empty string.  Then, the next item immediately after the blank/parenthesis
+        # is the method name!
+        for item in reversed(part):
+            if item == "":
                 continue
+            else:
+                method_name = item
+                break
 
-            # olol this was like 30 lines now it's 3.
-            # We're discarding the return value from the function since it does the inserting
-            # as well as returning.
-            methodUID = Scraper.get_method_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
-                                               db=config_info['db'], package=package, class_name=class_name,
-                                               method=method_name)
+        # Ignore new lines, for safety.
+        if method_name == "\n":
+            continue
+
+        # olol this was like 30 lines now it's 3.
+        # We're discarding the return value from the function since it does the inserting
+        # as well as returning.
+        methodUID = Scraper.get_method_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                                           db=config_info['db'], package=package, class_name=class_name,
+                                           method=method_name)
 
 
 methodsFile.close()

@@ -67,29 +67,31 @@ commit_uid = Scraper.get_commit_uid(ip=config_info['ip'], user=config_info['user
 # (which is now the root node) and print out their information to the DB.
 # .childNodes is a list of nodes that the root has as children.
 for file in root.childNodes:
-    if file.nodeType != file.TEXT_NODE:
-        for node in file.childNodes:
-            package = ""
-            class_name = ""
-            method = ""
-            line = 0
-            rule = ""
-            ruleset = ""
-            if node.nodeType != node.TEXT_NODE:
-                if node.hasAttribute("beginline"):
-                    line = int(node.getAttribute("beginline"))
-                if node.hasAttribute("rule"):
-                    rule = node.getAttribute("rule")
-                if node.hasAttribute("ruleset"):
-                    ruleset = node.getAttribute("ruleset")
-                if node.hasAttribute("package"):
-                    package = node.getAttribute("package").split('.')[-1]
-                if node.hasAttribute("class"):
-                    class_name = node.getAttribute("class")
-                if node.hasAttribute("method"):
-                    method = node.getAttribute("method")
-    else:
+    if file.nodeType == file.TEXT_NODE:
         continue
+
+    for node in file.childNodes:
+        if node.nodeType == node.TEXT_NODE:
+            continue
+
+        package = ""
+        class_name = ""
+        method = ""
+        line = 0
+        rule = ""
+        ruleset = ""
+        if node.hasAttribute("beginline"):
+            line = int(node.getAttribute("beginline"))
+        if node.hasAttribute("rule"):
+            rule = node.getAttribute("rule")
+        if node.hasAttribute("ruleset"):
+            ruleset = node.getAttribute("ruleset")
+        if node.hasAttribute("package"):
+            package = node.getAttribute("package").split('.')[-1]
+        if node.hasAttribute("class"):
+            class_name = node.getAttribute("class")
+        if node.hasAttribute("method"):
+            method = node.getAttribute("method")
 
     # holy FRAK it fits on the 100 limit!
     if package == "" or class_name == "" or method == "" or rule == "" or ruleset == "" or line == 0:

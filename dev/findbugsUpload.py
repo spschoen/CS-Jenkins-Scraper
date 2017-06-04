@@ -27,33 +27,22 @@ import Scraper
 
 FILE_DIR = Scraper.get_file_dir(sys.argv[1])
 
+# Getting commitUID info
+repo_id = sys.argv[2]
+commit_hash = sys.argv[3]
+
 if not (os.path.isfile(FILE_DIR + "/findbugs.xml")):
-    print(FILE_DIR + "/findbugs.xml")
-    print("Could not access findbugs.xml. Exiting.")
+    print("Could not access " + FILE_DIR + "/findbugs.xml" + " Exiting.")
     sys.exit()
 
 try:
     findbug_xml = xml.dom.minidom.parse(FILE_DIR + "/findbugs.xml")
 except:
-    # This is commented out, because findbugs XML can be not created for a lot of reasons.
-    '''ErrorString = sys.exc_info()[0] + "\n----------\n"
-    ErrorString += sys.exc_info()[1] + "\n----------\n"
-    ErrorString += sys.exc_info()[2]
-    Scraper.sendFailEmail("Failed to read findbugs.xml", "The following command failed:",
-                                "findbug_xml = xml.dom.minidom.parse(FILE_DIR + "/findbugs.xml")",
-                                "With the following variables (FILE_DIR)",
-                                ErrorString, FILE_DIR)'''
     print("Could not access findbugs xml file, but it exists.")
     sys.exit()
 
-# Getting commitUID info
-repo_id = sys.argv[2]
-commit_hash = sys.argv[3]
-
 # root is the first <> element in the XML file.
 root = findbug_xml.documentElement
-
-# Set up to read XML
 
 # Getting config options.
 config_info = Scraper.get_config_options()
@@ -65,10 +54,6 @@ cur = connection.cursor()
 commit_uid = Scraper.get_commit_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
                                     db=config_info['db'], commit_hash=commit_hash, repo_id=repo_id)
 
-if root.hasAttribute("version"):
-    # print("FindBugs Version : %s" % root.getAttribute("version"))
-    pass
-
 package = ""
 class_name = ""
 method = ""
@@ -79,55 +64,58 @@ cat = ""
 line = 0
 
 for node in root.childNodes:
-    if node.nodeName == "BugInstance":
-        bugType = node.getAttribute("type")
-        if node.hasAttribute("priority"):
-            priority = int(node.getAttribute("priority"))
-        if node.hasAttribute("rank"):
-            rank = int(node.getAttribute("rank"))
-        if node.hasAttribute("category"):
-            cat = node.getAttribute("category")
-        for classNode in node.childNodes:
-            if classNode.nodeType == classNode.TEXT_NODE:
-                continue
-            if classNode.nodeName == "Method" and not classNode.hasAttribute("role"):
-                if classNode.hasAttribute("classname"):
-                    string = classNode.getAttribute("classname")
-                    package = string.split(".")[-1]
-                    class_name = string.split(".")[-2]
-                if classNode.hasAttribute("name"):
-                    method = classNode.getAttribute("name")
-            if classNode.nodeName == "SourceLine":
-                if classNode.hasAttribute("start"):
-                    line = int(classNode.getAttribute("start"))
+    # If it's not a <BugInstance>, we don't need it.
+    if node.nodeName != "BugInstance" or node.nodeType == node.TEXT_NODE:
+        continue
 
-        # Grab methodUID for below. By now, it should definitely exist
-
-        method_uid = Scraper.get_method_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
-                                            db=config_info['db'], package=package, class_name=class_name,
-                                            method=method)
-        search = "SELECT * FROM findBugs WHERE CommitUID = %s AND MethodUID = %s AND BugType = %s AND Priority = %s " \
-                 "AND Rank = %s and Category = %s AND Line = %s"
-
-        cur.execute(search, (commit_uid, method_uid, bugType, priority, rank, cat, line))
-        if cur.rowcount != 0:
+    bugType = node.getAttribute("type")
+    if node.hasAttribute("priority"):
+        priority = int(node.getAttribute("priority"))
+    if node.hasAttribute("rank"):
+        rank = int(node.getAttribute("rank"))
+    if node.hasAttribute("category"):
+        cat = node.getAttribute("category")
+    for classNode in node.childNodes:
+        if classNode.nodeType == classNode.TEXT_NODE:
             continue
+        if classNode.nodeName == "Method" and not classNode.hasAttribute("role"):
+            if classNode.hasAttribute("classname"):
+                string = classNode.getAttribute("classname")
+                package = string.split(".")[-1]
+                class_name = string.split(".")[-2]
+            if classNode.hasAttribute("name"):
+                method = classNode.getAttribute("name")
+        if classNode.nodeName == "SourceLine":
+            if classNode.hasAttribute("start"):
+                line = int(classNode.getAttribute("start"))
 
-        add_findbugs = "INSERT INTO findBugs(CommitUID, MethodUID, BugType, Priority, Rank, Category, Line) VALUES " \
-                       "(%s, %s, %s, %s, %s, %s, %s)"
-        # This one goes to findbugs
-        try:
-            cur.execute(add_findbugs, (commit_uid, method_uid, bugType, priority, rank, cat, line))
-        except:
-            connection.rollback()
-            ErrorString = sys.exc_info()[0] + "\n----------\n"
-            ErrorString += sys.exc_info()[1] + "\n----------\n"
-            ErrorString += sys.exc_info()[2]
+    # Grab methodUID for below. By now, it should definitely exist
 
-            v_list = "(CommitUID, MethodUID, BugType, Priority, Rank, Category, Line)"
-            Scraper.sendFailEmail("Failed to insert into findBugs table!", "The following insert failed:",
-                                  add_findbugs, v_list, ErrorString, commit_uid, method_uid, bugType, priority,
-                                  rank, cat, line)
+    method_uid = Scraper.get_method_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                                        db=config_info['db'], package=package, class_name=class_name,
+                                        method=method)
+    search = "SELECT * FROM findBugs WHERE CommitUID = %s AND MethodUID = %s AND BugType = %s AND Priority = %s " \
+             "AND Rank = %s and Category = %s AND Line = %s"
+
+    cur.execute(search, (commit_uid, method_uid, bugType, priority, rank, cat, line))
+    if cur.rowcount != 0:
+        continue
+
+    add_findbugs = "INSERT INTO findBugs(CommitUID, MethodUID, BugType, Priority, Rank, Category, Line) VALUES " \
+                   "(%s, %s, %s, %s, %s, %s, %s)"
+    # This one goes to findbugs
+    try:
+        cur.execute(add_findbugs, (commit_uid, method_uid, bugType, priority, rank, cat, line))
+    except:
+        connection.rollback()
+        ErrorString = sys.exc_info()[0] + "\n----------\n"
+        ErrorString += sys.exc_info()[1] + "\n----------\n"
+        ErrorString += sys.exc_info()[2]
+
+        v_list = "(CommitUID, MethodUID, BugType, Priority, Rank, Category, Line)"
+        Scraper.sendFailEmail("Failed to insert into findBugs table!", "The following insert failed:",
+                              add_findbugs, v_list, ErrorString, commit_uid, method_uid, bugType, priority,
+                              rank, cat, line)
 
 # Closing connection
 connection.close()
