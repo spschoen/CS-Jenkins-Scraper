@@ -167,23 +167,28 @@ fi
 cp "$DIRECTORY"/testFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME"/testFileResultsUpload.py
 
 if [[ "$DEBUG" == "y" ]]; then
-    echo "    [Data Miner] Executing Test Results uploader"
+    echo "    [Data Miner] Executing Test Results uploader on ST tests"
 fi
-python3 testFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME" "$PROJECT_ID" "$GIT_COMMIT" "$PROJECT_NAME"
+python3 testFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME" "$PROJECT_ID" "$GIT_COMMIT" "$PROJECT_NAME" "test-reports"
+
+if [[ "$DEBUG" == "y" ]]; then
+    echo "    [Data Miner] Executing Test Results uploader on TS tests"
+fi
+python3 testFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME" "$PROJECT_ID" "$GIT_COMMIT" "$PROJECT_NAME" "ts-test-reports"
 
 ##################################
 # TS Test Results uploading.     #
 ##################################
 
-if [[ "$DEBUG" == "y" ]]; then
-    echo "    [Data Miner] Acquiring TS Test Results uploader"
-fi
-cp "$DIRECTORY"/TSTestFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME"/TSTestFileResultsUpload.py
-
-if [[ "$DEBUG" == "y" ]]; then
-    echo "    [Data Miner] Executing TS Test Results uploader"
-fi
-python3 TSTestFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME" "$PROJECT_ID" "$GIT_COMMIT" "$PROJECT_NAME"
+# if [[ "$DEBUG" == "y" ]]; then
+#     echo "    [Data Miner] Acquiring TS Test Results uploader"
+# fi
+# cp "$DIRECTORY"/TSTestFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME"/TSTestFileResultsUpload.py
+#
+# if [[ "$DEBUG" == "y" ]]; then
+#     echo "    [Data Miner] Executing TS Test Results uploader"
+# fi
+# python3 TSTestFileResultsUpload.py "$WORKSPACE"/"$PROJECT_NAME" "$PROJECT_ID" "$GIT_COMMIT" "$PROJECT_NAME"
 
 ##################################
 # Coverage uploading.            #

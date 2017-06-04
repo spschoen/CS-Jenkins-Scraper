@@ -12,6 +12,7 @@ Args:
                     For example: csc216-002-P2-096
     3. GIT_COMMIT - 40 Character commit hash.
     4. PROJECT_ID - Name of project.  Likely "Project1" or "Project2" ...
+    5. TEST_DIR   - Name of directory of test reports to be read in.  test-reports/ or ts-test-reports/, probably
 
 Returns:
     N/A
@@ -28,11 +29,15 @@ import pymysql
 import Scraper
 import platform
 
-if len(sys.argv) != 5:
+if len(sys.argv) != 6:
     print("Did not get expected arguments.")
     sys.exit()
 
 FILE_DIR = Scraper.get_file_dir(sys.argv[1])
+
+# Getting commitUID info
+repo_id = sys.argv[2]
+commit_hash = sys.argv[3]
 
 project_name = sys.argv[4]
 if project_name not in FILE_DIR:
@@ -43,20 +48,20 @@ if project_name not in FILE_DIR:
 
 # Getting to the right directory
 
-if "test-reports" not in FILE_DIR:
+test_dir = sys.argv[5]
+
+if test_dir not in FILE_DIR:
     if platform.system() is "Windows":
-        FILE_DIR += "\\test-reports\\"
+        FILE_DIR += "\\" + test_dir + "\\"
     else:
-        FILE_DIR += "/test-reports/"
+        FILE_DIR += "/" + test_dir + "/"
 
 if "//" in FILE_DIR:
     FILE_DIR = FILE_DIR.replace("//", "/")
+if "\\\\" in FILE_DIR:
+    FILE_DIR = FILE_DIR.replace("\\\\", "\\")
 
 # Directory to XML set up.
-
-# Getting commitUID info
-repo_id = sys.argv[2]
-commit_hash = sys.argv[3]
 
 # Getting config options.
 config_info = Scraper.get_config_options()
@@ -71,7 +76,7 @@ commit_uid = Scraper.get_commit_uid(ip=config_info['ip'], user=config_info['user
 # Initialize variables
 package = ""
 method = ""
-className = ""
+class_name = ""
 test_name = ""
 passing = ""
 message = ""
@@ -81,6 +86,7 @@ for file in os.listdir(FILE_DIR):
     if not (str(file).endswith(".xml")):
         continue
 
+    # Open parsing for test report
     try:
         DOMTree = xml.dom.minidom.parse(FILE_DIR + file)
     except:
@@ -90,6 +96,7 @@ for file in os.listdir(FILE_DIR):
 
     root = DOMTree.documentElement
 
+    # If, for some reason, the root node lacks a name attribute, something horrible has happened we're skipping.
     if not root.hasAttribute("name"):
         continue
 
@@ -127,12 +134,19 @@ for file in os.listdir(FILE_DIR):
                                                       pw=config_info['pass'], db=config_info['db'],
                                                       method=test_name, class_name=class_name, package=package)
 
-        find = "SELECT * FROM testTable WHERE CommitUID = %s AND testMethodUID = %s AND Passing = %s"
+        if test_dir.startswith("ts"):
+            find = "SELECT * FROM TS_testTable WHERE CommitUID = %s AND testMethodUID = %s AND Passing = %s"
+        else:
+            find = "SELECT * FROM testTable WHERE CommitUID = %s AND testMethodUID = %s AND Passing = %s"
         cur.execute(find, (commit_uid, test_method_uid, passing))
 
         if cur.rowcount == 0:
-            testInsert = "INSERT INTO testTable(CommitUID, testMethodUID, Passing, Message, Line)" \
-                         "VALUES (%s, %s, %s, %s, %s)"
+            if test_dir.startswith("ts"):
+                testInsert = "INSERT INTO TS_testTable(CommitUID, testMethodUID, Passing, Message, Line)" \
+                             " VALUES (%s, %s, %s, %s, %s)"
+            else:
+                testInsert = "INSERT INTO testTable(CommitUID, testMethodUID, Passing, Message, Line)" \
+                             " VALUES (%s, %s, %s, %s, %s)"
             try:
                 cur.execute(testInsert, (commit_uid, test_method_uid, passing, message, line))
             except:
