@@ -2,8 +2,8 @@
 Reads TS test reports and uploads them to the given Database.
 
 Requirements:
-    Scraper.py      - library for interaction with databases must be available in the same directory as this file.
-    config.txt      - file specifying database information.
+    Scraper.py       - library for interaction with databases must be available in the same directory as this file.
+    config.json      - file specifying database information.
     ts-test-reports/ - directory of test report files to be scraped
 
 Args:
@@ -114,12 +114,12 @@ for file in os.listdir(FILE_DIR):
 
         if len(node.childNodes) != 0:
             passing = "F"
-            for test_case_child in node.childNodes:
-                if test_case_child.nodeType == test_case_child.TEXT_NODE:
-                    continue
 
-                message = test_case_child.getAttribute("message")
-                line = test_case_child.firstChild.nodeValue.split("\n")[1].split(".java:")[1].split(")")[0]
+            # So, removed the for loop, because there's only one or no failures per method.
+            # And since the first node is the new line, we just work with the second child node.
+
+            message = node.childNodes[1].getAttribute("message")
+            line = node.childNodes[1].firstChild.nodeValue.split("\n")[1].split(".java:")[1].split(")")[0]
 
         else:
             passing = "P"

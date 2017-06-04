@@ -13,15 +13,15 @@ import os
 import sys
 
 # Now, we begin reading the config file.
-if not os.path.exists('config.txt'):
-    print("Config.txt does not exist.  Exiting.")
+if not os.path.exists('config.json'):
+    print("config.json does not exist.  Exiting.")
     sys.exit()
 
-config_file = open("config.txt", "r")
+config_file = open("config.json", "r")
 lines = list(config_file)
 if len(lines) != 4:
     # incorrect config file
-    # print("config.txt contains incorrect number of records.")
+    # print("config.json contains incorrect number of records.")
     sys.exit()
 
 # Setting up the db connection

@@ -2,8 +2,8 @@
 Reads checkstyle error file (checkstyle.xml) and uploads any records to the given Database.
 
 Requirements:
-    Scraper.py - library for interaction with databases must be available in the same directory as this file.
-    config.txt    - file specifying database information.
+    Scraper.py  - library for interaction with databases must be available in the same directory as this file.
+    config.json - file specifying database information.
 
 Args:
     1. WORKSPACE  - Absolute path to the location of test-reports/, which contains the test XML files.

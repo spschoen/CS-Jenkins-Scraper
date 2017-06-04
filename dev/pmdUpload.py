@@ -1,9 +1,11 @@
+# TODO : rewrite documentation here
+
 """
 Custom pmd xml parser
 Requirements:
  - pmd.xml must exist.  If not, this script won't read it.
- - Scraper.py for interacting with MySQL.
- - config.txt to read in variables for IP, DB, etc.
+    Scraper.py  - library for interaction with databases must be available in the same directory as this file.
+    config.json - file specifying database information.
 
 Execution:
  - python3 pmdUpload.py $WORKSPACE $PROJECT_ID $GIT_COMMIT

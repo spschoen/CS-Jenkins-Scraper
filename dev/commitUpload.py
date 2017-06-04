@@ -2,8 +2,8 @@
 Reads local git directory, lines of code, and more, and uploads relevant information to given database.
 
 Requirements:
-    Scraper.py - library for interaction with databases must be available in the same directory as this file.
-    config.txt    - file specifying database information.
+    Scraper.py  - library for interaction with databases must be available in the same directory as this file.
+    config.json - file specifying database information.
 
 Args:
     1. WORKSPACE  - Absolute path to the location of the .git directory
@@ -296,24 +296,25 @@ except:
 
 assert_count = 0
 
-for root, dirs, files in os.walk(test_dir):
-    for name in files:
-        # print(name)
-        test_file = open(os.path.join(root, name))
-        in_block_comment = False
-        for line in test_file:
-            if "/*" in line:
-                in_block_comment = True
-            if "*/" in line:
-                in_block_comment = False
+root, dirs, files = os.walk(test_dir)
 
-            if not in_block_comment and "assert" in line:
-                if "//" in line:
-                    compare = line.split("//")[0]
-                    if "assert" in compare:
-                        assert_count += 1
-                else:
+for name in files:
+    # print(name)
+    test_file = open(os.path.join(root, name))
+    in_block_comment = False
+    for line in test_file:
+        if "/*" in line:
+            in_block_comment = True
+        if "*/" in line:
+            in_block_comment = False
+
+        if not in_block_comment and "assert" in line:
+            if "//" in line:
+                compare = line.split("//")[0]
+                if "assert" in compare:
                     assert_count += 1
+            else:
+                assert_count += 1
 
 ######################################################################
 

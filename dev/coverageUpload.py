@@ -2,8 +2,8 @@
 Reads report.csv file from jacoco and uploads coverage information to given database.
 
 Requirements:
-    Scraper.py - library for interaction with databases must be available in the same directory as this file.
-    config.txt    - file specifying database information.
+    Scraper.py  - library for interaction with databases must be available in the same directory as this file.
+    config.json - file specifying database information.
 
 Args:
     1. WORKSPACE  - Absolute path to the location of report.csv

@@ -2,8 +2,8 @@
 Reads findbugs xml file uploads any records into given database.
 
 Requirements:
-    Scraper.py - library for interaction with databases must be available in the same directory as this file.
-    config.txt    - file specifying database information.
+    Scraper.py  - library for interaction with databases must be available in the same directory as this file.
+    config.json - file specifying database information.
 
 Args:
     1. WORKSPACE  - Absolute path to the location of the findbugs.xml file
@@ -85,9 +85,8 @@ for node in root.childNodes:
                 class_name = string.split(".")[-2]
             if classNode.hasAttribute("name"):
                 method = classNode.getAttribute("name")
-        if classNode.nodeName == "SourceLine":
-            if classNode.hasAttribute("start"):
-                line = int(classNode.getAttribute("start"))
+        if classNode.nodeName == "SourceLine" and classNode.hasAttribute("start"):
+            line = int(classNode.getAttribute("start"))
 
     # Grab methodUID for below. By now, it should definitely exist
 

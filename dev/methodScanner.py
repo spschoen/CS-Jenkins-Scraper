@@ -3,9 +3,9 @@ Interpreter for methodScan.sh output file.  Uploads all methods to database, giv
 throughout these scraper programs.
 
 Requirements:
-    Scraper.py - library for interaction with databases must be available in the same directory as this file.
-    config.txt    - file specifying database information.
-    methods.txt   - output from methodScan.sh script.
+    Scraper.py  - library for interaction with databases must be available in the same directory as this file.
+    config.json - file specifying database information.
+    methods.txt - output from methodScan.sh script.
 
 Args:
     N/A
