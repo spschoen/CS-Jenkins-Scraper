@@ -2,9 +2,9 @@
 Reads student test reports and uploads them to the given Database.
 
 Requirements:
-    Scraper.py    - library for interaction with databases must be available in the same directory as this file.
-    config.json   - file specifying database information.
-    test-reports/ - directory of test report files to be scraped
+    Scraper.py         - library for interaction with databases must be available in the same directory as this file.
+    config.json        - file specifying database information.
+    (ts-)test-reports/ - directory of test report files to be scraped
 
 Args:
     1. WORKSPACE  - Absolute path to the location of test-reports/, which contains the test XML files.
