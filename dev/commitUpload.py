@@ -311,25 +311,24 @@ except:
 
 assert_count = 0
 
-root, dirs, files = os.walk(test_dir)
-
-for name in files:
-    # print(name)
-    test_file = open(os.path.join(root, name))
-    in_block_comment = False
-    for line in test_file:
-        if "/*" in line:
-            in_block_comment = True
-        if "*/" in line:
+for root, dirs, files in os.walk(test_dir):
+    for name in files:
+        # print(name)
+        with open(os.path.join(root, name)) as test_file:
             in_block_comment = False
-
-        if not in_block_comment and "assert" in line:
-            if "//" in line:
-                compare = line.split("//")[0]
-                if "assert" in compare:
-                    assert_count += 1
-            else:
-                assert_count += 1
+            for line in test_file:
+                if "/*" in line:
+                    in_block_comment = True
+                if "*/" in line:
+                    in_block_comment = False
+                if not in_block_comment:
+                    if "assert" in line:
+                        if "//" in line:
+                            compare = line.split("//")[0]
+                            if "assert" in compare:
+                                assert_count += 1
+                        else:
+                            assert_count += 1
 
 ######################################################################
 # Assert count complete
