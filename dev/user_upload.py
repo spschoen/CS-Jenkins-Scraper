@@ -33,9 +33,9 @@ db = lines[3].replace("\n", "")
 try:
     connection = pymysql.connect(host=ip, user=user, password=pw, db=db)
 except:
-    error_string = sys.exc_info()[0] + "\n----------\n"
-    error_string += sys.exc_info()[1] + "\n----------\n"
-    error_string += sys.exc_info()[2]
+    error_string = str(sys.exc_info()[0]) + "\n----------\n"
+    error_string += str(sys.exc_info()[1]) + "\n----------\n"
+    error_string += str(sys.exc_info()[2])
     print(error_string)
 cur = connection.cursor()
 
@@ -51,9 +51,9 @@ for line in f:
             cur.execute(upload, (user.replace("\n",""), project_id))
         except:
             connection.rollback()
-            error_string = sys.exc_info()[0] + "\n----------\n"
-            error_string += sys.exc_info()[1] + "\n----------\n"
-            error_string += sys.exc_info()[2]
+            error_string = str(sys.exc_info()[0]) + "\n----------\n"
+            error_string += str(sys.exc_info()[1]) + "\n----------\n"
+            error_string += str(sys.exc_info()[2])
             print(error_string)
 
 

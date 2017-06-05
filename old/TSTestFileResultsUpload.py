@@ -139,12 +139,12 @@ for file in os.listdir(FILE_DIR):
                 cur.execute(testInsert, (commit_uid, test_method_uid, passing, message, line))
             except:
                 connection.rollback()
-                ErrorString = str(sys.exc_info()[0]) + "\n----------\n"
-                ErrorString += str(sys.exc_info()[1]) + "\n----------\n"
-                ErrorString += str(sys.exc_info()[2])
+                Error_String = str(sys.exc_info()[0]) + "\n----------\n"
+                Error_String += str(sys.exc_info()[1]) + "\n----------\n"
+                Error_String += str(sys.exc_info()[2])
 
                 v_list = "(commit_uid, test_method_uid, passing)"
                 Scraper.sendFailEmail("Failed to insert into TS Test Results table!", "The following insert failed:",
-                                      testInsert, v_list, ErrorString, str(commit_uid), str(test_method_uid), passing)
+                                      testInsert, v_list, Error_String, str(commit_uid), str(test_method_uid), passing)
 
 connection.close()

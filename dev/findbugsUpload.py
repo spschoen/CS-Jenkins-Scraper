@@ -24,6 +24,15 @@ import sys
 import os
 import pymysql
 import Scraper
+import platform
+
+######################################################################
+# Setup Section
+######################################################################
+
+if len(sys.argv) != 4:
+    print("Invalid number of arguments.")
+    sys.exit()
 
 FILE_DIR = Scraper.get_file_dir(sys.argv[1])
 
@@ -31,12 +40,17 @@ FILE_DIR = Scraper.get_file_dir(sys.argv[1])
 repo_id = sys.argv[2]
 commit_hash = sys.argv[3]
 
-if not (os.path.isfile(FILE_DIR + "/findbugs.xml")):
-    print("Could not access " + FILE_DIR + "/findbugs.xml" + " Exiting.")
+if platform.system() is "Windows":
+    FILE_DIR += "\\"
+else:
+    FILE_DIR += "/"
+
+if not (os.path.isfile(FILE_DIR + "findbugs.xml")):
+    print("Could not access " + FILE_DIR + "findbugs.xml" + " Exiting.")
     sys.exit()
 
 try:
-    findbug_xml = xml.dom.minidom.parse(FILE_DIR + "/findbugs.xml")
+    findbug_xml = xml.dom.minidom.parse(FILE_DIR + "findbugs.xml")
 except:
     print("Could not access findbugs xml file, but it exists.")
     sys.exit()
@@ -54,19 +68,24 @@ cur = connection.cursor()
 commit_uid = Scraper.get_commit_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
                                     db=config_info['db'], commit_hash=commit_hash, repo_id=repo_id)
 
-package = ""
-class_name = ""
-method = ""
-bugType = ""
-priority = 0
-rank = 0
-cat = ""
-line = 0
+# Initialized variables to be inserted
 
-for node in root.childNodes:
-    # If it's not a <BugInstance>, we don't need it.
-    if node.nodeName != "BugInstance" or node.nodeType == node.TEXT_NODE:
-        continue
+######################################################################
+# Setup Section complete.
+######################################################################
+
+######################################################################
+# XML Section
+######################################################################
+
+for node in findbug_xml.getElementsByTagName("BugInstance"):
+    package = ""
+    class_name = ""
+    method = ""
+    priority = 0
+    rank = 0
+    cat = ""
+    line = 0
 
     bugType = node.getAttribute("type")
     if node.hasAttribute("priority"):
@@ -107,13 +126,13 @@ for node in root.childNodes:
         cur.execute(add_findbugs, (commit_uid, method_uid, bugType, priority, rank, cat, line))
     except:
         connection.rollback()
-        ErrorString = sys.exc_info()[0] + "\n----------\n"
-        ErrorString += sys.exc_info()[1] + "\n----------\n"
-        ErrorString += sys.exc_info()[2]
+        Error_String = str(sys.exc_info()[0]) + "\n----------\n"
+        Error_String += str(sys.exc_info()[1]) + "\n----------\n"
+        Error_String += str(sys.exc_info()[2])
 
         v_list = "(CommitUID, MethodUID, BugType, Priority, Rank, Category, Line)"
         Scraper.sendFailEmail("Failed to insert into findBugs table!", "The following insert failed:",
-                              add_findbugs, v_list, ErrorString, commit_uid, method_uid, bugType, priority,
+                              add_findbugs, v_list, Error_String, commit_uid, method_uid, bugType, priority,
                               rank, cat, line)
 
 # Closing connection

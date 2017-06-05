@@ -1,18 +1,19 @@
 """
-methodScanner.py is a python file that will read tests.txt for all methods and classes in a
-student's directory, then upload the unique ones.
+Reads output from testScan.sh and interprets it as test methods to be added to a database.
 
 Requirements:
- - tests.txt must exist.  If not, this script won't read it.
     Scraper.py  - library for interaction with databases must be available in the same directory as this file.
     config.json - file specifying database information.
+    tests.txt   - redirected output of testScan.sh
 
-Execution:
- - python3 testScanner.py
-   - Arguments:
-     - 0. testScanner.py
+Args:
+    None
 
-@author Samuel Schoeneberger
+Returns:
+    N/A
+
+Authors:
+    Samuel Schoeneberger
 """
 
 import sys

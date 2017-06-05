@@ -25,6 +25,10 @@ import pymysql
 import Scraper
 import os
 
+######################################################################
+# Setting up arguments and connections
+######################################################################
+
 if len(sys.argv) != 4:
     print("Did not get expected args.")
     sys.exit()
@@ -43,9 +47,16 @@ commit_hash = sys.argv[3]
 commit_uid = Scraper.get_commit_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
                                     db=config_info['db'], commit_hash=commit_hash, repo_id=repo_id)
 
+######################################################################
+# Primary arguments setup
+######################################################################
+
+######################################################################
+# Setting up coverage file
+######################################################################
+
 if not os.path.exists(FILE_DIR + '/report.csv'):
-    print(FILE_DIR + "/report.csv")
-    print("Could not access report.csv. Exiting.")
+    print("Could not access " + FILE_DIR + "/report.csv" + " Exiting.")
     sys.exit()
 
 try:
@@ -54,6 +65,13 @@ except:
     print("Failed to open report.csv file; please contact a TA.")
     sys.exit()
 
+######################################################################
+# Coverage file now definitely read in
+######################################################################
+
+######################################################################
+# Reading coverage file
+######################################################################
 
 report = csv.DictReader(csv_file, delimiter=',')
 for row in report:
@@ -108,13 +126,14 @@ for row in report:
         cur.execute(insert, (commit_uid, class_uid, coverage, instruction, branch, complexity, method))
     except:
         connection.rollback()
-        ErrorString = sys.exc_info()[0] + "\n----------\n"
-        ErrorString += sys.exc_info()[1] + "\n----------\n"
-        ErrorString += sys.exc_info()[2]
+        Error_String = str(sys.exc_info()[0]) + "\n----------\n"
+        Error_String += str(sys.exc_info()[1]) + "\n----------\n"
+        Error_String += str(sys.exc_info()[2])
+
         fail_list = "(CommitUID, ClassUID, Line_Coverage, Instruction_Coverage, Branch_Coverage, "
         fail_list += "Complexity Coverage, Method_Coverage)"
         Scraper.sendFailEmail("Failed to insert into Coverage table!", "The following insert failed:", insert,
-                              fail_list, ErrorString, commit_uid, class_uid,
+                              fail_list, Error_String, commit_uid, class_uid,
                               (commit_uid, class_uid, coverage, instruction, branch, complexity, method))
 
 connection.close()

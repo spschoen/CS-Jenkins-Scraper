@@ -29,6 +29,10 @@ import pymysql
 import Scraper
 import platform
 
+######################################################################
+# Setup Section
+######################################################################
+
 if len(sys.argv) != 6:
     print("Did not get expected arguments.")
     sys.exit()
@@ -38,6 +42,14 @@ FILE_DIR = Scraper.get_file_dir(sys.argv[1])
 # Getting commitUID info
 repo_id = sys.argv[2]
 commit_hash = sys.argv[3]
+
+######################################################################
+# Setup Section partially complete
+######################################################################
+
+######################################################################
+# Setting up reading the specific report directory
+######################################################################
 
 project_name = sys.argv[4]
 if project_name not in FILE_DIR:
@@ -61,6 +73,10 @@ if "//" in FILE_DIR:
 if "\\\\" in FILE_DIR:
     FILE_DIR = FILE_DIR.replace("\\\\", "\\")
 
+######################################################################
+# Report directory setup.
+######################################################################
+
 # Directory to XML set up.
 
 # Getting config options.
@@ -72,6 +88,14 @@ cur = connection.cursor()
 # CommitUID getting
 commit_uid = Scraper.get_commit_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
                                     db=config_info['db'], commit_hash=commit_hash, repo_id=repo_id)
+
+######################################################################
+# Setup Section fully complete
+######################################################################
+
+######################################################################
+# XML Setup/Reading/Uploading
+######################################################################
 
 # Initialize variables
 package = ""
@@ -105,12 +129,8 @@ for file in os.listdir(FILE_DIR):
     package = temp.split(".")[-2]
 
     # TODO: Replace this with searching only through <testcase>
-    for node in root.childNodes:
+    for node in root.getElementsByTagName("testcase"):
         message = ""
-        # Skip the node if it's not a test case.
-        # Which means basically means just skip <properties>
-        if node.nodeName != "testcase" or node.nodeType == node.TEXT_NODE:
-            continue
 
         if node.hasAttribute("name"):
             test_name = node.getAttribute("name")
@@ -151,13 +171,13 @@ for file in os.listdir(FILE_DIR):
                 cur.execute(testInsert, (commit_uid, test_method_uid, passing, message, line))
             except:
                 connection.rollback()
-                ErrorString = sys.exc_info()[0] + "\n----------\n"
-                ErrorString += sys.exc_info()[1] + "\n----------\n"
-                ErrorString += sys.exc_info()[2]
+                Error_String = str(sys.exc_info()[0]) + "\n----------\n"
+                Error_String += str(sys.exc_info()[1]) + "\n----------\n"
+                Error_String += str(sys.exc_info()[2])
 
                 v_list = "(CommitUID, test_method_uid, Passing, Message)"
                 Scraper.sendFailEmail("Failed to insert into test Results table!", "The following insert failed:",
-                                      testInsert, v_list, ErrorString, str(commit_uid), str(test_method_uid),
+                                      testInsert, v_list, Error_String, str(commit_uid), str(test_method_uid),
                                       str(passing), str(message))
 
 connection.close()

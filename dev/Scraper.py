@@ -53,9 +53,9 @@ def get_method_uid(ip, user, pw, db, method, class_name, package):
             cur.execute(insert, (class_uid, method))
         except:
             connection.rollback()
-            error_string = sys.exc_info()[0] + "\n----------\n"
-            error_string += sys.exc_info()[1] + "\n----------\n"
-            error_string += sys.exc_info()[2]
+            error_string = str(sys.exc_info()[0]) + "\n----------\n"
+            error_string += str(sys.exc_info()[1]) + "\n----------\n"
+            error_string += str(sys.exc_info()[2])
             send_fail_email("Failure to insert into method_uid!", "The following insert statement failed: ", insert,
                             "The variables were: ", error_string, package, class_name)
 
@@ -108,9 +108,9 @@ def get_class_uid(ip, user, pw, db, class_name, package):
             cur.execute(insert, (package, class_name))
         except:
             connection.rollback()
-            error_string = sys.exc_info()[0] + "\n----------\n"
-            error_string += sys.exc_info()[1] + "\n----------\n"
-            error_string += sys.exc_info()[2]
+            error_string = str(sys.exc_info()[0]) + "\n----------\n"
+            error_string += str(sys.exc_info()[1]) + "\n----------\n"
+            error_string += str(sys.exc_info()[2])
             send_fail_email("Failure to insert into classUID!", "The following insert statement failed: ", insert,
                             "The variables were: ", error_string, package, class_name)
 
@@ -168,9 +168,9 @@ def get_test_method_uid(ip, user, pw, db, method, class_name, package):
             cur.execute(insert, (test_class_uid, method))
         except:
             connection.rollback()
-            error_string = sys.exc_info()[0] + "\n----------\n"
-            error_string += sys.exc_info()[1] + "\n----------\n"
-            error_string += sys.exc_info()[2]
+            error_string = str(sys.exc_info()[0]) + "\n----------\n"
+            error_string += str(sys.exc_info()[1]) + "\n----------\n"
+            error_string += str(sys.exc_info()[2])
             send_fail_email("Failure to insert into testMethodUID!", "The following insert statement failed: ", insert,
                             "The variables were: ", error_string, method, package, class_name)
 
@@ -224,9 +224,9 @@ def get_test_class_uid(ip, user, pw, db, class_name, package):
             cur.execute(insert, (package, class_name))
         except:
             connection.rollback()
-            error_string = sys.exc_info()[0] + "\n----------\n"
-            error_string += sys.exc_info()[1] + "\n----------\n"
-            error_string += sys.exc_info()[2]
+            error_string = str(sys.exc_info()[0]) + "\n----------\n"
+            error_string += str(sys.exc_info()[1]) + "\n----------\n"
+            error_string += str(sys.exc_info()[2])
             send_fail_email("Failure to insert into testClassUID!", "The following insert statement failed: ", insert,
                             "The variables were: ", error_string, package, class_name)
 
@@ -279,9 +279,9 @@ def get_commit_uid(ip, user, pw, db, commit_hash, repo_id):
     #         cur.execute(insert, (commit_hash, repo_id))
     #     except:
     #         connection.rollback()
-    #         error_string = sys.exc_info()[0] + "\n----------\n"
-    #         error_string += sys.exc_info()[1] + "\n----------\n"
-    #         error_string += sys.exc_info()[2]
+    #         error_string = str(sys.exc_info()[0]) + "\n----------\n"
+    #         error_string += str(sys.exc_info()[1]) + "\n----------\n"
+    #         error_string += str(sys.exc_info()[2])
     #         send_fail_email("Failure to insert commitUID!", "The following insert failed: ", insert,
     #                         "The variables were: ", error_string, commit_hash, repo_id)
 
@@ -342,9 +342,9 @@ def send_fail_email(subject, failure_message, command, variable_list, trace, *va
         server.sendmail(from_mail, to, str(email_text))
         server.close()
     except:
-        error_string = sys.exc_info()[0] + "\n----------\n"
-        error_string += sys.exc_info()[1] + "\n----------\n"
-        error_string += sys.exc_info()[2]
+        error_string = str(sys.exc_info()[0]) + "\n----------\n"
+        error_string += str(sys.exc_info()[1]) + "\n----------\n"
+        error_string += str(sys.exc_info()[2])
         print(error_string)
 
 
