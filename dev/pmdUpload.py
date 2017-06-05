@@ -108,8 +108,8 @@ for file in pmd.getElementsByTagName("file"):
             continue
 
         # Class UID
-        methodUID = Scraper.get_method_uid(IP=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
-                                           DB=config_info['db'], package=package, class_name=class_name, method=method)
+        methodUID = Scraper.get_method_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
+                                           db=config_info['db'], package=package, class_name=class_name, method=method)
 
         search = "SELECT * FROM PMD WHERE CommitUID = %s AND MethodUID = %s AND Ruleset = %s AND " \
                  "Rule = %s AND Line = %s"
