@@ -321,8 +321,7 @@ for root, dirs, files in os.walk(test_dir):
                     in_block_comment = True
                 if "*/" in line:
                     in_block_comment = False
-                if not in_block_comment:
-                    if "assert" in line:
+                if not in_block_comment and "assert" in line:
                         if "//" in line:
                             compare = line.split("//")[0]
                             if "assert" in compare:
