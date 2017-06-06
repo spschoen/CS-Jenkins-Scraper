@@ -36,8 +36,7 @@ if len(sys.argv) != 4:
 FILE_DIR = Scraper.get_file_dir(sys.argv[1])
 
 if not os.path.exists(FILE_DIR + '/checkstyle.xml'):
-    print(FILE_DIR + "/checkstyle.xml")
-    print("Could not access checkstyle.xml. Exiting.")
+    print("Could not access " + FILE_DIR + "/checkstyle.xml" + " Exiting.")
     sys.exit()
 
 try:
