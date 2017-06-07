@@ -275,11 +275,11 @@ if shutil.which("cloc") is not None:
                 continue
 
             if node.hasAttribute("code") and not node.getAttribute("code") == "":
-                src_lines_of_code = node.getAttribute("code")
+                test_lines_of_code = node.getAttribute("code")
             if node.hasAttribute("comment") and not node.getAttribute("comment") == "":
-                src_lines_of_comments = node.getAttribute("comment")
+                test_lines_of_comments = node.getAttribute("comment")
             if node.hasAttribute("files_count") and not node.getAttribute("files_count") == "":
-                src_classes = node.getAttribute("files_count")
+                test_classes = node.getAttribute("files_count")
     except:
         print("Could not parse CLOC_test.xml, setting outputs to -1")
         test_lines_of_code = -1
