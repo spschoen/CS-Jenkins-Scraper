@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.1.73, for redhat-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.6.10, for Linux (x86_64)
 --
 -- Host: localhost    Database: repoinfo
 -- ------------------------------------------------------
--- Server version	5.1.73
+-- Server version	5.6.10
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -51,7 +51,7 @@ CREATE TABLE `TS_testTable` (
   `CommitUID` int(11) NOT NULL DEFAULT '0',
   `testMethodUID` int(11) DEFAULT NULL,
   `Passing` varchar(1) DEFAULT NULL,
-  `Message` varchar(200) DEFAULT NULL,
+  `Message` varchar(500) DEFAULT NULL,
   `Line` int(11) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -62,6 +62,7 @@ CREATE TABLE `TS_testTable` (
 
 LOCK TABLES `TS_testTable` WRITE;
 /*!40000 ALTER TABLE `TS_testTable` DISABLE KEYS */;
+
 /*!40000 ALTER TABLE `TS_testTable` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -89,6 +90,7 @@ CREATE TABLE `checkstyle` (
 
 LOCK TABLES `checkstyle` WRITE;
 /*!40000 ALTER TABLE `checkstyle` DISABLE KEYS */;
+
 /*!40000 ALTER TABLE `checkstyle` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -104,7 +106,7 @@ CREATE TABLE `classUID` (
   `Package` varchar(50) DEFAULT NULL,
   `Class` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`classUID`)
-) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -113,6 +115,7 @@ CREATE TABLE `classUID` (
 
 LOCK TABLES `classUID` WRITE;
 /*!40000 ALTER TABLE `classUID` DISABLE KEYS */;
+
 /*!40000 ALTER TABLE `classUID` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -128,7 +131,7 @@ CREATE TABLE `commitUID` (
   `Hexsha` varchar(40) DEFAULT NULL,
   `Repo` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`commitUID`)
-) ENGINE=MyISAM AUTO_INCREMENT=22 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=31 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -137,6 +140,7 @@ CREATE TABLE `commitUID` (
 
 LOCK TABLES `commitUID` WRITE;
 /*!40000 ALTER TABLE `commitUID` DISABLE KEYS */;
+
 /*!40000 ALTER TABLE `commitUID` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -148,19 +152,28 @@ DROP TABLE IF EXISTS `commits`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `commits` (
-  `CommitUID` int(11) NOT NULL,
+  `CommitUID` int(11) NOT NULL AUTO_INCREMENT,
+  `Commit_Hash` varchar(40) NOT NULL,
+  `Repo` varchar(40) NOT NULL,
   `Build_Num` int(11) DEFAULT NULL,
-  `Compile_Stud` varchar(1) DEFAULT NULL,
+  `Compile_ST` varchar(1) DEFAULT NULL,
   `Compile_TS` varchar(1) DEFAULT NULL,
   `Author` varchar(8) DEFAULT NULL,
   `Time` int(11) DEFAULT NULL,
   `Duration` int(11) DEFAULT NULL,
   `Message` varchar(50) DEFAULT NULL,
-  `LOC` int(11) DEFAULT NULL,
-  `LOC_DIFF` int(11) DEFAULT NULL,
-  `Gen_Javadoc` int(11) DEFAULT NULL,
+  `Src_Code_Lines` int(11) NOT NULL,
+  `Src_Comment_Lines` int(11) NOT NULL,
+  `Src_Class_Count` int(11) NOT NULL,
+  `Src_Method_Count` int(11) NOT NULL,
+  `Test_Code_Lines` int(11) NOT NULL,
+  `Test_Comment_Lines` int(11) NOT NULL,
+  `Test_Classes` int(11) NOT NULL,
+  `Test_Method_Count` int(11) NOT NULL,
+  `Assert_Count` int(11) NOT NULL,
+  `Commits_Since_Javadoc` int(11) NOT NULL,
   PRIMARY KEY (`CommitUID`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=57 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -169,6 +182,7 @@ CREATE TABLE `commits` (
 
 LOCK TABLES `commits` WRITE;
 /*!40000 ALTER TABLE `commits` DISABLE KEYS */;
+
 /*!40000 ALTER TABLE `commits` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -196,6 +210,7 @@ CREATE TABLE `coverage` (
 
 LOCK TABLES `coverage` WRITE;
 /*!40000 ALTER TABLE `coverage` DISABLE KEYS */;
+
 /*!40000 ALTER TABLE `coverage` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -223,6 +238,7 @@ CREATE TABLE `findBugs` (
 
 LOCK TABLES `findBugs` WRITE;
 /*!40000 ALTER TABLE `findBugs` DISABLE KEYS */;
+
 /*!40000 ALTER TABLE `findBugs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -238,7 +254,7 @@ CREATE TABLE `methodUID` (
   `ClassUID` int(11) DEFAULT NULL,
   `Method` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`methodUID`)
-) ENGINE=MyISAM AUTO_INCREMENT=60 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=62 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -247,7 +263,37 @@ CREATE TABLE `methodUID` (
 
 LOCK TABLES `methodUID` WRITE;
 /*!40000 ALTER TABLE `methodUID` DISABLE KEYS */;
+
 /*!40000 ALTER TABLE `methodUID` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `reflection`
+--
+
+DROP TABLE IF EXISTS `reflection`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `reflection` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `unityID` varchar(8) DEFAULT NULL,
+  `date_added` datetime NOT NULL,
+  `reviewed_unityID` varchar(8) DEFAULT NULL,
+  `review` text,
+  PRIMARY KEY (`id`),
+  KEY `unityID` (`unityID`),
+  KEY `reviewed_unityID` (`reviewed_unityID`)
+) ENGINE=MyISAM AUTO_INCREMENT=57 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `reflection`
+--
+
+LOCK TABLES `reflection` WRITE;
+/*!40000 ALTER TABLE `reflection` DISABLE KEYS */;
+
+/*!40000 ALTER TABLE `reflection` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -271,6 +317,7 @@ CREATE TABLE `testClassUID` (
 
 LOCK TABLES `testClassUID` WRITE;
 /*!40000 ALTER TABLE `testClassUID` DISABLE KEYS */;
+
 /*!40000 ALTER TABLE `testClassUID` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -286,7 +333,7 @@ CREATE TABLE `testMethodUID` (
   `testClassUID` int(11) NOT NULL,
   `testMethodName` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`testMethodUID`)
-) ENGINE=MyISAM AUTO_INCREMENT=85 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=86 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -295,6 +342,7 @@ CREATE TABLE `testMethodUID` (
 
 LOCK TABLES `testMethodUID` WRITE;
 /*!40000 ALTER TABLE `testMethodUID` DISABLE KEYS */;
+
 /*!40000 ALTER TABLE `testMethodUID` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -309,7 +357,7 @@ CREATE TABLE `testTable` (
   `CommitUID` int(11) NOT NULL DEFAULT '0',
   `testMethodUID` int(11) DEFAULT NULL,
   `Passing` varchar(1) DEFAULT NULL,
-  `Message` varchar(200) DEFAULT NULL,
+  `Message` varchar(500) DEFAULT NULL,
   `Line` int(11) DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -320,6 +368,7 @@ CREATE TABLE `testTable` (
 
 LOCK TABLES `testTable` WRITE;
 /*!40000 ALTER TABLE `testTable` DISABLE KEYS */;
+
 /*!40000 ALTER TABLE `testTable` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -335,7 +384,7 @@ CREATE TABLE `users` (
   `unityID` varchar(8) DEFAULT NULL,
   `ProjectID` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=308 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=156 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -344,6 +393,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
+
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -356,4 +406,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-05-02 14:08:21
+-- Dump completed on 2017-06-13 21:55:02

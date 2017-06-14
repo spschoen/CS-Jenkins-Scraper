@@ -15,7 +15,7 @@ Alternatively, you can (manually) remove the Author column from the Commits tabl
 TL;DR These are a bunch of scripts which, when run, will scrape data from all the xml files produced by Jenkins, and feed that information into a Database, for future calculations.
 
 ## Pre-Setup
-#### Without `setup.sh`
+#### Without `*_setup.sh`
 
 1. Update yum: ```sudo yum update```
 2. Install Python3 (because RHEL is sensitive about 2.6): ```sudo yum install python34.x86_64```
@@ -32,9 +32,10 @@ Alternatively, instead of using `pip` to install the modules, you can clone them
 
 ___
 
-#### With `setup.sh`
+#### With `*_setup.sh`
 
-1. Execute ```sudo sh setup.sh```, it will execute all the above steps in a single script.
+1. Execute ```sudo sh master_setup.sh``` on the master server.  Will install MySQL 5.6, as well as set up the database using base.sql
+1. Execute ```sudo sh executor_setup.sh``` on the executor server.  Will install Python and needed modules.
 
 ___
 
@@ -55,13 +56,13 @@ ___
 6. Copy `config.json` to somewhere that ant can access it, then edit `build.xml` to copy it to the local directory.
 
 
-## Database Setup
+## Database Setup (Master)
 
-1. Download `repo_base.sql`
+1. Download `base.sql`
 2. Enter mysql: ```mysql -u root -p```
 3. Create the DB: ```create database [DB NAME];```
 4. Switch to the new DB: ```use [DB NAME];```
-5. Import the file. ```source repo_base.sql```
+5. Import the file. ```source base.sql```
 
 ## File structure
 
@@ -71,6 +72,6 @@ ___
   * `runScript.sh` is the script which should be added to the post-build
 * Docs/
   * DB_Tables represents the structure of a database, a plain text and easy to read version of repo_base.sql
-  * `repo_base.sql` is a dump file which can be imported into created databases to setup for the scripts.
+  * `base.sql` is a dump file which can be imported into created databases to setup for the scripts.
 * old/
   * These scripts are example scripts/XML which were used to create dev/ scripts.  They can be safely ignored (and deleted, which we should probably do)
