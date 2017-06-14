@@ -34,7 +34,7 @@ ___
 
 #### With `*_setup.sh`
 
-1. Execute ```sudo sh master_setup.sh``` on the master server.  Will install MySQL 5.6, as well as set up the database using base.sql
+1. Execute ```sudo sh master_setup.sh <IP for Executor 1> <IP for Executor 2> ... ``` on the master server.  Will install MySQL 5.6, as well as set up the database using base.sql, then setup Executors to have access.  In theory.
 1. Execute ```sudo sh executor_setup.sh``` on the executor server.  Will install Python and needed modules.
 
 ___
