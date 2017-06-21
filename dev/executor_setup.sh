@@ -26,21 +26,22 @@ fi
 
 #Update yum, because our versions are ancient.
 info "Updating Yum"
-yum -y update
-if [ "$?" -ne 0 ]; then
-    warning "Yum update resulted in non-zero exit status."
-    echo -n "Continue? (y/n) "
-    read yum_warning_choice
-    if [[ "$yum_warning_choice" == "y" ]]; then
-        info "Continuing execution of setup.sh"
-    elif [[ "$yum_warning_choice" == "n" ]]; then
-        fatal "Execution exiting."
-        exit 1
-    else
-        fatal "Unknown answer, exiting."
-        exit 2
-    fi
-fi
+info "Not updating yum because it's slow."
+# yum -y update
+# if [ "$?" -ne 0 ]; then
+#     warning "Yum update resulted in non-zero exit status."
+#     echo -n "Continue? (y/n) "
+#     read yum_warning_choice
+#     if [[ "$yum_warning_choice" == "y" ]]; then
+#         info "Continuing execution of setup.sh"
+#     elif [[ "$yum_warning_choice" == "n" ]]; then
+#         fatal "Execution exiting."
+#         exit 1
+#     else
+#         fatal "Unknown answer, exiting."
+#         exit 2
+#     fi
+# fi
 
 # Python34 Installation
 if [[ "$(yum list installed python34.x86_64 >/dev/null 2>&1)" == 1 ]]; then

@@ -92,7 +92,7 @@ if [ "$MYSQL_COUNT" -ne "4" ]; then
     service mysql start
 
     # Getting root pw, and config options
-    info "Reading generated rood password from installation."
+    info "Reading generated root password from installation."
     SECRET_FILE="$(head -n1 /root/.mysql_secret)"
     MYSQL_PASS=${SECRET_FILE##* }
 
