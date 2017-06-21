@@ -340,9 +340,9 @@ for root, dirs, files in os.walk(test_dir):
 
 test_dir = FILE_DIR
 if platform.system() is "Windows":
-    f = open(FILE_DIR + "\\" + "ant.log", "r")
+    f = open(FILE_DIR + "\\" + project_name + "\\" + "ant.log", "r")
 else:
-    f = open(FILE_DIR + "/" + "ant.log", "r")
+    f = open(FILE_DIR + "/" + project_name + "/" + "ant.log", "r")
 
 javac_lines = []
 stacktrace = ""
