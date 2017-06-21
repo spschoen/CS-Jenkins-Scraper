@@ -337,7 +337,12 @@ for root, dirs, files in os.walk(test_dir):
 # Stacktrace acquisition
 ######################################################################
 
-f = open(FILE_DIR + "ant.log", "r")
+
+test_dir = FILE_DIR
+if platform.system() is "Windows":
+    f = open(FILE_DIR + "\\" + "ant.log", "r")
+else:
+    f = open(FILE_DIR + "/" + "ant.log", "r")
 
 javac_lines = []
 stacktrace = ""
