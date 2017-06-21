@@ -334,6 +334,31 @@ for root, dirs, files in os.walk(test_dir):
 ######################################################################
 
 ######################################################################
+# Stacktrace acquisition
+######################################################################
+
+f = open(FILE_DIR + "ant.log", "r")
+
+javac_lines = []
+stacktrace = ""
+
+for line in f.readlines():
+    # print(line.replace("\n", ""))
+    fixed_line = line.replace("\n", "")
+    if "[javac]" in fixed_line:
+        if "Compiling" in fixed_line:
+            continue
+        javac_lines.append(fixed_line.split("[javac] ")[1])
+
+if len(javac_lines) != 0:
+    for line in javac_lines:
+        stacktrace += line + "\n"
+
+######################################################################
+# Stacktrace found/ignored
+######################################################################
+
+######################################################################
 # Database uploading
 ######################################################################
 
@@ -342,27 +367,28 @@ for root, dirs, files in os.walk(test_dir):
 
 insert = "INSERT INTO commits (CommitUID, Commit_Hash, Repo, Build_Num, Compile_ST, Compile_TS, Author, Time, " \
          "Duration, Message, Src_Code_Lines, Src_Comment_Lines, Src_Class_Count, Src_Method_Count, Test_Code_Lines, " \
-         "Test_Comment_Lines, Test_Classes, Test_Method_Count, Assert_Count, Commits_Since_Javadoc) " \
-         "VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+         "Test_Comment_Lines, Test_Classes, Test_Method_Count, Assert_Count, Commits_Since_Javadoc, Stacktrace) " \
+         "VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
 try:
     cur.execute(insert, (commit_hash, repo_id, build_num, Compile_ST, Compile_TS, author, time, duration, message,
                          src_lines_of_code, src_lines_of_comments, src_classes, src_methodCount, test_lines_of_code,
                          test_lines_of_comments, test_classes, test_methodCount, assert_count,
-                         commits_since_doc_modified))
+                         commits_since_doc_modified, stacktrace))
 except:
     connection.rollback()
     Error_String = str(sys.exc_info()[0]) + "\n----------\n"
     Error_String += str(sys.exc_info()[1]) + "\n----------\n"
     Error_String += str(sys.exc_info()[2])
 
-    v_list = "(CommitUID, Commit_Hash, Repo, Build_Num, Compile_ST, Compile_TS, Author, Time, "
-    v_list += "Duration, Message, Code_Lines, Comment_Lines, Commits_Since_Javadoc, Method_Count, Class_Count)"
+    v_list = "(CommitUID, Commit_Hash, Repo, Build_Num, Compile_ST, Compile_TS, Author, Time, Duration, Message, " \
+             "Src_Code_Lines, Src_Comment_Lines, Src_Class_Count, Src_Method_Count, Test_Code_Lines, " \
+             "Test_Comment_Lines, Test_Classes, Test_Method_Count, Assert_Count, Commits_Since_Javadoc, Stacktrace)"
 
     Scraper.sendFailEmail("Failed to insert into checkstyle table!", "The following insert failed:", insert,
                           v_list, Error_String, commit_hash, repo_id, build_num, Compile_ST, Compile_TS, author, time,
                           duration, message, src_lines_of_code, src_lines_of_comments, src_classes, src_methodCount,
                           test_lines_of_code, test_lines_of_comments, test_classes, test_methodCount, assert_count,
-                          commits_since_doc_modified)
+                          commits_since_doc_modified, stacktrace)
 
 connection.close()
