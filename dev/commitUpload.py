@@ -339,13 +339,13 @@ for root, dirs, files in os.walk(test_dir):
 
 stacktrace = ""
 if platform.system() is "Windows":
-    antlog = FILE_DIR + "\\" + project_name + "\\" + "ant.log", "r"
+    antlog = FILE_DIR + "\\" + project_name + "\\" + "ant.log"
 else:
-    antlog = FILE_DIR + "/" + project_name + "/" + "ant.log", "r"
+    antlog = FILE_DIR + "/" + project_name + "/" + "ant.log"
 
 javac_lines = []
 try:
-    f = open(antlog)
+    f = open(antlog, "r")
     for line in f.readlines():
         # print(line.replace("\n", ""))
         fixed_line = line.replace("\n", "")
