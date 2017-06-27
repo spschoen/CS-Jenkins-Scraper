@@ -235,7 +235,7 @@ try:
             # print(line.replace("\n", ""))
             src_methodCount += 1
 except:
-    print("Could not open tests.txt")
+    print("Could not open methods.txt")
 
 ######################################################################
 # src/ number analysis complete
@@ -337,23 +337,24 @@ for root, dirs, files in os.walk(test_dir):
 # Stacktrace acquisition
 ######################################################################
 
-
-test_dir = FILE_DIR
+stacktrace = ""
 if platform.system() is "Windows":
-    f = open(FILE_DIR + "\\" + project_name + "\\" + "ant.log", "r")
+    antlog = FILE_DIR + "\\" + project_name + "\\" + "ant.log", "r"
 else:
-    f = open(FILE_DIR + "/" + project_name + "/" + "ant.log", "r")
+    antlog = FILE_DIR + "/" + project_name + "/" + "ant.log", "r"
 
 javac_lines = []
-stacktrace = ""
-
-for line in f.readlines():
-    # print(line.replace("\n", ""))
-    fixed_line = line.replace("\n", "")
-    if "[javac]" in fixed_line:
-        if "Compiling" in fixed_line:
-            continue
-        javac_lines.append(fixed_line.split("[javac] ")[1])
+try:
+    f = open(antlog)
+    for line in f.readlines():
+        # print(line.replace("\n", ""))
+        fixed_line = line.replace("\n", "")
+        if "[javac]" in fixed_line:
+            if "Compiling" in fixed_line:
+                continue
+            javac_lines.append(fixed_line.split("[javac] ")[1])
+except:
+    print("Could not open ant.log")
 
 if len(javac_lines) != 0:
     for line in javac_lines:
@@ -367,6 +368,45 @@ stacktrace.replace("\t", "    ")
 ######################################################################
 
 ######################################################################
+# Lines Added/Removed
+######################################################################
+
+linesAdded = -1
+linesRemoved = -1
+
+# git log --stat -n 1 | grep changed
+churn_command = ["git", "log", "--stat", "-n 1"]
+churn_output = subprocess.check_output(churn_command).decode("utf-8").replace("\"", "")
+
+# print(churn_output)
+for line in churn_output.split("\n"):
+    if "changed" in line:
+        changes = line.split("changed, ")[1]
+
+        if "insertion" in changes:
+            linesAdded = int(changes.split(" insertion")[0])
+        else:
+            linesAdded = 0
+        # print(linesAdded)
+
+        if "deletion" in changes:
+            if ", " in changes:
+                linesRemoved = int(changes.split(", ")[1].split(" deletion")[0])
+            else:
+                linesRemoved = int(changes.split(" deletion")[0])
+                # deletions = changes.split("")
+        else:
+            linesRemoved = 0
+        # print(linesRemoved)
+
+        break
+
+
+######################################################################
+# Lines Added/Removed Done
+######################################################################
+
+######################################################################
 # Database uploading
 ######################################################################
 
@@ -375,14 +415,15 @@ stacktrace.replace("\t", "    ")
 
 insert = "INSERT INTO commits (CommitUID, Commit_Hash, Repo, Build_Num, Compile_ST, Compile_TS, Author, Time, " \
          "Duration, Message, Src_Code_Lines, Src_Comment_Lines, Src_Class_Count, Src_Method_Count, Test_Code_Lines, " \
-         "Test_Comment_Lines, Test_Classes, Test_Method_Count, Assert_Count, Commits_Since_Javadoc, Stacktrace) " \
-         "VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+         "Test_Comment_Lines, Test_Classes, Test_Method_Count, Assert_Count, Commits_Since_Javadoc, LinesAdded," \
+         "LinesRemoved, Stacktrace) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, " \
+         "%s, %s, %s, %s, %s)"
 
 try:
     cur.execute(insert, (commit_hash, repo_id, build_num, Compile_ST, Compile_TS, author, time, duration, message,
                          src_lines_of_code, src_lines_of_comments, src_classes, src_methodCount, test_lines_of_code,
                          test_lines_of_comments, test_classes, test_methodCount, assert_count,
-                         commits_since_doc_modified, stacktrace))
+                         commits_since_doc_modified, linesAdded, linesRemoved, stacktrace))
 except:
     connection.rollback()
     Error_String = str(sys.exc_info()[0]) + "\n----------\n"
@@ -391,12 +432,13 @@ except:
 
     v_list = "(CommitUID, Commit_Hash, Repo, Build_Num, Compile_ST, Compile_TS, Author, Time, Duration, Message, " \
              "Src_Code_Lines, Src_Comment_Lines, Src_Class_Count, Src_Method_Count, Test_Code_Lines, " \
-             "Test_Comment_Lines, Test_Classes, Test_Method_Count, Assert_Count, Commits_Since_Javadoc, Stacktrace)"
+             "Test_Comment_Lines, Test_Classes, Test_Method_Count, Assert_Count, Commits_Since_Javadoc, LinesAdded," \
+             "LinesRemoved, Stacktrace)"
 
     Scraper.sendFailEmail("Failed to insert into checkstyle table!", "The following insert failed:", insert,
                           v_list, Error_String, commit_hash, repo_id, build_num, Compile_ST, Compile_TS, author, time,
                           duration, message, src_lines_of_code, src_lines_of_comments, src_classes, src_methodCount,
                           test_lines_of_code, test_lines_of_comments, test_classes, test_methodCount, assert_count,
-                          commits_since_doc_modified, stacktrace)
+                          commits_since_doc_modified, linesAdded, linesRemoved, stacktrace)
 
 connection.close()
