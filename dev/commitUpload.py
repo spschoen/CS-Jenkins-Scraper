@@ -359,6 +359,9 @@ if len(javac_lines) != 0:
     for line in javac_lines:
         stacktrace += line + "\n"
 
+# Fixing some problems for the Dashboard.
+stacktrace.replace("\t", "    ")
+
 ######################################################################
 # Stacktrace found/ignored
 ######################################################################
