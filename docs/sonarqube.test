@@ -1,0 +1,25 @@
+
+# Add repo to yum
+wget -O /etc/yum.repos.d/sonar.repo http://downloads.sourceforge.net/project/sonar-pkg/rpm/sonar.repo
+
+# Install sonarqube
+yum install sonar
+
+# Enter custom sonarqube username and password for DB
+
+# Goto /opt/conf/sonar.properties and change following lines to:
+#sonar.jdbc.username=<DATABASE USERNAME HERE>
+#sonar.jdbc.password=<DATABASE PASSWORD HERE>
+#sonar.jdbc.url=jdbc:mysql://localhost/sonarqube?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance
+
+#sonar.web.host=<MASTER IP HERE>
+#sonar.web.port=<Choose a good port - 9000 is usually free>
+#sonar.web.context=/sonar
+
+# Together, sonarqube can be accessed from <host>:<port>/<context>
+
+# It *should* be running by this point.  Automated script ends, and you have to do actual work in Jenkins from this point forward
+
+# run "sh bin/linux-x86-64/sonar.sh start" and it should be online within 20 seconds.  Go to above link to find out.
+
+# Add to Jenkins - todo: this
