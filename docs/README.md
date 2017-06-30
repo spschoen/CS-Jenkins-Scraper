@@ -9,6 +9,7 @@ ___
 ### Properties Content
 
 Add `SCRIPT_DIR=[wherever you store the scraper scripts]` to to the `Properties Content` box under Build Environment.
+Add `WORKDIR=$WORKSPACE/$PROJECT_NAME` to to the `Properties Content` box under Build Environment.
 
 ___
 
