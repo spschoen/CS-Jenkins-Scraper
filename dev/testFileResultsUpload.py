@@ -104,9 +104,9 @@ class_name = ""
 test_name = ""
 passing = ""
 message = ""
-line = -1
 
 for file in os.listdir(FILE_DIR):
+    line = -1
     if not (str(file).endswith(".xml")):
         continue
 
