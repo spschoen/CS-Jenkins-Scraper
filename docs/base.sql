@@ -37,6 +37,7 @@ CREATE TABLE `PMD` (
 
 LOCK TABLES `PMD` WRITE;
 /*!40000 ALTER TABLE `PMD` DISABLE KEYS */;
+
 /*!40000 ALTER TABLE `PMD` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -120,31 +121,6 @@ LOCK TABLES `classUID` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `commitUID`
---
-
-DROP TABLE IF EXISTS `commitUID`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `commitUID` (
-  `commitUID` int(11) NOT NULL AUTO_INCREMENT,
-  `Hexsha` varchar(40) DEFAULT NULL,
-  `Repo` varchar(30) DEFAULT NULL,
-  PRIMARY KEY (`commitUID`)
-) ENGINE=MyISAM AUTO_INCREMENT=31 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `commitUID`
---
-
-LOCK TABLES `commitUID` WRITE;
-/*!40000 ALTER TABLE `commitUID` DISABLE KEYS */;
-
-/*!40000 ALTER TABLE `commitUID` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `commits`
 --
 
@@ -172,8 +148,11 @@ CREATE TABLE `commits` (
   `Test_Method_Count` int(11) NOT NULL,
   `Assert_Count` int(11) NOT NULL,
   `Commits_Since_Javadoc` int(11) NOT NULL,
+  `LinesAdded` int(11) NOT NULL,
+  `LinesRemoved` int(11) NOT NULL,
+  `Stacktrace` mediumtext,
   PRIMARY KEY (`CommitUID`)
-) ENGINE=MyISAM AUTO_INCREMENT=57 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=62 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -254,7 +233,7 @@ CREATE TABLE `methodUID` (
   `ClassUID` int(11) DEFAULT NULL,
   `Method` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`methodUID`)
-) ENGINE=MyISAM AUTO_INCREMENT=62 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -283,7 +262,7 @@ CREATE TABLE `reflection` (
   PRIMARY KEY (`id`),
   KEY `unityID` (`unityID`),
   KEY `reviewed_unityID` (`reviewed_unityID`)
-) ENGINE=MyISAM AUTO_INCREMENT=57 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -308,7 +287,7 @@ CREATE TABLE `testClassUID` (
   `testClass` varchar(50) DEFAULT NULL,
   `testPackage` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`testClassUID`)
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -333,7 +312,7 @@ CREATE TABLE `testMethodUID` (
   `testClassUID` int(11) NOT NULL,
   `testMethodName` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`testMethodUID`)
-) ENGINE=MyISAM AUTO_INCREMENT=86 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -384,7 +363,7 @@ CREATE TABLE `users` (
   `unityID` varchar(8) DEFAULT NULL,
   `ProjectID` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=156 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=0 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -406,4 +385,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-06-13 21:55:02
+-- Dump completed on 2017-06-30  9:14:40

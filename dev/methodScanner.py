@@ -90,7 +90,6 @@ for line in allMethods:
         if method_name == "\n":
             continue
 
-        # olol this was like 30 lines now it's 3.
         # We're discarding the return value from the function since it does the inserting
         # as well as returning.
         methodUID = Scraper.get_method_uid(ip=config_info['ip'], user=config_info['user'], pw=config_info['pass'],
