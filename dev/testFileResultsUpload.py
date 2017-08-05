@@ -145,6 +145,7 @@ for file in os.listdir(FILE_DIR):
             line = node.childNodes[1].firstChild.nodeValue.split("\n")[1].split(".java:")[1].split(")")[0]
 
         else:
+            line = -1
             passing = "P"
 
         # If we get any records returned, then it's already in the table.
